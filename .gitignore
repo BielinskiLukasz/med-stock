@@ -1,0 +1,12 @@
+# plan.md — local plan file (one-time Markdown-converted in Phase 5)
+plan.md
+
+# Per-developer Claude Code permission overrides — never commit personal allows.
+.claude/settings.local.json
+
+# GSD
+gsd-*
+.gsd-*
+.claude/get-shit-done/
+.claude/commands/gsd/
+.claude/hooks/lib/git-cmd.js
