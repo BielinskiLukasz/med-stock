@@ -113,51 +113,49 @@
 
 ## Traceability
 
-*Populated during roadmap creation.*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INV-01 | — | Pending |
-| INV-02 | — | Pending |
-| INV-03 | — | Pending |
-| INV-04 | — | Pending |
-| INV-05 | — | Pending |
-| INV-06 | — | Pending |
-| SRCH-01 | — | Pending |
-| SRCH-02 | — | Pending |
-| SRCH-03 | — | Pending |
-| SRCH-04 | — | Pending |
-| SRCH-05 | — | Pending |
-| SRCH-06 | — | Pending |
-| DASH-01 | — | Pending |
-| DASH-02 | — | Pending |
-| DASH-03 | — | Pending |
-| DASH-04 | — | Pending |
-| HIST-01 | — | Pending |
-| HIST-02 | — | Pending |
-| TRSH-01 | — | Pending |
-| TRSH-02 | — | Pending |
-| TRSH-03 | — | Pending |
-| TRSH-04 | — | Pending |
-| LOC-01 | — | Pending |
-| LOC-02 | — | Pending |
-| LOC-03 | — | Pending |
-| LOC-04 | — | Pending |
-| LOC-05 | — | Pending |
-| DATA-01 | — | Pending |
-| DATA-02 | — | Pending |
-| DATA-03 | — | Pending |
-| DATA-04 | — | Pending |
-| PWA-01 | — | Pending |
-| PWA-02 | — | Pending |
-| PWA-03 | — | Pending |
-| PWA-04 | — | Pending |
+| INV-01 | Phase 1 | Pending |
+| INV-02 | Phase 1 | Pending |
+| INV-03 | Phase 1 | Pending |
+| INV-04 | Phase 1 | Pending |
+| INV-05 | Phase 1 | Pending |
+| INV-06 | Phase 1 | Pending |
+| SRCH-01 | Phase 2 | Pending |
+| SRCH-02 | Phase 2 | Pending |
+| SRCH-03 | Phase 2 | Pending |
+| SRCH-04 | Phase 2 | Pending |
+| SRCH-05 | Phase 2 | Pending |
+| SRCH-06 | Phase 2 | Pending |
+| DASH-01 | Phase 2 | Pending |
+| DASH-02 | Phase 2 | Pending |
+| DASH-03 | Phase 2 | Pending |
+| DASH-04 | Phase 2 | Pending |
+| HIST-01 | Phase 2 | Pending |
+| HIST-02 | Phase 2 | Pending |
+| TRSH-01 | Phase 2 | Pending |
+| TRSH-02 | Phase 2 | Pending |
+| TRSH-03 | Phase 2 | Pending |
+| TRSH-04 | Phase 2 | Pending |
+| LOC-01 | Phase 1 | Pending |
+| LOC-02 | Phase 1 | Pending |
+| LOC-03 | Phase 1 | Pending |
+| LOC-04 | Phase 1 | Pending |
+| LOC-05 | Phase 1 | Pending |
+| DATA-01 | Phase 3 | Pending |
+| DATA-02 | Phase 3 | Pending |
+| DATA-03 | Phase 3 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| PWA-01 | Phase 1 | Pending |
+| PWA-02 | Phase 1 | Pending |
+| PWA-03 | Phase 1 | Pending |
+| PWA-04 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 35 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 35 ⚠️
+- Mapped to phases: 35
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-06-29*
-*Last updated: 2026-06-29 after initial definition*
+*Last updated: 2026-06-29 after roadmap creation*
