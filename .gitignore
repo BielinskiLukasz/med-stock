@@ -4,6 +4,9 @@ plan.md
 # Per-developer Claude Code permission overrides — never commit personal allows.
 .claude/settings.local.json
 
+# Research cache — machine-generated, not worth tracking
+.planning/research/.cache/
+
 # GSD
 gsd-*
 .gsd-*
