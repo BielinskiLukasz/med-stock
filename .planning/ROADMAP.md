@@ -29,7 +29,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can add a medicine package (name, category, location, expiry date, opened date, period-after-opening, quantity, notes) and see it appear in the list immediately
   4. App automatically computes and displays the correct validity status (Active / Opened / Expired / Used Up) for each package, combining expiry date and period-after-opening constraints
   5. User can add, rename, and delete custom locations; deleted locations revert existing medicines to "Other"
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Walking Skeleton: project scaffold, Vite config, Dexie schema, HashRouter, PWA service worker, minimal add-medicine form
+- [ ] 01-02-PLAN.md — TDD: calculateStatus() pure function with all edge cases (D-13, D-14, D-15)
+- [ ] 01-03-PLAN.md — Full Medicine CRUD: complete form with all 9 fields, detail view, edit, soft-delete, status badges
+- [ ] 01-04-PLAN.md — Location Management: Locations screen, add/rename/delete custom locations, LOC-04 cascade TDD
+
 **UI hint**: yes
 
 ### Phase 2: Search, Dashboard & Audit
@@ -66,6 +73,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. PWA Foundation & Inventory CRUD | 0/TBD | Not started | - |
+| 1. PWA Foundation & Inventory CRUD | 0/4 | Not started | - |
 | 2. Search, Dashboard & Audit | 0/TBD | Not started | - |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
