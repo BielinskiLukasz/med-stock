@@ -11,8 +11,8 @@
 - [ ] **INV-02**: User can edit any field of an existing medicine package
 - [ ] **INV-03**: User can view full details of a medicine package
 - [ ] **INV-04**: User can delete a medicine package (moves to Trash Bin, not permanently removed)
-- [ ] **INV-05**: App automatically calculates validity status from expiration date, opened date, and period-after-opening — combining both constraints (whichever expires first)
-- [ ] **INV-06**: Medicine package status is one of: Active, Opened, Expired, Used Up, Disposed, Archived — and updates automatically based on dates
+- [x] **INV-05**: App automatically calculates validity status from expiration date, opened date, and period-after-opening — combining both constraints (whichever expires first)
+- [x] **INV-06**: Medicine package status is one of: Active, Opened, Expired, Used Up, Disposed, Archived — and updates automatically based on dates
 
 ### Search & Browse
 
@@ -119,8 +119,8 @@
 | INV-02 | Phase 1 | Pending |
 | INV-03 | Phase 1 | Pending |
 | INV-04 | Phase 1 | Pending |
-| INV-05 | Phase 1 | Pending |
-| INV-06 | Phase 1 | Pending |
+| INV-05 | Phase 1 | Complete |
+| INV-06 | Phase 1 | Complete |
 | SRCH-01 | Phase 2 | Pending |
 | SRCH-02 | Phase 2 | Pending |
 | SRCH-03 | Phase 2 | Pending |
@@ -152,6 +152,7 @@
 | PWA-04 | Phase 1 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 35 total
 - Mapped to phases: 35
 - Unmapped: 0 ✓
