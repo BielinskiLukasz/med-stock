@@ -62,7 +62,7 @@ Plans:
   4. Deleted medicine moves to Trash Bin; user can restore it or permanently delete it from there
   5. User can open any medicine and view its full change history with timestamps, changed fields, and old/new values
 
-**Plans**: 2/4 plans executed
+**Plans**: 3/4 plans executed
 
 Plans:
 **Wave 1**
@@ -72,7 +72,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 02-02-PLAN.md — Search & Filter/Sort slice: uiStore extension, SearchBar, FilterBottomSheet (shadcn Sheet), FilterChips, Medicines screen two-step query, BottomTabBar 4-tab, App.tsx routes
-- [ ] 02-03-PLAN.md — Dashboard slice: DashboardCard component, Dashboard route with 4 metric queries, tap-to-filter navigation
+- [x] 02-03-PLAN.md — Dashboard slice: DashboardCard component, Dashboard route with 4 metric queries, tap-to-filter navigation
 - [ ] 02-04-PLAN.md — Trash Bin + Change History: TrashBin route, [id].tsx delete fix (D-25), [id].edit.tsx history writes, new.tsx history create, ChangeHistory + HistoryEntry components
 
 **UI hint**: yes
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 4/4 | Complete    | 2026-06-30 |
-| 2. Search, Dashboard & Audit | 2/4 | In Progress|  |
+| 2. Search, Dashboard & Audit | 3/4 | In Progress|  |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
