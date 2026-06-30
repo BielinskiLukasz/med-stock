@@ -42,6 +42,7 @@ describe('deleteLocation', () => {
       manualStatus: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: null,
     })
     const med2Id = await db.medicines.add({
       name: 'Med B',
@@ -56,6 +57,7 @@ describe('deleteLocation', () => {
       manualStatus: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: null,
     })
     await db.medicines.add({
       name: 'Med C',
@@ -70,6 +72,7 @@ describe('deleteLocation', () => {
       manualStatus: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: null,
     })
 
     await deleteLocation(locId)
@@ -104,6 +107,7 @@ describe('renameLocation', () => {
       manualStatus: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: null,
     })
     const med2Id = await db.medicines.add({
       name: 'Med B',
@@ -118,6 +122,7 @@ describe('renameLocation', () => {
       manualStatus: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      deletedAt: null,
     })
 
     await renameLocation(locId, 'Bedroom')

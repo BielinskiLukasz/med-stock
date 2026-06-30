@@ -24,6 +24,7 @@ export function MedicineNew() {
         manualStatus: null,
         createdAt: now,
         updatedAt: now,
+        deletedAt: null,
       })
       void navigate('/medicines')
     } catch (err) {
