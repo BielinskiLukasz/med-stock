@@ -12,7 +12,7 @@ describe('uiStore — filter state', () => {
   })
 
   it('useActiveFilterCount returns 0 when no filters active', async () => {
-    const { useUIStore, useActiveFilterCount } = await import('./uiStore')
+    const { useUIStore } = await import('./uiStore')
     // Access the derived selector with getState
     const state = useUIStore.getState()
     // Make sure arrays are empty
