@@ -45,10 +45,10 @@
 ### Locations
 
 - [x] **LOC-01**: Predefined locations are available when adding/editing a medicine (Kitchen Drawer, Bathroom Cabinet, Bedroom Cabinet, Medicine Box, Travel Kit, Refrigerator, Living Room Cabinet, Other)
-- [ ] **LOC-02**: User can add a custom location
-- [ ] **LOC-03**: User can edit a custom location name
-- [ ] **LOC-04**: User can delete a custom location (medicines using it revert to "Other")
-- [ ] **LOC-05**: User can manage all locations from a dedicated Locations screen
+- [x] **LOC-02**: User can add a custom location
+- [x] **LOC-03**: User can edit a custom location name
+- [x] **LOC-04**: User can delete a custom location (medicines using it revert to "Other")
+- [x] **LOC-05**: User can manage all locations from a dedicated Locations screen
 
 ### Data (Import / Export / Sync)
 
@@ -59,9 +59,9 @@
 
 ### PWA & Offline
 
-- [ ] **PWA-01**: App works fully offline — all core features (search, add, edit, browse) function without any internet connection
-- [ ] **PWA-02**: App requests persistent storage on first launch to prevent iOS Safari 7-day automatic data eviction
-- [ ] **PWA-03**: App is installable as a PWA on Android, Windows, macOS, and Linux (home screen / taskbar)
+- [x] **PWA-01**: App works fully offline — all core features (search, add, edit, browse) function without any internet connection
+- [x] **PWA-02**: App requests persistent storage on first launch to prevent iOS Safari 7-day automatic data eviction
+- [x] **PWA-03**: App is installable as a PWA on Android, Windows, macOS, and Linux (home screen / taskbar)
 - [x] **PWA-04**: App remains responsive with 1,000+ medicine packages
 
 ---
@@ -138,17 +138,17 @@
 | TRSH-03 | Phase 2 | Pending |
 | TRSH-04 | Phase 2 | Pending |
 | LOC-01 | Phase 1 | Complete |
-| LOC-02 | Phase 1 | Pending |
-| LOC-03 | Phase 1 | Pending |
-| LOC-04 | Phase 1 | Pending |
-| LOC-05 | Phase 1 | Pending |
+| LOC-02 | Phase 1 | Complete |
+| LOC-03 | Phase 1 | Complete |
+| LOC-04 | Phase 1 | Complete |
+| LOC-05 | Phase 1 | Complete |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |
 | DATA-04 | Phase 3 | Pending |
-| PWA-01 | Phase 1 | Pending |
-| PWA-02 | Phase 1 | Pending |
-| PWA-03 | Phase 1 | Pending |
+| PWA-01 | Phase 1 | Complete |
+| PWA-02 | Phase 1 | Complete |
+| PWA-03 | Phase 1 | Complete |
 | PWA-04 | Phase 1 | Complete |
 
 **Coverage:**
