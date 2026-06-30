@@ -208,3 +208,13 @@ None — `calculateStatus` is fully implemented with no hardcoded return values 
 ---
 *Phase: 01-pwa-foundation-inventory-crud*
 *Completed: 2026-06-30*
+
+## Self-Check: PASSED
+
+- FOUND: src/lib/expiry.ts
+- FOUND: src/lib/expiry.test.ts
+- FOUND: .planning/phases/01-pwa-foundation-inventory-crud/01-02-SUMMARY.md
+- FOUND: 2c4265f (RED commit — test(01-02): add failing tests for calculateStatus)
+- FOUND: bbf7fbb (GREEN commit — feat(01-02): implement calculateStatus with all D-13/D-14/D-15 edge cases)
+- FOUND: 77d71b0 (docs commit — complete calculateStatus TDD plan summary)
+- Tests: 11 passed, 0 failed, 0 skipped
