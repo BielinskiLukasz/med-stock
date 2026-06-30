@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. App automatically computes and displays the correct validity status (Active / Opened / Expired / Used Up) for each package, combining expiry date and period-after-opening constraints
   5. User can add, rename, and delete custom locations; deleted locations revert existing medicines to "Other"
 
-**Plans**: 2/4 plans executed
+**Plans**: 3/4 plans executed
 
 Plans:
 **Wave 1**
@@ -43,7 +43,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 01-03-PLAN.md — Full Medicine CRUD: complete form with all 9 fields, detail view, edit, soft-delete, status badges
+- [x] 01-03-PLAN.md — Full Medicine CRUD: complete form with all 9 fields, detail view, edit, soft-delete, status badges
 - [ ] 01-04-PLAN.md — Location Management: Locations screen, add/rename/delete custom locations, LOC-04 cascade TDD
 
 **UI hint**: yes
@@ -88,6 +88,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. PWA Foundation & Inventory CRUD | 2/4 | In Progress|  |
+| 1. PWA Foundation & Inventory CRUD | 3/4 | In Progress|  |
 | 2. Search, Dashboard & Audit | 0/TBD | Not started | - |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
