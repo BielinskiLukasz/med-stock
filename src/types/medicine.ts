@@ -1,10 +1,8 @@
 // Re-exports from the DB types module
 export type { Medicine, Location, PAO, ManualStatus } from '@/lib/db'
 
-// MedicineStatus is defined here as Plan 02 will create src/lib/expiry.ts.
-// TODO: After Plan 02, replace these with: export type { MedicineStatus, AutoStatus } from '@/lib/expiry'
-export type AutoStatus = 'Active' | 'Opened' | 'Expired'
-export type MedicineStatus = AutoStatus | 'Used Up' | 'Disposed' | 'Archived'
+// After Plan 02, MedicineStatus/AutoStatus come from @/lib/expiry
+export type { MedicineStatus, AutoStatus } from '@/lib/expiry'
 
 // Predefined categories (D-10)
 export const CATEGORIES = [

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 export function MedicineList() {
   // useLiveQuery: re-renders whenever IndexedDB changes
-  // INV-04: filter out soft-deleted items (manualStatus === 'Disposed')
+  // INV-04: filter out soft-deleted items — indexed query for PWA-04 performance (no full table scan)
   const medicines = useLiveQuery(
     () =>
       db.medicines
@@ -43,12 +43,9 @@ export function MedicineList() {
           <Link to="/medicines/new">Add</Link>
         </Button>
       </div>
+      {/* D-11: calculateStatus() computed inside MedicineCard at render time */}
       {medicines.map((med) => (
-        <MedicineCard
-          key={med.id}
-          medicine={med}
-          status="Active" // Plan 03 wires calculateStatus from @/lib/expiry
-        />
+        <MedicineCard key={med.id} medicine={med} />
       ))}
     </div>
   )
