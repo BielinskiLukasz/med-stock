@@ -17,6 +17,7 @@ export interface Medicine {
   manualStatus: ManualStatus    // D-13: takes precedence over auto-calculated status
   createdAt: string             // ISO timestamp
   updatedAt: string             // ISO timestamp
+  deletedAt: string | null      // null = active; ISO string = soft-deleted (D-25)
 }
 
 export interface Location {
@@ -25,9 +26,20 @@ export interface Location {
   isDefault: boolean            // D-18: predefined locations cannot be renamed/deleted
 }
 
+// Phase 2: audit history (D-36, D-38)
+export interface HistoryEntry {
+  id?: number
+  medicineId: number
+  medicineName: string          // denormalized — readable after medicine is permanently deleted (D-36, D-38)
+  action: 'created' | 'updated' | 'deleted' | 'restored'
+  changedFields: { field: string; oldValue: unknown; newValue: unknown }[]
+  timestamp: string             // ISO 8601
+}
+
 const db = new Dexie('MedStockDB') as Dexie & {
   medicines: EntityTable<Medicine, 'id'>
   locations: EntityTable<Location, 'id'>
+  history:   EntityTable<HistoryEntry, 'id'>
 }
 
 db.version(1).stores({
@@ -36,6 +48,19 @@ db.version(1).stores({
   medicines: '++id, name, category, location, expiryDate, manualStatus',
   locations: '++id, name, isDefault',
 })
+
+db.version(2)
+  .stores({
+    // CRITICAL: deletedAt is NOT in the index string — null is not a valid IndexedDB key (Pitfall 1).
+    // Query active records with toCollection().filter(m => m.deletedAt === null) instead.
+    medicines: '++id, name, category, location, expiryDate, manualStatus',
+    history:   '++id, medicineId, timestamp',
+  })
+  .upgrade(tx =>
+    tx.table('medicines').toCollection().modify((m: Medicine) => {
+      m.deletedAt = null
+    })
+  )
 
 // Seed predefined locations on first open (D-18, LOC-01)
 db.on('populate', async () => {
