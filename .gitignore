@@ -1,15 +1,24 @@
-# plan.md — local plan file (one-time Markdown-converted in Phase 5)
-plan.md
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Per-developer Claude Code permission overrides — never commit personal allows.
-.claude/settings.local.json
+node_modules
+dist
+dist-ssr
+*.local
 
-# Research cache — machine-generated, not worth tracking
-.planning/research/.cache/
-
-# GSD
-gsd-*
-.gsd-*
-.claude/get-shit-done/
-.claude/commands/gsd/
-.claude/hooks/lib/git-cmd.js
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
