@@ -7,10 +7,10 @@
 
 ### Inventory (CRUD)
 
-- [ ] **INV-01**: User can add a medicine package with: name, category (predefined), location, expiration date, opened date, period-after-opening (value + unit), quantity remaining, quantity unit, notes
-- [ ] **INV-02**: User can edit any field of an existing medicine package
-- [ ] **INV-03**: User can view full details of a medicine package
-- [ ] **INV-04**: User can delete a medicine package (moves to Trash Bin, not permanently removed)
+- [x] **INV-01**: User can add a medicine package with: name, category (predefined), location, expiration date, opened date, period-after-opening (value + unit), quantity remaining, quantity unit, notes
+- [x] **INV-02**: User can edit any field of an existing medicine package
+- [x] **INV-03**: User can view full details of a medicine package
+- [x] **INV-04**: User can delete a medicine package (moves to Trash Bin, not permanently removed)
 - [x] **INV-05**: App automatically calculates validity status from expiration date, opened date, and period-after-opening — combining both constraints (whichever expires first)
 - [x] **INV-06**: Medicine package status is one of: Active, Opened, Expired, Used Up, Disposed, Archived — and updates automatically based on dates
 
@@ -44,7 +44,7 @@
 
 ### Locations
 
-- [ ] **LOC-01**: Predefined locations are available when adding/editing a medicine (Kitchen Drawer, Bathroom Cabinet, Bedroom Cabinet, Medicine Box, Travel Kit, Refrigerator, Living Room Cabinet, Other)
+- [x] **LOC-01**: Predefined locations are available when adding/editing a medicine (Kitchen Drawer, Bathroom Cabinet, Bedroom Cabinet, Medicine Box, Travel Kit, Refrigerator, Living Room Cabinet, Other)
 - [ ] **LOC-02**: User can add a custom location
 - [ ] **LOC-03**: User can edit a custom location name
 - [ ] **LOC-04**: User can delete a custom location (medicines using it revert to "Other")
@@ -62,7 +62,7 @@
 - [ ] **PWA-01**: App works fully offline — all core features (search, add, edit, browse) function without any internet connection
 - [ ] **PWA-02**: App requests persistent storage on first launch to prevent iOS Safari 7-day automatic data eviction
 - [ ] **PWA-03**: App is installable as a PWA on Android, Windows, macOS, and Linux (home screen / taskbar)
-- [ ] **PWA-04**: App remains responsive with 1,000+ medicine packages
+- [x] **PWA-04**: App remains responsive with 1,000+ medicine packages
 
 ---
 
@@ -115,10 +115,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INV-01 | Phase 1 | Pending |
-| INV-02 | Phase 1 | Pending |
-| INV-03 | Phase 1 | Pending |
-| INV-04 | Phase 1 | Pending |
+| INV-01 | Phase 1 | Complete |
+| INV-02 | Phase 1 | Complete |
+| INV-03 | Phase 1 | Complete |
+| INV-04 | Phase 1 | Complete |
 | INV-05 | Phase 1 | Complete |
 | INV-06 | Phase 1 | Complete |
 | SRCH-01 | Phase 2 | Pending |
@@ -137,7 +137,7 @@
 | TRSH-02 | Phase 2 | Pending |
 | TRSH-03 | Phase 2 | Pending |
 | TRSH-04 | Phase 2 | Pending |
-| LOC-01 | Phase 1 | Pending |
+| LOC-01 | Phase 1 | Complete |
 | LOC-02 | Phase 1 | Pending |
 | LOC-03 | Phase 1 | Pending |
 | LOC-04 | Phase 1 | Pending |
@@ -149,7 +149,7 @@
 | PWA-01 | Phase 1 | Pending |
 | PWA-02 | Phase 1 | Pending |
 | PWA-03 | Phase 1 | Pending |
-| PWA-04 | Phase 1 | Pending |
+| PWA-04 | Phase 1 | Complete |
 
 **Coverage:**
 
