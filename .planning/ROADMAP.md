@@ -62,7 +62,19 @@ Plans:
   4. Deleted medicine moves to Trash Bin; user can restore it or permanently delete it from there
   5. User can open any medicine and view its full change history with timestamps, changed fields, and old/new values
 
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Dexie schema v2 migration (deletedAt + history table) + historyOps.ts TDD (all lifecycle functions)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Search & Filter/Sort slice: uiStore extension, SearchBar, FilterBottomSheet (shadcn Sheet), FilterChips, Medicines screen two-step query, BottomTabBar 4-tab, App.tsx routes
+- [ ] 02-03-PLAN.md — Dashboard slice: DashboardCard component, Dashboard route with 4 metric queries, tap-to-filter navigation
+- [ ] 02-04-PLAN.md — Trash Bin + Change History: TrashBin route, [id].tsx delete fix (D-25), [id].edit.tsx history writes, new.tsx history create, ChangeHistory + HistoryEntry components
+
 **UI hint**: yes
 
 ### Phase 3: Data & Household Sync
