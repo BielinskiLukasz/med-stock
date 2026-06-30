@@ -1,8 +1,5 @@
+import type { MedicineStatus } from '@/lib/expiry'
 import { cn } from '@/lib/utils'
-
-// MedicineStatus defined locally here — Plan 02 creates src/lib/expiry.ts.
-// TODO: After Plan 02, replace with: import type { MedicineStatus } from '@/types/medicine'
-type MedicineStatus = 'Active' | 'Opened' | 'Expired' | 'Used Up' | 'Disposed' | 'Archived'
 
 const STATUS_STYLES: Record<MedicineStatus, string> = {
   Active: 'bg-green-100 text-green-800',
