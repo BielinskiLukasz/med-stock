@@ -32,15 +32,15 @@
 
 ### History & Audit
 
-- [ ] **HIST-01**: Every change to a medicine record (create, edit, delete, restore) is recorded with timestamp, changed field, old value, and new value
-- [ ] **HIST-02**: User can view the change history for a specific medicine package
+- [x] **HIST-01**: Every change to a medicine record (create, edit, delete, restore) is recorded with timestamp, changed field, old value, and new value
+- [x] **HIST-02**: User can view the change history for a specific medicine package
 
 ### Trash Bin
 
-- [ ] **TRSH-01**: Deleted medicines appear in Trash Bin and are not permanently removed
-- [ ] **TRSH-02**: User can restore a medicine from the Trash Bin
-- [ ] **TRSH-03**: User can permanently delete a medicine from the Trash Bin
-- [ ] **TRSH-04**: Trash Bin preserves the full history of deleted items
+- [x] **TRSH-01**: Deleted medicines appear in Trash Bin and are not permanently removed
+- [x] **TRSH-02**: User can restore a medicine from the Trash Bin
+- [x] **TRSH-03**: User can permanently delete a medicine from the Trash Bin
+- [x] **TRSH-04**: Trash Bin preserves the full history of deleted items
 
 ### Locations
 
@@ -131,12 +131,12 @@
 | DASH-02 | Phase 2 | Complete |
 | DASH-03 | Phase 2 | Complete |
 | DASH-04 | Phase 2 | Complete |
-| HIST-01 | Phase 2 | Pending |
-| HIST-02 | Phase 2 | Pending |
-| TRSH-01 | Phase 2 | Pending |
-| TRSH-02 | Phase 2 | Pending |
-| TRSH-03 | Phase 2 | Pending |
-| TRSH-04 | Phase 2 | Pending |
+| HIST-01 | Phase 2 | Complete |
+| HIST-02 | Phase 2 | Complete |
+| TRSH-01 | Phase 2 | Complete |
+| TRSH-02 | Phase 2 | Complete |
+| TRSH-03 | Phase 2 | Complete |
+| TRSH-04 | Phase 2 | Complete |
 | LOC-01 | Phase 1 | Complete |
 | LOC-02 | Phase 1 | Complete |
 | LOC-03 | Phase 1 | Complete |

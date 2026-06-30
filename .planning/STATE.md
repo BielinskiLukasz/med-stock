@@ -5,16 +5,16 @@ milestone_name: milestone
 current_phase: 02
 current_phase_name: search-dashboard-audit
 status: executing
-stopped_at: Phase 2 Plan 02-03 complete — Dashboard screen with 4 metric cards
-last_updated: "2026-06-30T22:56:11.494Z"
+stopped_at: Phase 2 Plan 02-04 complete — Trash Bin + Change History wired
+last_updated: "2026-06-30T23:34:01.215Z"
 last_activity: 2026-06-30
 last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 3
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 8
-  completed_plans: 7
-  percent: 33
+  completed_plans: 8
+  percent: 67
 ---
 
 # Project State
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-06-29)
 ## Current Position
 
 Phase: 02 (search-dashboard-audit) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-06-30 — Phase 02 execution started
 
@@ -59,6 +59,7 @@ Progress: [░░░░░░░░░░] 0%
 | Phase 01 P03 | 35min | 2 tasks | 14 files |
 | Phase 02 P02 | 29min | 2 tasks | 10 files |
 | Phase 02 P03 | 6min | 2 tasks | 2 files |
+| Phase 02 P04 | 20min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,9 @@ Recent decisions affecting current work:
 - [Phase ?]: Two-step query+memo: useLiveQuery for DB reactivity, useMemo for Zustand filter state changes
 - [Phase ?]: calculateStatus() inside useLiveQuery for Dashboard (Pattern 9): updates on DB change not timer ticks
 - [Phase ?]: DashboardCard interactive prop: false renders div (Total), true renders button (alert cards)
+- [Phase ?]: softDeleteMedicine() replaces Phase 1 manualStatus='Disposed' delete — deletedAt set, medicine moves to Trash (D-25)
+- [Phase ?]: TrashScreen toCollection().filter(m => m.deletedAt !== null) — null is not a valid IndexedDB key (Pitfall 1)
+- [Phase ?]: permanentDeleteMedicine preserves history entries forever — T-02-07 mitigated, D-38 compliance confirmed
 
 ### Pending Todos
 
@@ -96,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-30T22:56:11.409Z
-Stopped at: Phase 2 Plan 02-03 complete — Dashboard screen with 4 metric cards
+Last session: 2026-06-30T23:34:00.991Z
+Stopped at: Phase 2 Plan 02-04 complete — Trash Bin + Change History wired
 Resume file: None

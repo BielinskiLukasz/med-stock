@@ -14,7 +14,7 @@ MedStock ships in three phases. Phase 1 builds the installable PWA foundation wi
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: PWA Foundation & Inventory CRUD** - Installable offline PWA, Dexie schema, iOS persistent-storage request, full add/edit/delete/view loop, expiry calculation, location management (completed 2026-06-30)
-- [ ] **Phase 2: Search, Dashboard & Audit** - Name search, filter/sort, expiry dashboard with alert cards, trash bin with restore, per-medicine change history
+- [x] **Phase 2: Search, Dashboard & Audit** - Name search, filter/sort, expiry dashboard with alert cards, trash bin with restore, per-medicine change history (completed 2026-06-30)
 - [ ] **Phase 3: Data & Household Sync** - JSON export/import backup, CSV bulk import with column mapping, manual OneDrive sync flow
 
 ## Phase Details
@@ -62,7 +62,7 @@ Plans:
   4. Deleted medicine moves to Trash Bin; user can restore it or permanently delete it from there
   5. User can open any medicine and view its full change history with timestamps, changed fields, and old/new values
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -73,7 +73,7 @@ Plans:
 
 - [x] 02-02-PLAN.md — Search & Filter/Sort slice: uiStore extension, SearchBar, FilterBottomSheet (shadcn Sheet), FilterChips, Medicines screen two-step query, BottomTabBar 4-tab, App.tsx routes
 - [x] 02-03-PLAN.md — Dashboard slice: DashboardCard component, Dashboard route with 4 metric queries, tap-to-filter navigation
-- [ ] 02-04-PLAN.md — Trash Bin + Change History: TrashBin route, [id].tsx delete fix (D-25), [id].edit.tsx history writes, new.tsx history create, ChangeHistory + HistoryEntry components
+- [x] 02-04-PLAN.md — Trash Bin + Change History: TrashBin route, [id].tsx delete fix (D-25), [id].edit.tsx history writes, new.tsx history create, ChangeHistory + HistoryEntry components
 
 **UI hint**: yes
 
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 4/4 | Complete    | 2026-06-30 |
-| 2. Search, Dashboard & Audit | 3/4 | In Progress|  |
+| 2. Search, Dashboard & Audit | 4/4 | Complete   | 2026-06-30 |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
