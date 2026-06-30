@@ -62,12 +62,12 @@ Plans:
   4. Deleted medicine moves to Trash Bin; user can restore it or permanently delete it from there
   5. User can open any medicine and view its full change history with timestamps, changed fields, and old/new values
 
-**Plans**: 4 plans
+**Plans**: 1/4 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Dexie schema v2 migration (deletedAt + history table) + historyOps.ts TDD (all lifecycle functions)
+- [x] 02-01-PLAN.md — Dexie schema v2 migration (deletedAt + history table) + historyOps.ts TDD (all lifecycle functions)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 4/4 | Complete    | 2026-06-30 |
-| 2. Search, Dashboard & Audit | 0/TBD | Not started | - |
+| 2. Search, Dashboard & Audit | 1/4 | In Progress|  |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
