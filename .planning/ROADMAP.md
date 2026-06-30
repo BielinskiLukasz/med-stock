@@ -13,7 +13,7 @@ MedStock ships in three phases. Phase 1 builds the installable PWA foundation wi
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: PWA Foundation & Inventory CRUD** - Installable offline PWA, Dexie schema, iOS persistent-storage request, full add/edit/delete/view loop, expiry calculation, location management
+- [x] **Phase 1: PWA Foundation & Inventory CRUD** - Installable offline PWA, Dexie schema, iOS persistent-storage request, full add/edit/delete/view loop, expiry calculation, location management (completed 2026-06-30)
 - [ ] **Phase 2: Search, Dashboard & Audit** - Name search, filter/sort, expiry dashboard with alert cards, trash bin with restore, per-medicine change history
 - [ ] **Phase 3: Data & Household Sync** - JSON export/import backup, CSV bulk import with column mapping, manual OneDrive sync flow
 
@@ -33,7 +33,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. App automatically computes and displays the correct validity status (Active / Opened / Expired / Used Up) for each package, combining expiry date and period-after-opening constraints
   5. User can add, rename, and delete custom locations; deleted locations revert existing medicines to "Other"
 
-**Plans**: 3/4 plans executed
+**Plans**: 4/4 plans complete
 
 Plans:
 **Wave 1**
@@ -44,7 +44,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 01-03-PLAN.md — Full Medicine CRUD: complete form with all 9 fields, detail view, edit, soft-delete, status badges
-- [ ] 01-04-PLAN.md — Location Management: Locations screen, add/rename/delete custom locations, LOC-04 cascade TDD
+- [x] 01-04-PLAN.md — Location Management: Locations screen, add/rename/delete custom locations, LOC-04 cascade TDD
 
 **UI hint**: yes
 
@@ -88,6 +88,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. PWA Foundation & Inventory CRUD | 3/4 | In Progress|  |
+| 1. PWA Foundation & Inventory CRUD | 4/4 | Complete   | 2026-06-30 |
 | 2. Search, Dashboard & Audit | 0/TBD | Not started | - |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
