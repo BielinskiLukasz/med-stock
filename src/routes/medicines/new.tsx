@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { db } from '@/lib/db'
+import { addMedicineHistory } from '@/lib/historyOps'
 import { MedicineForm, type MedicineFormData } from '@/components/MedicineForm'
 
 export function MedicineNew() {
@@ -8,7 +9,7 @@ export function MedicineNew() {
   async function handleSubmit(data: MedicineFormData) {
     try {
       const now = new Date().toISOString()
-      await db.medicines.add({
+      const newId = await db.medicines.add({
         name: data.name,
         expiryDate: data.expiryDate,
         category: data.category ?? null,
@@ -26,6 +27,10 @@ export function MedicineNew() {
         updatedAt: now,
         deletedAt: null,
       })
+      const newMedicine = await db.medicines.get(newId)
+      if (newMedicine) {
+        await addMedicineHistory(newMedicine, 'created')
+      }
       void navigate('/medicines')
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI

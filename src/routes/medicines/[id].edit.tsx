@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
+import { updateMedicineWithHistory } from '@/lib/historyOps'
 import { MedicineForm, type MedicineFormData } from '@/components/MedicineForm'
 
 export function MedicineEdit() {
@@ -11,8 +12,10 @@ export function MedicineEdit() {
   const medicine = useLiveQuery(() => db.medicines.get(Number(id)), [id])
 
   async function handleSubmit(data: MedicineFormData) {
+    if (!medicine) return
     try {
-      await db.medicines.update(Number(id), {
+      const before = medicine
+      await updateMedicineWithHistory(Number(id), before, {
         name: data.name,
         expiryDate: data.expiryDate,
         category: data.category ?? null,
@@ -25,7 +28,6 @@ export function MedicineEdit() {
         quantity: data.quantity ?? null,
         quantityUnit: data.quantityUnit ?? null,
         notes: data.notes ?? null,
-        updatedAt: new Date().toISOString(),
       })
       void navigate(`/medicines/${id}`)
     } catch (err) {
