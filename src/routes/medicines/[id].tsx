@@ -1,8 +1,10 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
+import { softDeleteMedicine } from '@/lib/historyOps'
 import { calculateStatus } from '@/lib/expiry'
 import { StatusBadge } from '@/components/StatusBadge'
+import { ChangeHistory } from '@/components/ChangeHistory'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog,
@@ -23,13 +25,11 @@ export function MedicineDetail() {
   // Load medicine live from Dexie
   const medicine = useLiveQuery(() => db.medicines.get(Number(id)), [id])
 
-  // Soft-delete: sets manualStatus to 'Disposed' (INV-04) — record is kept in DB
+  // Soft-delete: moves medicine to Trash Bin (sets deletedAt) — record is preserved (D-25)
   async function handleDelete() {
+    if (!medicine) return
     try {
-      await db.medicines.update(Number(id), {
-        manualStatus: 'Disposed',
-        updatedAt: new Date().toISOString(),
-      })
+      await softDeleteMedicine(medicine)
       void navigate('/medicines')
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI
@@ -127,6 +127,8 @@ export function MedicineDetail() {
         )}
       </dl>
 
+      <ChangeHistory medicineId={medicine.id} />
+
       {/* Actions */}
       <div className="flex gap-3 pt-2">
         <Button asChild className="flex-1">
@@ -144,9 +146,8 @@ export function MedicineDetail() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete medicine?</AlertDialogTitle>
               <AlertDialogDescription>
-                This will remove <strong>{medicine.name}</strong> from your
-                medicine list. The record is kept in your database and can be
-                recovered.
+                This will move <strong>{medicine.name}</strong> to the Trash
+                Bin. You can restore it from Trash.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
