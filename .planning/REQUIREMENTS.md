@@ -16,12 +16,12 @@
 
 ### Search & Browse
 
-- [ ] **SRCH-01**: User can search medicines by name with partial/substring matching, from any screen
-- [ ] **SRCH-02**: Search results show stock + validity status in a single glance (no drill-down required for the critical question)
-- [ ] **SRCH-03**: User can filter the medicine list by category
-- [ ] **SRCH-04**: User can filter the medicine list by location
-- [ ] **SRCH-05**: User can filter the medicine list by status (Active, Opened, Expired, etc.)
-- [ ] **SRCH-06**: User can sort the medicine list by name, expiration date, or category
+- [x] **SRCH-01**: User can search medicines by name with partial/substring matching, from any screen
+- [x] **SRCH-02**: Search results show stock + validity status in a single glance (no drill-down required for the critical question)
+- [x] **SRCH-03**: User can filter the medicine list by category
+- [x] **SRCH-04**: User can filter the medicine list by location
+- [x] **SRCH-05**: User can filter the medicine list by status (Active, Opened, Expired, etc.)
+- [x] **SRCH-06**: User can sort the medicine list by name, expiration date, or category
 
 ### Dashboard
 
@@ -121,12 +121,12 @@
 | INV-04 | Phase 1 | Complete |
 | INV-05 | Phase 1 | Complete |
 | INV-06 | Phase 1 | Complete |
-| SRCH-01 | Phase 2 | Pending |
-| SRCH-02 | Phase 2 | Pending |
-| SRCH-03 | Phase 2 | Pending |
-| SRCH-04 | Phase 2 | Pending |
-| SRCH-05 | Phase 2 | Pending |
-| SRCH-06 | Phase 2 | Pending |
+| SRCH-01 | Phase 2 | Complete |
+| SRCH-02 | Phase 2 | Complete |
+| SRCH-03 | Phase 2 | Complete |
+| SRCH-04 | Phase 2 | Complete |
+| SRCH-05 | Phase 2 | Complete |
+| SRCH-06 | Phase 2 | Complete |
 | DASH-01 | Phase 2 | Pending |
 | DASH-02 | Phase 2 | Pending |
 | DASH-03 | Phase 2 | Pending |
