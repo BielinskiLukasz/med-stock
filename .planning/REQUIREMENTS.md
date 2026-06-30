@@ -25,10 +25,10 @@
 
 ### Dashboard
 
-- [ ] **DASH-01**: Dashboard shows total medicine count
-- [ ] **DASH-02**: Dashboard shows expired medicines count as an alert card; tapping it opens a filtered list of expired medicines
-- [ ] **DASH-03**: Dashboard shows medicines expiring within 30 days as an alert card; tapping it opens the filtered list
-- [ ] **DASH-04**: Dashboard shows medicines that exceeded their period-after-opening as an alert card; tapping it opens the filtered list
+- [x] **DASH-01**: Dashboard shows total medicine count
+- [x] **DASH-02**: Dashboard shows expired medicines count as an alert card; tapping it opens a filtered list of expired medicines
+- [x] **DASH-03**: Dashboard shows medicines expiring within 30 days as an alert card; tapping it opens the filtered list
+- [x] **DASH-04**: Dashboard shows medicines that exceeded their period-after-opening as an alert card; tapping it opens the filtered list
 
 ### History & Audit
 
@@ -127,10 +127,10 @@
 | SRCH-04 | Phase 2 | Complete |
 | SRCH-05 | Phase 2 | Complete |
 | SRCH-06 | Phase 2 | Complete |
-| DASH-01 | Phase 2 | Pending |
-| DASH-02 | Phase 2 | Pending |
-| DASH-03 | Phase 2 | Pending |
-| DASH-04 | Phase 2 | Pending |
+| DASH-01 | Phase 2 | Complete |
+| DASH-02 | Phase 2 | Complete |
+| DASH-03 | Phase 2 | Complete |
+| DASH-04 | Phase 2 | Complete |
 | HIST-01 | Phase 2 | Pending |
 | HIST-02 | Phase 2 | Pending |
 | TRSH-01 | Phase 2 | Pending |
