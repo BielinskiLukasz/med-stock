@@ -45,7 +45,8 @@
     "security_block_on": "high",
     "post_planning_gaps": false,
     "build_command": null,
-    "test_command": null
+    "test_command": null,
+    "_auto_chain_active": false
   },
   "code_quality": {
     "fallow": {
