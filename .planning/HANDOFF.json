@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-07-02T22:44:55.580Z",
+  "phase": "02",
+  "phase_name": "search-dashboard-audit",
+  "phase_dir": ".planning/phases/02-search-dashboard-audit",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "Phase 01 — PWA Foundation & Inventory CRUD (4/4 plans)", "status": "done", "commit": "94b142b"},
+    {"id": 2, "name": "Phase 02 — Search, Dashboard & Audit (4/4 plans)", "status": "done", "commit": "94b142b"}
+  ],
+  "remaining_tasks": [
+    {"id": 3, "name": "Phase 03 — Data & Household Sync — plan and execute", "status": "not_started"}
+  ],
+  "blockers": [
+    {
+      "description": "iOS Safari standalone PWA File Picker API behavior is unverified — export/import flows in Phase 3 may not work as expected in standalone mode on iOS",
+      "type": "technical",
+      "workaround": "Plan a short device-test spike before committing to the Phase 3 import/export approach"
+    }
+  ],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {
+      "action": "Test iOS Safari standalone PWA File Picker behavior before finalizing Phase 3 import approach",
+      "context": "iOS Safari PWA (standalone mode) may block the File Picker API used for import. This was flagged during roadmap creation and is unresolved.",
+      "blocking": false
+    }
+  ],
+  "decisions": [
+    {"decision": "Vite + React 18 + TypeScript + Dexie.js 4 + Zustand + shadcn/ui + Tailwind + React Hook Form + Zod + vite-plugin-pwa", "rationale": "Roadmap stack selection — no backend, privacy-first", "phase": "00"},
+    {"decision": "All dates stored as YYYY-MM-DD strings", "rationale": "Timezone safety for expiry calculations", "phase": "00"},
+    {"decision": "Persistent storage request on first launch is mandatory", "rationale": "iOS Safari 7-day eviction risk mitigation", "phase": "01"},
+    {"decision": "NULL_SENTINEL='__NULL__' pattern in Radix Select for nullable location/category", "rationale": "D-17 compliance — Radix Select cannot represent null values natively", "phase": "01"},
+    {"decision": "calculateStatus() called inside MedicineCard", "rationale": "Status co-located with display; card owns calculation (D-11/D-12)", "phase": "01"},
+    {"decision": "Zustand v5 uses useShallow(selector) wrapper instead of useStore(selector, shallow)", "rationale": "Second-arg API removed in Zustand v5", "phase": "01"},
+    {"decision": "Two-step query+memo pattern: useLiveQuery for DB reactivity, useMemo for Zustand filter state", "rationale": "Prevents stale filter state on Zustand changes without unnecessary DB re-queries", "phase": "02"},
+    {"decision": "softDeleteMedicine() replaces Phase 1 manualStatus='Disposed' delete — deletedAt set", "rationale": "Medicine moves to Trash Bin per D-25; preserves history", "phase": "02"},
+    {"decision": "TrashScreen uses toCollection().filter(m => m.deletedAt !== null)", "rationale": "Null is not a valid IndexedDB key (Pitfall 1) — filter in JS not Dexie query", "phase": "02"},
+    {"decision": "permanentDeleteMedicine preserves history entries forever", "rationale": "T-02-07 mitigated, D-38 compliance confirmed", "phase": "02"}
+  ],
+  "uncommitted_files": [],
+  "next_action": "Run /gsd-plan-phase for Phase 3: Data & Household Sync. Consider a spike on iOS Safari File Picker behavior before finalizing import approach.",
+  "context_notes": "Clean phase-boundary pause. Phases 1 and 2 are fully verified and committed. Phase 3 (Data & Household Sync) has not been planned yet — it is the last phase before v1.0 ships. The blocker to note is iOS Safari standalone PWA behavior for the File Picker API (used for import/export in Phase 3). The ROADMAP.md already documents this as a spike recommendation."
+}
