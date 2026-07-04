@@ -1,4 +1,4 @@
----
+﻿---
 status: complete
 phase: 01-pwa-foundation-inventory-crud
 source:
@@ -7,7 +7,8 @@ source:
   - 01-03-SUMMARY.md
   - 01-04-SUMMARY.md
 started: 2026-07-04T00:00:00Z
-updated: 2026-07-05T00:00:00Z
+updated: 2026-07-05T10:00:00Z
+gaps_resolved: 2026-07-05T10:00:00Z
 ---
 
 ## Current Test
@@ -244,7 +245,7 @@ blocked: 0
 ## Gaps
 
 - truth: "App loads with no console errors on cold start"
-  status: failed
+  status: resolved
   reason: "User reported: yes, but I got 2 same warnings: App.tsx:37 Persistent storage not granted — IndexedDB may be evicted on low storage (appears twice)"
   severity: minor
   test: 1
@@ -257,7 +258,7 @@ blocked: 0
   debug_session: ""
 
 - truth: "navigator.storage.persist() is granted and DevTools Storage panel confirms Persist=granted"
-  status: failed
+  status: resolved
   reason: "User reported: service worker active and offline reload works, but persist storage not granted (confirmed by Test 1 warning)"
   severity: minor
   test: 2
@@ -268,7 +269,7 @@ blocked: 0
   debug_session: ""
 
 - truth: "All Select dropdown lists have an opaque background (items are readable against a solid white/themed surface)"
-  status: failed
+  status: resolved
   reason: "User reported: dropdown lists are fully transparent — form is visible in the background. Affects all Select dropdowns: Location, Period Unit, Quantity Unit"
   severity: cosmetic
   test: 4
@@ -283,7 +284,7 @@ blocked: 0
   debug_session: ""
 
 - truth: "Confirmation dialog (AlertDialog) has an opaque content panel visible over a dark semi-transparent overlay"
-  status: failed
+  status: resolved
   reason: "User reported: confirm window is transparent — background is darker than the page (different behaviour than dropdown list)"
   severity: cosmetic
   test: 7
@@ -298,7 +299,7 @@ blocked: 0
   debug_session: ""
 
 - truth: "Soft-deleted medicine has manualStatus='Disposed' set in IndexedDB"
-  status: failed
+  status: resolved
   reason: "User reported: manualStatus is null but deletedAt has a date — implementation uses deletedAt timestamp instead of manualStatus='Disposed'"
   severity: major
   test: 7
