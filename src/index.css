@@ -1,5 +1,46 @@
 @import "tailwindcss";
 
+/*
+ * Gap B fix: Bridge Tailwind v3-style CSS vars to the Tailwind v4 --color-* namespace.
+ *
+ * Root cause: Tailwind v4 generates utilities such as `bg-popover` as
+ *   `background-color: var(--color-popover)`, but shadcn/ui only defines `--popover`
+ *   (the Tailwind v3 convention). Without this block, --color-popover is undefined,
+ *   so every shadcn/ui floating surface (Select dropdown, AlertDialog, Popover) renders
+ *   with a transparent background.
+ *
+ * The `inline` keyword tells Tailwind v4 to substitute these mappings at the point of use,
+ * preserving runtime CSS variable resolution — so dark mode keeps working by toggling
+ * .dark {} which changes the underlying --popover value.
+ *
+ * Order matters: this block must appear AFTER @import "tailwindcss" and BEFORE any
+ * @layer rule (Tailwind v4 processes @theme before @layer).
+ *
+ * The --radius token is intentionally excluded: shadcn/ui uses it directly as a raw CSS
+ * var (e.g. `var(--radius)`), not through Tailwind's color pipeline.
+ */
+@theme inline {
+  --color-background:           hsl(var(--background));
+  --color-foreground:           hsl(var(--foreground));
+  --color-card:                 hsl(var(--card));
+  --color-card-foreground:      hsl(var(--card-foreground));
+  --color-popover:              hsl(var(--popover));
+  --color-popover-foreground:   hsl(var(--popover-foreground));
+  --color-primary:              hsl(var(--primary));
+  --color-primary-foreground:   hsl(var(--primary-foreground));
+  --color-secondary:            hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted:                hsl(var(--muted));
+  --color-muted-foreground:     hsl(var(--muted-foreground));
+  --color-accent:               hsl(var(--accent));
+  --color-accent-foreground:    hsl(var(--accent-foreground));
+  --color-destructive:          hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border:               hsl(var(--border));
+  --color-input:                hsl(var(--input));
+  --color-ring:                 hsl(var(--ring));
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
