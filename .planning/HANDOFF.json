@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "timestamp": "2026-07-02T22:44:55.580Z",
+  "timestamp": "2026-07-05T00:00:00Z",
   "phase": "02",
   "phase_name": "search-dashboard-audit",
   "phase_dir": ".planning/phases/02-search-dashboard-audit",
@@ -10,10 +10,12 @@
   "status": "paused",
   "completed_tasks": [
     {"id": 1, "name": "Phase 01 — PWA Foundation & Inventory CRUD (4/4 plans)", "status": "done", "commit": "94b142b"},
-    {"id": 2, "name": "Phase 02 — Search, Dashboard & Audit (4/4 plans)", "status": "done", "commit": "94b142b"}
+    {"id": 2, "name": "Phase 02 — Search, Dashboard & Audit (4/4 plans)", "status": "done", "commit": "94b142b"},
+    {"id": 3, "name": "Phase 02 UAT — 02-UAT.md created, 5 auto-passed, Test 1 presented", "status": "in_progress", "progress": "UAT file created at .planning/phases/02-search-dashboard-audit/02-UAT.md; 5 automated items auto-passed; human Test 1 (Search by Medicine Name) was presented but user paused before responding"}
   ],
   "remaining_tasks": [
-    {"id": 3, "name": "Phase 03 — Data & Household Sync — plan and execute", "status": "not_started"}
+    {"id": 4, "name": "Complete Phase 02 UAT — 10 human tests remaining (Test 1 through 10)", "status": "not_started"},
+    {"id": 5, "name": "Phase 03 — Data & Household Sync — plan and execute", "status": "not_started"}
   ],
   "blockers": [
     {
@@ -24,6 +26,11 @@
   ],
   "async_jobs": [],
   "human_actions_pending": [
+    {
+      "action": "Resume UAT for Phase 2 — answer the 10 human test checkpoints in 02-UAT.md starting from Test 1",
+      "context": "UAT session started this session. Test 1 (Search by Medicine Name) was the last presented checkpoint before pause. Run /gsd-verify-work 2 to resume.",
+      "blocking": true
+    },
     {
       "action": "Test iOS Safari standalone PWA File Picker behavior before finalizing Phase 3 import approach",
       "context": "iOS Safari PWA (standalone mode) may block the File Picker API used for import. This was flagged during roadmap creation and is unresolved.",
@@ -42,7 +49,9 @@
     {"decision": "TrashScreen uses toCollection().filter(m => m.deletedAt !== null)", "rationale": "Null is not a valid IndexedDB key (Pitfall 1) — filter in JS not Dexie query", "phase": "02"},
     {"decision": "permanentDeleteMedicine preserves history entries forever", "rationale": "T-02-07 mitigated, D-38 compliance confirmed", "phase": "02"}
   ],
-  "uncommitted_files": [],
-  "next_action": "Run /gsd-plan-phase for Phase 3: Data & Household Sync. Consider a spike on iOS Safari File Picker behavior before finalizing import approach.",
-  "context_notes": "Clean phase-boundary pause. Phases 1 and 2 are fully verified and committed. Phase 3 (Data & Household Sync) has not been planned yet — it is the last phase before v1.0 ships. The blocker to note is iOS Safari standalone PWA behavior for the File Picker API (used for import/export in Phase 3). The ROADMAP.md already documents this as a spike recommendation."
+  "uncommitted_files": [
+    ".planning/phases/02-search-dashboard-audit/02-UAT.md"
+  ],
+  "next_action": "Resume Phase 2 UAT: run /gsd-verify-work 2 — the UAT file is at Test 1; answer the 10 human checkpoints. Once UAT passes, run /gsd-plan-phase for Phase 3.",
+  "context_notes": "Phase 2 UAT session was started this session. The 02-UAT.md file was freshly created with 15 total entries: 5 auto-passed (code-verified items) and 10 human checkpoints. The first checkpoint (Test 1 — Search by Medicine Name) was presented but user invoked /gsd-pause-work before answering. On resume, present Test 1 again and continue through all 10 human tests."
 }
