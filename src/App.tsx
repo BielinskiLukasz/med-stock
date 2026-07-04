@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { createHashRouter, RouterProvider, Navigate } from 'react-router-dom'
 import { RootLayout } from '@/routes/RootLayout'
 import { MedicineList } from '@/routes/medicines/index'
@@ -27,20 +26,20 @@ const router = createHashRouter([
   },
 ])
 
-export default function App() {
-  useEffect(() => {
-    // PWA-02: request persistent storage on first launch (once only — empty deps)
-    // Pitfall 6: check return value; don't assume granted
-    if (navigator.storage?.persist) {
-      navigator.storage.persist().then((granted) => {
-        if (!granted) {
-          console.warn('Persistent storage not granted — IndexedDB may be evicted on low storage')
-        }
-      }).catch((err: unknown) => {
-        console.warn('navigator.storage.persist() failed:', err)
-      })
+// PWA-02: request persistent storage once per page load — placed at module scope like the
+// router above so React 18 StrictMode's double-invocation of effect hooks doesn't fire it twice.
+// Pitfall 6: check return value; don't assume granted. Guard navigator.storage? for browsers
+// that don't expose the Storage API (e.g. some older iOS Safari versions).
+if (navigator.storage?.persist) {
+  navigator.storage.persist().then((granted) => {
+    if (!granted) {
+      console.warn('Persistent storage not granted — IndexedDB may be evicted on low storage')
     }
-  }, [])
+  }).catch((err: unknown) => {
+    console.warn('navigator.storage.persist() failed:', err)
+  })
+}
 
+export default function App() {
   return <RouterProvider router={router} />
 }
