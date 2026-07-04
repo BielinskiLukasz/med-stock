@@ -33,9 +33,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. App automatically computes and displays the correct validity status (Active / Opened / Expired / Used Up) for each package, combining expiry date and period-after-opening constraints
   5. User can add, rename, and delete custom locations; deleted locations revert existing medicines to "Other"
 
-**Plans**: 4/4 plans complete
+**Plans**: 5/5 plans complete
 
 Plans:
+
+- [x] 01-GAP-PLAN.md
+
 **Wave 1**
 
 - [x] 01-01-PLAN.md — Walking Skeleton: project scaffold, Vite config, Dexie schema, HashRouter, PWA service worker, minimal add-medicine form
@@ -100,6 +103,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. PWA Foundation & Inventory CRUD | 4/4 | Complete    | 2026-06-30 |
+| 1. PWA Foundation & Inventory CRUD | 5/5 | Complete   | 2026-06-30 |
 | 2. Search, Dashboard & Audit | 4/4 | Complete   | 2026-06-30 |
 | 3. Data & Household Sync | 0/TBD | Not started | - |
