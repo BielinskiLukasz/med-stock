@@ -4,7 +4,7 @@ import type { Medicine, PAO } from './db'
 export type AutoStatus = 'Active' | 'Opened' | 'Expired' | 'ExceededOpenPeriod'
 
 /** Statuses set manually by the user (stored in DB, take precedence over auto-calculation) */
-export type ManualStatus = 'Used Up' | 'Disposed' | 'Archived'
+export type ManualStatus = 'UsedUp' | 'Disposed' | 'Archived'
 
 /** Union of all possible medicine statuses */
 export type MedicineStatus = AutoStatus | ManualStatus
@@ -15,7 +15,7 @@ export const STATUS_LABELS: Record<MedicineStatus, string> = {
   Opened: 'Opened',
   Expired: 'Expired',
   ExceededOpenPeriod: 'Exceeded Open Period',
-  'Used Up': 'Used Up',
+  UsedUp: 'Used Up',
   Disposed: 'Disposed',
   Archived: 'Archived',
 }

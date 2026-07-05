@@ -7,7 +7,7 @@ const STATUS_STYLES: Record<MedicineStatus, string> = {
   Opened: 'bg-blue-100 text-blue-800',
   Expired: 'bg-red-100 text-red-800',
   ExceededOpenPeriod: 'bg-orange-100 text-orange-800',
-  'Used Up': 'bg-gray-100 text-gray-600',
+  UsedUp: 'bg-gray-100 text-gray-600',
   Disposed: 'bg-gray-100 text-gray-600',
   Archived: 'bg-yellow-100 text-yellow-800',
 }
