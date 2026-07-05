@@ -1,5 +1,7 @@
 import { useUIStore, useShallow } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
+import { STATUS_LABELS } from '@/lib/expiry'
+import type { MedicineStatus } from '@/lib/expiry'
 
 export function FilterChips() {
   // Use useShallow to avoid re-renders when array reference changes (Pitfall 4 — Zustand v5)
@@ -18,7 +20,7 @@ export function FilterChips() {
       remove: () => toggleLocation(v),
     })),
     ...selectedStatuses.map((v) => ({
-      label: `Status: ${v}`,
+      label: `Status: ${STATUS_LABELS[v as MedicineStatus] ?? v}`,
       remove: () => toggleStatus(v),
     })),
   ]

@@ -10,11 +10,13 @@ import type { SortField, SortDirection } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
 import { db } from '@/lib/db'
 import type { MedicineStatus } from '@/lib/expiry'
+import { STATUS_LABELS } from '@/lib/expiry'
 
 const ALL_STATUSES: MedicineStatus[] = [
   'Active',
   'Opened',
   'Expired',
+  'ExceededOpenPeriod',
   'Used Up',
   'Disposed',
   'Archived',
@@ -85,7 +87,7 @@ export function FilterBottomSheet() {
                   }`}
                 >
                   {isSelected && <span className="mr-1">&#10003;</span>}
-                  {status}
+                  {STATUS_LABELS[status]}
                 </button>
               )
             })}

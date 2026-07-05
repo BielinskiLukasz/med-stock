@@ -1,13 +1,24 @@
 import type { Medicine, PAO } from './db'
 
 /** Statuses derived automatically from dates */
-export type AutoStatus = 'Active' | 'Opened' | 'Expired'
+export type AutoStatus = 'Active' | 'Opened' | 'Expired' | 'ExceededOpenPeriod'
 
 /** Statuses set manually by the user (stored in DB, take precedence over auto-calculation) */
 export type ManualStatus = 'Used Up' | 'Disposed' | 'Archived'
 
 /** Union of all possible medicine statuses */
 export type MedicineStatus = AutoStatus | ManualStatus
+
+/** Human-readable display labels for each status */
+export const STATUS_LABELS: Record<MedicineStatus, string> = {
+  Active: 'Active',
+  Opened: 'Opened',
+  Expired: 'Expired',
+  ExceededOpenPeriod: 'Exceeded Open Period',
+  'Used Up': 'Used Up',
+  Disposed: 'Disposed',
+  Archived: 'Archived',
+}
 
 /**
  * Add a PAO (period-after-opening) duration to a Date, returning a new Date.
@@ -56,7 +67,7 @@ export function calculateStatus(med: Medicine, now: Date = new Date()): Medicine
 
   // D-14: No expiry date but PAO is set — use PAO window only
   if (!expiry && paoEnd) {
-    return now <= paoEnd ? 'Opened' : 'Expired'
+    return now <= paoEnd ? 'Opened' : 'ExceededOpenPeriod'
   }
 
   // D-15: Opened but no PAO — skip PAO check, use expiry date only
@@ -64,9 +75,9 @@ export function calculateStatus(med: Medicine, now: Date = new Date()): Medicine
     return now > expiry ? 'Expired' : 'Opened'
   }
 
-  // Standard path
+  // Standard path — expiry date takes precedence; PAO alone is ExceededOpenPeriod
   if (expiry && now > expiry) return 'Expired'
-  if (paoEnd && now > paoEnd) return 'Expired'
+  if (paoEnd && now > paoEnd) return 'ExceededOpenPeriod'
   if (opened) return 'Opened'
   return 'Active'
 }

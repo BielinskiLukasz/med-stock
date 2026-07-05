@@ -49,15 +49,15 @@ describe('calculateStatus', () => {
     expect(calculateStatus(med, now)).toBe('Expired')
   })
 
-  // Expired by PAO window
-  it('returns Expired when now is past openedDate + PAO window', () => {
+  // ExceededOpenPeriod: PAO window elapsed but expiry date still in future
+  it('returns ExceededOpenPeriod when PAO window has elapsed but expiryDate is still in the future', () => {
     const med = makeMed({
       expiryDate: '2030-12-31',
       openedDate: '2026-06-01',
       pao: { value: 30, unit: 'days' },
     })
     const now = new Date('2026-07-15')
-    expect(calculateStatus(med, now)).toBe('Expired')
+    expect(calculateStatus(med, now)).toBe('ExceededOpenPeriod')
   })
 
   // Whichever-first: expiry fires before PAO
@@ -103,14 +103,14 @@ describe('calculateStatus', () => {
   })
 
   // D-14: null expiry + PAO, past window
-  it('D-14: returns Expired when expiryDate is null, PAO is set, and past PAO window', () => {
+  it('D-14: returns ExceededOpenPeriod when expiryDate is null, PAO is set, and past PAO window', () => {
     const med = makeMed({
       expiryDate: null,
       openedDate: '2026-06-01',
       pao: { value: 30, unit: 'days' },
     })
     const now = new Date('2026-07-15')
-    expect(calculateStatus(med, now)).toBe('Expired')
+    expect(calculateStatus(med, now)).toBe('ExceededOpenPeriod')
   })
 
   // D-15: opened + no PAO, expiry future
