@@ -17,7 +17,7 @@ const ALL_STATUSES: MedicineStatus[] = [
   'Opened',
   'Expired',
   'ExceededOpenPeriod',
-  'Used Up',
+  'UsedUp',
   'Disposed',
   'Archived',
 ]

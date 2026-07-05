@@ -82,13 +82,13 @@ describe('calculateStatus', () => {
   })
 
   // D-13: manual override — manualStatus wins even if dates are expired
-  it('D-13: returns manualStatus Used Up when manualStatus is set (dates are expired)', () => {
+  it('D-13: returns manualStatus UsedUp when manualStatus is set (dates are expired)', () => {
     const med = makeMed({
       expiryDate: '2020-01-01',
-      manualStatus: 'Used Up',
+      manualStatus: 'UsedUp',
     })
     const now = new Date('2026-06-30')
-    expect(calculateStatus(med, now)).toBe('Used Up')
+    expect(calculateStatus(med, now)).toBe('UsedUp')
   })
 
   // D-14: null expiry + PAO, within window
