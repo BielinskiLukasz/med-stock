@@ -34,6 +34,7 @@ export function DashboardScreen() {
     for (const m of all) {
       const status = calculateStatus(m, now)
       if (status === 'Expired') expired++
+      if (status === 'ExceededOpenPeriod') exceededOpenPeriod++
       // Expiring Soon: not yet expired by date, expiry within 30 days, no manual status override
       if (
         m.manualStatus === null &&
@@ -42,11 +43,6 @@ export function DashboardScreen() {
         m.expiryDate <= in30
       ) {
         expiringSoon++
-      }
-      // Exceeded Open Period: calculateStatus reports Expired but expiry date is still in the future
-      // This means the PAO window caused the expiry (Pattern 9 approximation)
-      if (status === 'Expired' && m.expiryDate && m.expiryDate > today) {
-        exceededOpenPeriod++
       }
     }
 
@@ -69,7 +65,7 @@ export function DashboardScreen() {
 
   const handleExceededOpenPeriodTap = () => {
     clearAllFilters()
-    toggleStatus('Expired')
+    toggleStatus('ExceededOpenPeriod')
     void navigate('/medicines')
   }
 
