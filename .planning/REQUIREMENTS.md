@@ -7,48 +7,48 @@
 
 ### Inventory (CRUD)
 
-- [ ] **INV-01**: User can add a medicine package with: name, category (predefined), location, expiration date, opened date, period-after-opening (value + unit), quantity remaining, quantity unit, notes
-- [ ] **INV-02**: User can edit any field of an existing medicine package
-- [ ] **INV-03**: User can view full details of a medicine package
-- [ ] **INV-04**: User can delete a medicine package (moves to Trash Bin, not permanently removed)
-- [ ] **INV-05**: App automatically calculates validity status from expiration date, opened date, and period-after-opening — combining both constraints (whichever expires first)
-- [ ] **INV-06**: Medicine package status is one of: Active, Opened, Expired, Used Up, Disposed, Archived — and updates automatically based on dates
+- [x] **INV-01**: User can add a medicine package with: name, category (predefined), location, expiration date, opened date, period-after-opening (value + unit), quantity remaining, quantity unit, notes
+- [x] **INV-02**: User can edit any field of an existing medicine package
+- [x] **INV-03**: User can view full details of a medicine package
+- [x] **INV-04**: User can delete a medicine package (moves to Trash Bin, not permanently removed)
+- [x] **INV-05**: App automatically calculates validity status from expiration date, opened date, and period-after-opening — combining both constraints (whichever expires first)
+- [x] **INV-06**: Medicine package status is one of: Active, Opened, Expired, Used Up, Disposed, Archived — and updates automatically based on dates
 
 ### Search & Browse
 
-- [ ] **SRCH-01**: User can search medicines by name with partial/substring matching, from any screen
-- [ ] **SRCH-02**: Search results show stock + validity status in a single glance (no drill-down required for the critical question)
-- [ ] **SRCH-03**: User can filter the medicine list by category
-- [ ] **SRCH-04**: User can filter the medicine list by location
-- [ ] **SRCH-05**: User can filter the medicine list by status (Active, Opened, Expired, etc.)
-- [ ] **SRCH-06**: User can sort the medicine list by name, expiration date, or category
+- [x] **SRCH-01**: User can search medicines by name with partial/substring matching, from any screen
+- [x] **SRCH-02**: Search results show stock + validity status in a single glance (no drill-down required for the critical question)
+- [x] **SRCH-03**: User can filter the medicine list by category
+- [x] **SRCH-04**: User can filter the medicine list by location
+- [x] **SRCH-05**: User can filter the medicine list by status (Active, Opened, Expired, etc.)
+- [x] **SRCH-06**: User can sort the medicine list by name, expiration date, or category
 
 ### Dashboard
 
-- [ ] **DASH-01**: Dashboard shows total medicine count
-- [ ] **DASH-02**: Dashboard shows expired medicines count as an alert card; tapping it opens a filtered list of expired medicines
-- [ ] **DASH-03**: Dashboard shows medicines expiring within 30 days as an alert card; tapping it opens the filtered list
-- [ ] **DASH-04**: Dashboard shows medicines that exceeded their period-after-opening as an alert card; tapping it opens the filtered list
+- [x] **DASH-01**: Dashboard shows total medicine count
+- [x] **DASH-02**: Dashboard shows expired medicines count as an alert card; tapping it opens a filtered list of expired medicines
+- [x] **DASH-03**: Dashboard shows medicines expiring within 30 days as an alert card; tapping it opens the filtered list
+- [x] **DASH-04**: Dashboard shows medicines that exceeded their period-after-opening as an alert card; tapping it opens the filtered list
 
 ### History & Audit
 
-- [ ] **HIST-01**: Every change to a medicine record (create, edit, delete, restore) is recorded with timestamp, changed field, old value, and new value
-- [ ] **HIST-02**: User can view the change history for a specific medicine package
+- [x] **HIST-01**: Every change to a medicine record (create, edit, delete, restore) is recorded with timestamp, changed field, old value, and new value
+- [x] **HIST-02**: User can view the change history for a specific medicine package
 
 ### Trash Bin
 
-- [ ] **TRSH-01**: Deleted medicines appear in Trash Bin and are not permanently removed
-- [ ] **TRSH-02**: User can restore a medicine from the Trash Bin
-- [ ] **TRSH-03**: User can permanently delete a medicine from the Trash Bin
-- [ ] **TRSH-04**: Trash Bin preserves the full history of deleted items
+- [x] **TRSH-01**: Deleted medicines appear in Trash Bin and are not permanently removed
+- [x] **TRSH-02**: User can restore a medicine from the Trash Bin
+- [x] **TRSH-03**: User can permanently delete a medicine from the Trash Bin
+- [x] **TRSH-04**: Trash Bin preserves the full history of deleted items
 
 ### Locations
 
-- [ ] **LOC-01**: Predefined locations are available when adding/editing a medicine (Kitchen Drawer, Bathroom Cabinet, Bedroom Cabinet, Medicine Box, Travel Kit, Refrigerator, Living Room Cabinet, Other)
-- [ ] **LOC-02**: User can add a custom location
-- [ ] **LOC-03**: User can edit a custom location name
-- [ ] **LOC-04**: User can delete a custom location (medicines using it revert to "Other")
-- [ ] **LOC-05**: User can manage all locations from a dedicated Locations screen
+- [x] **LOC-01**: Predefined locations are available when adding/editing a medicine (Kitchen Drawer, Bathroom Cabinet, Bedroom Cabinet, Medicine Box, Travel Kit, Refrigerator, Living Room Cabinet, Other)
+- [x] **LOC-02**: User can add a custom location
+- [x] **LOC-03**: User can edit a custom location name
+- [x] **LOC-04**: User can delete a custom location (medicines using it revert to "Other")
+- [x] **LOC-05**: User can manage all locations from a dedicated Locations screen
 
 ### Data (Import / Export / Sync)
 
@@ -59,10 +59,10 @@
 
 ### PWA & Offline
 
-- [ ] **PWA-01**: App works fully offline — all core features (search, add, edit, browse) function without any internet connection
-- [ ] **PWA-02**: App requests persistent storage on first launch to prevent iOS Safari 7-day automatic data eviction
-- [ ] **PWA-03**: App is installable as a PWA on Android, Windows, macOS, and Linux (home screen / taskbar)
-- [ ] **PWA-04**: App remains responsive with 1,000+ medicine packages
+- [x] **PWA-01**: App works fully offline — all core features (search, add, edit, browse) function without any internet connection
+- [x] **PWA-02**: App requests persistent storage on first launch to prevent iOS Safari 7-day automatic data eviction
+- [x] **PWA-03**: App is installable as a PWA on Android, Windows, macOS, and Linux (home screen / taskbar)
+- [x] **PWA-04**: App remains responsive with 1,000+ medicine packages
 
 ---
 
@@ -115,43 +115,44 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INV-01 | Phase 1 | Pending |
-| INV-02 | Phase 1 | Pending |
-| INV-03 | Phase 1 | Pending |
-| INV-04 | Phase 1 | Pending |
-| INV-05 | Phase 1 | Pending |
-| INV-06 | Phase 1 | Pending |
-| SRCH-01 | Phase 2 | Pending |
-| SRCH-02 | Phase 2 | Pending |
-| SRCH-03 | Phase 2 | Pending |
-| SRCH-04 | Phase 2 | Pending |
-| SRCH-05 | Phase 2 | Pending |
-| SRCH-06 | Phase 2 | Pending |
-| DASH-01 | Phase 2 | Pending |
-| DASH-02 | Phase 2 | Pending |
-| DASH-03 | Phase 2 | Pending |
-| DASH-04 | Phase 2 | Pending |
-| HIST-01 | Phase 2 | Pending |
-| HIST-02 | Phase 2 | Pending |
-| TRSH-01 | Phase 2 | Pending |
-| TRSH-02 | Phase 2 | Pending |
-| TRSH-03 | Phase 2 | Pending |
-| TRSH-04 | Phase 2 | Pending |
-| LOC-01 | Phase 1 | Pending |
-| LOC-02 | Phase 1 | Pending |
-| LOC-03 | Phase 1 | Pending |
-| LOC-04 | Phase 1 | Pending |
-| LOC-05 | Phase 1 | Pending |
+| INV-01 | Phase 1 | Complete |
+| INV-02 | Phase 1 | Complete |
+| INV-03 | Phase 1 | Complete |
+| INV-04 | Phase 1 | Complete |
+| INV-05 | Phase 1 | Complete |
+| INV-06 | Phase 1 | Complete |
+| SRCH-01 | Phase 2 | Complete |
+| SRCH-02 | Phase 2 | Complete |
+| SRCH-03 | Phase 2 | Complete |
+| SRCH-04 | Phase 2 | Complete |
+| SRCH-05 | Phase 2 | Complete |
+| SRCH-06 | Phase 2 | Complete |
+| DASH-01 | Phase 2 | Complete |
+| DASH-02 | Phase 2 | Complete |
+| DASH-03 | Phase 2 | Complete |
+| DASH-04 | Phase 2 | Complete |
+| HIST-01 | Phase 2 | Complete |
+| HIST-02 | Phase 2 | Complete |
+| TRSH-01 | Phase 2 | Complete |
+| TRSH-02 | Phase 2 | Complete |
+| TRSH-03 | Phase 2 | Complete |
+| TRSH-04 | Phase 2 | Complete |
+| LOC-01 | Phase 1 | Complete |
+| LOC-02 | Phase 1 | Complete |
+| LOC-03 | Phase 1 | Complete |
+| LOC-04 | Phase 1 | Complete |
+| LOC-05 | Phase 1 | Complete |
 | DATA-01 | Phase 3 | Pending |
 | DATA-02 | Phase 3 | Pending |
 | DATA-03 | Phase 3 | Pending |
 | DATA-04 | Phase 3 | Pending |
-| PWA-01 | Phase 1 | Pending |
-| PWA-02 | Phase 1 | Pending |
-| PWA-03 | Phase 1 | Pending |
-| PWA-04 | Phase 1 | Pending |
+| PWA-01 | Phase 1 | Complete |
+| PWA-02 | Phase 1 | Complete |
+| PWA-03 | Phase 1 | Complete |
+| PWA-04 | Phase 1 | Complete |
 
 **Coverage:**
+
 - v1 requirements: 35 total
 - Mapped to phases: 35
 - Unmapped: 0 ✓

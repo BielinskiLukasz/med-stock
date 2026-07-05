@@ -1,12 +1,20 @@
 ---
-gsd_state_version: '1.0'
-status: planning
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: 02
+current_phase_name: search-dashboard-audit
+status: complete
+stopped_at: Phase 2 UAT complete — all 15 tests passed (1 gap found and fixed: ExceededOpenPeriod distinct status)
+last_updated: "2026-07-05T00:00:00.000Z"
+last_activity: 2026-07-05
+last_activity_desc: Phase 02 UAT complete — ready for Phase 3 planning
 progress:
   total_phases: 3
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 2
+  total_plans: 9
+  completed_plans: 9
+  percent: 67
 ---
 
 # Project State
@@ -16,21 +24,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-06-29)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 1 — PWA Foundation & Inventory CRUD
+**Current focus:** Phase 02 — search-dashboard-audit
 
 ## Current Position
 
-Phase: 1 of 3 (PWA Foundation & Inventory CRUD)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-06-29 — Roadmap created; 35 v1 requirements mapped to 3 phases
+Phase: 02 (search-dashboard-audit) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-06-30 — Phase 02 execution started
 
 Progress: [░░░░░░░░░░] 0%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
+
+- Total plans completed: 4
 - Average duration: -
 - Total execution time: 0 hours
 
@@ -38,13 +47,19 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 4 | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: -
 - Trend: -
 
 *Updated after each plan completion*
+| Phase 01 P02 | 9min | 2 tasks | 2 files |
+| Phase 01 P03 | 35min | 2 tasks | 14 files |
+| Phase 02 P02 | 29min | 2 tasks | 10 files |
+| Phase 02 P03 | 6min | 2 tasks | 2 files |
+| Phase 02 P04 | 20min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -57,6 +72,17 @@ Recent decisions affecting current work:
 - Roadmap: All dates stored as YYYY-MM-DD strings (timezone safety for expiry calculations)
 - Roadmap: Persistent storage request on first launch is mandatory (iOS Safari 7-day eviction risk)
 - Roadmap: Phase 3 (OneDrive sync) — plan a short testing spike for iOS Safari standalone File Picker behavior before committing to approach
+- [Phase ?]: .planning/phases/01-pwa-foundation-inventory-crud/01-02-SUMMARY.md
+- [Phase ?]: NULL_SENTINEL='__NULL__' pattern in Radix Select for nullable location/category (D-17 compliance)
+- [Phase ?]: calculateStatus() called inside MedicineCard — status co-located with display, card owns calculation (D-11/D-12)
+- [Phase ?]: Zustand v5 uses useShallow(selector) wrapper instead of useStore(selector, shallow) — second-arg API removed in v5
+- [Phase ?]: shadcn Sheet CLI placed files in wrong @/ directory — created manually via @radix-ui/react-dialog
+- [Phase ?]: Two-step query+memo: useLiveQuery for DB reactivity, useMemo for Zustand filter state changes
+- [Phase ?]: calculateStatus() inside useLiveQuery for Dashboard (Pattern 9): updates on DB change not timer ticks
+- [Phase ?]: DashboardCard interactive prop: false renders div (Total), true renders button (alert cards)
+- [Phase ?]: softDeleteMedicine() replaces Phase 1 manualStatus='Disposed' delete — deletedAt set, medicine moves to Trash (D-25)
+- [Phase ?]: TrashScreen toCollection().filter(m => m.deletedAt !== null) — null is not a valid IndexedDB key (Pitfall 1)
+- [Phase ?]: permanentDeleteMedicine preserves history entries forever — T-02-07 mitigated, D-38 compliance confirmed
 
 ### Pending Todos
 
@@ -74,6 +100,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-29
-Stopped at: Roadmap written; REQUIREMENTS.md traceability updated; ready to plan Phase 1
+Last session: 2026-07-04T22:45:04.326Z
+Stopped at: Phase 2 Plan 02-04 complete — Trash Bin + Change History wired
 Resume file: None
