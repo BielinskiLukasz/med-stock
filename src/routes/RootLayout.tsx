@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import { BottomTabBar } from '@/components/BottomTabBar'
+import { Toaster } from '@/components/ui/sonner'
 
 export function RootLayout() {
   return (
@@ -9,6 +10,7 @@ export function RootLayout() {
         <Outlet />
       </main>
       <BottomTabBar />
+      <Toaster />
     </div>
   )
 }
