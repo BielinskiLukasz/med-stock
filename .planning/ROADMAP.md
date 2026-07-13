@@ -93,7 +93,18 @@ Plans:
   3. User can import a CSV file by mapping its columns to medicine fields, preview the mapped data, and commit the import — all within the app
   4. "Sync Now" flow guides the user step-by-step through exporting to and importing from a shared folder, enabling two-device household sharing without any backend
 
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Foundation: install sonner + papaparse, toast setup, 5th Data tab, DataScreen scaffold, SyncInstructions
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 03-02-PLAN.md — JSON Export + Import: dataOps.ts (BackupSchema, exportToJSON, importFromJSON), ExportSection, ImportJSONSection
+- [ ] 03-03-PLAN.md — CSV Import: csvOps.ts (parseCSVFile, mergeCSVRowsToMedicines), CSVColumnMapper, CSVPreview, ImportCSVSection
+
 **UI hint**: yes
 
 ## Progress
