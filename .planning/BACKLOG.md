@@ -1,9 +1,9 @@
 # MedStock Backlog
 
-Captured ideas and future enhancements not yet planned into a phase.
+Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-12 (cleanup: removed B-09, B-16, B-23, B-24 — shipped or stale; fixed B-28/B-29/B-30 formatting; B-21 fully specified as TIF algorithm; B-26 expanded with ratio metrics) <-- TODO it's example from night-watch, replace it with real change next time
-Last assigned ID: **B-30** — next new item must be **B-31**
+Last updated: 2026-07-13 (B-01 reformatted to standard backlog template — added Source/Status/Earliest slot; split Summary+Scope into What/Why/Implementation notes)
+Last assigned ID: **B-01** — next new item must be **B-02**
 
 ---
 
@@ -27,17 +27,23 @@ Last assigned ID: **B-30** — next new item must be **B-31**
 
 ### B-01 · Medicine Name Autocomplete (Dropdown from History)
 
-**Summary:** When adding a new medicine, suggest names from medicines already in the inventory — including items in Trash — via a dropdown/autocomplete.
+**Source:** product idea — recurring data-entry friction observed during Phase 1 implementation
+**Status:** captured · not scheduled
+**Earliest sensible slot:** post-Phase 2 (medicine list + dashboard lands first) — or as a Phase 2 sub-plan if entry speed is prioritised early
 
-**Motivation:** Users tend to buy the same medicines repeatedly. Showing known names speeds up entry, reduces typos, and keeps naming consistent across packages of the same product.
+**What:** When the Add / Edit medicine form opens, the name field suggests names from medicines already in the inventory — including trashed items — via a dropdown/autocomplete. Selecting a suggestion pre-fills the name only; all other fields stay blank so the user enters fresh data for the new package.
 
-**Scope notes:**
-- Source pool: all medicines in the DB regardless of status (active, expired, used up, trashed)
-- Deduplicate by name (case-insensitive)
-- Trigger on the name field in the Add / Edit form — type to filter, or click to open full list
-- Selecting a suggestion should only pre-fill the name; other fields stay blank so the user enters fresh data for the new package
+**Why:** Users buy the same medicines repeatedly. Today they retype the exact name every time, which causes typos and inconsistent naming across packages of the same product (e.g., "Ibuprofen 400" vs "ibuprofen400"). Autocomplete from history eliminates retyping and keeps names consistent for free, which in turn makes search and deduplication work better.
 
-**Open questions:**
-- Should selecting a name also pre-fill category (since the same medicine usually belongs to the same category)?
-- UX: native `<datalist>`, shadcn/ui Combobox (Radix Popover + Command), or a simple filtered dropdown?
-- Minimum character count before suggestions appear (0 = show all on focus, 1 = after first keystroke)?
+**Open questions when this gets planned:**
+
+- Should selecting a name also pre-fill **category** (same medicine usually belongs to the same category)?
+- UX widget: native `<datalist>`, shadcn/ui Combobox (Radix Popover + Command), or a custom filtered dropdown?
+- Minimum character count before suggestions appear — 0 (show all on focus) vs 1 (after first keystroke)?
+- Should results be ranked by recency or frequency of use, or simple alphabetical?
+
+**Implementation notes:**
+
+- Source pool: query all medicines from Dexie regardless of `status` (active, expired, used-up, trashed); deduplicate by name case-insensitively before rendering.
+- The name field in `AddMedicineForm` / `EditMedicineForm` gains a controlled Combobox; no schema or Zustand store changes needed — read-only query on open.
+- If category pre-fill is approved: carry the most-recently-used category for that name as the prefill value; user can override.
