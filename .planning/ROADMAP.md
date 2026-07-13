@@ -116,4 +116,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 5/5 | Complete   | 2026-06-30 |
 | 2. Search, Dashboard & Audit | 4/4 | Complete   | 2026-06-30 |
-| 3. Data & Household Sync | 0/TBD | Not started | - |
+| 3. Data & Household Sync | 0/3 | Planned | - |
