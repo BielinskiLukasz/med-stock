@@ -7,6 +7,7 @@ import { MedicineEdit } from '@/routes/medicines/[id].edit'
 import { LocationsScreen } from '@/routes/locations/index'
 import { DashboardScreen } from '@/routes/dashboard/index'
 import { TrashScreen } from '@/routes/trash/index'
+import { DataScreen } from '@/routes/data/index'
 
 // CRITICAL: router created OUTSIDE React tree — never inside a component or useState (Pitfall 4)
 const router = createHashRouter([
@@ -22,6 +23,7 @@ const router = createHashRouter([
       { path: 'locations', element: <LocationsScreen /> },
       { path: 'dashboard', element: <DashboardScreen /> },
       { path: 'trash', element: <TrashScreen /> },
+      { path: 'data', element: <DataScreen /> },
     ],
   },
 ])

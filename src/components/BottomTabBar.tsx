@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
-// D-39: 4 tabs: Medicines | Dashboard | Trash | Locations
+// D-42: 5 tabs: Medicines | Dashboard | Trash | Locations | Data
 export function BottomTabBar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex h-16 z-50">
@@ -56,6 +56,19 @@ export function BottomTabBar() {
         }
       >
         <span>Locations</span>
+      </NavLink>
+      <NavLink
+        to="/data"
+        className={({ isActive }) =>
+          cn(
+            'flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors',
+            isActive
+              ? 'text-primary border-t-2 border-primary'
+              : 'text-gray-500 hover:text-gray-700',
+          )
+        }
+      >
+        <span>Data</span>
       </NavLink>
     </nav>
   )

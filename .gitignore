@@ -1,5 +1,7 @@
-# Local data files
-data/
+# Local data files (root-level only)
+/data/
+# Allow src/routes/data/ source directory
+!src/routes/data/
 
 # Logs
 logs
