@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: PWA Foundation & Inventory CRUD** - Installable offline PWA, Dexie schema, iOS persistent-storage request, full add/edit/delete/view loop, expiry calculation, location management (completed 2026-06-30)
 - [x] **Phase 2: Search, Dashboard & Audit** - Name search, filter/sort, expiry dashboard with alert cards, trash bin with restore, per-medicine change history (completed 2026-06-30)
-- [ ] **Phase 3: Data & Household Sync** - JSON export/import backup, CSV bulk import with column mapping, manual OneDrive sync flow
+- [x] **Phase 3: Data & Household Sync** - JSON export/import backup, CSV bulk import with column mapping, manual OneDrive sync flow (completed 2026-07-13)
 
 ## Phase Details
 
@@ -93,7 +93,7 @@ Plans:
   3. User can import a CSV file by mapping its columns to medicine fields, preview the mapped data, and commit the import — all within the app
   4. "Sync Now" flow guides the user step-by-step through exporting to and importing from a shared folder, enabling two-device household sharing without any backend
 
-**Plans**: 2/3 plans executed
+**Plans**: 3/3 plans complete
 
 Plans:
 **Wave 1**
@@ -103,7 +103,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 03-02-PLAN.md — JSON Export + Import: dataOps.ts (BackupSchema, exportToJSON, importFromJSON), ExportSection, ImportJSONSection
-- [ ] 03-03-PLAN.md — CSV Import: csvOps.ts (parseCSVFile, mergeCSVRowsToMedicines), CSVColumnMapper, CSVPreview, ImportCSVSection
+- [x] 03-03-PLAN.md — CSV Import: csvOps.ts (parseCSVFile, mergeCSVRowsToMedicines), CSVColumnMapper, CSVPreview, ImportCSVSection
 
 **UI hint**: yes
 
@@ -116,4 +116,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 5/5 | Complete   | 2026-06-30 |
 | 2. Search, Dashboard & Audit | 4/4 | Complete   | 2026-06-30 |
-| 3. Data & Household Sync | 2/3 | In Progress|  |
+| 3. Data & Household Sync | 3/3 | Complete   | 2026-07-13 |
