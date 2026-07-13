@@ -52,8 +52,8 @@
 
 ### Data (Import / Export / Sync)
 
-- [ ] **DATA-01**: User can export the full inventory as a JSON file (medicines, locations, categories, history, settings)
-- [ ] **DATA-02**: User can import a JSON backup file to restore or merge inventory
+- [x] **DATA-01**: User can export the full inventory as a JSON file (medicines, locations, categories, history, settings)
+- [x] **DATA-02**: User can import a JSON backup file to restore or merge inventory
 - [ ] **DATA-03**: User can import an existing inventory from a CSV file with an interactive column-mapping step
 - [ ] **DATA-04**: User can trigger a "Sync Now" flow that guides them through exporting to / importing from a shared OneDrive folder — enabling two household members to share one inventory across their devices
 
@@ -142,8 +142,8 @@
 | LOC-03 | Phase 1 | Complete |
 | LOC-04 | Phase 1 | Complete |
 | LOC-05 | Phase 1 | Complete |
-| DATA-01 | Phase 3 | Pending |
-| DATA-02 | Phase 3 | Pending |
+| DATA-01 | Phase 3 | Complete |
+| DATA-02 | Phase 3 | Complete |
 | DATA-03 | Phase 3 | Pending |
 | DATA-04 | Phase 3 | Pending |
 | PWA-01 | Phase 1 | Complete |

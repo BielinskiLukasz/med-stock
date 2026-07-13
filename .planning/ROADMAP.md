@@ -93,16 +93,16 @@ Plans:
   3. User can import a CSV file by mapping its columns to medicine fields, preview the mapped data, and commit the import — all within the app
   4. "Sync Now" flow guides the user step-by-step through exporting to and importing from a shared folder, enabling two-device household sharing without any backend
 
-**Plans**: 3 plans
+**Plans**: 2/3 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 03-01-PLAN.md — Foundation: install sonner + papaparse, toast setup, 5th Data tab, DataScreen scaffold, SyncInstructions
+- [x] 03-01-PLAN.md — Foundation: install sonner + papaparse, toast setup, 5th Data tab, DataScreen scaffold, SyncInstructions
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 03-02-PLAN.md — JSON Export + Import: dataOps.ts (BackupSchema, exportToJSON, importFromJSON), ExportSection, ImportJSONSection
+- [x] 03-02-PLAN.md — JSON Export + Import: dataOps.ts (BackupSchema, exportToJSON, importFromJSON), ExportSection, ImportJSONSection
 - [ ] 03-03-PLAN.md — CSV Import: csvOps.ts (parseCSVFile, mergeCSVRowsToMedicines), CSVColumnMapper, CSVPreview, ImportCSVSection
 
 **UI hint**: yes
@@ -116,4 +116,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. PWA Foundation & Inventory CRUD | 5/5 | Complete   | 2026-06-30 |
 | 2. Search, Dashboard & Audit | 4/4 | Complete   | 2026-06-30 |
-| 3. Data & Household Sync | 0/3 | Planned | - |
+| 3. Data & Household Sync | 2/3 | In Progress|  |
