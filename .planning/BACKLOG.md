@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-13 (B-001 reformatted to standard backlog template — added Source/Status/Earliest slot; split Summary+Scope into What/Why/Implementation notes)
-Last assigned ID: **B-001** — next new item must be **B-002**
+Last updated: 2026-07-13 (B-002, B-003 added after Phase 3 verification — DATA-04 interactive sync flow + proper merge-based sync)
+Last assigned ID: **B-003** — next new item must be **B-004**
 
 ---
 
@@ -47,3 +47,54 @@ Last assigned ID: **B-001** — next new item must be **B-002**
 - Source pool: query all medicines from Dexie regardless of `status` (active, expired, used-up, trashed); deduplicate by name case-insensitively before rendering.
 - The name field in `AddMedicineForm` / `EditMedicineForm` gains a controlled Combobox; no schema or Zustand store changes needed — read-only query on open.
 - If category pre-fill is approved: carry the most-recently-used category for that name as the prefill value; user can override.
+
+---
+
+### B-002 · Interactive Guided Sync Flow (DATA-04 Enhancement)
+
+**Source:** Phase 3 verification — DATA-04 requirement left open; D-44 locked delivery as static text-only instructions
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone or a later Phase 4 iteration
+
+**What:** Upgrade the "Sync with household" section from static instructional text to an interactive guided flow. Users tap through steps with context-aware prompts (e.g., detect if a backup was recently exported, surface a direct "Go to Files" deep link, guide the receiving device through importing).
+
+**Why:** Static instructions satisfy the minimum goal (user knows what to do) but friction remains high for non-technical users — they must context-switch between the app and their file manager. A guided flow would reduce errors and make household sync feel first-class.
+
+**Open questions when this gets planned:**
+
+- Should the flow detect the OS (Android vs iOS) and show different instructions?
+- Can we deep-link to OneDrive/Google Drive/Files app from a PWA on iOS?
+- Should the exporting device set a "last exported" timestamp visible to the receiving device?
+- Is a guided stepper (sequential steps with back/next) or a checklist (user ticks each step) the right UX?
+
+**Implementation notes:**
+
+- SyncInstructions.tsx is the entry point — replace static paragraphs with a step machine component
+- No backend required — device detection via `navigator.userAgent`; deep links via `window.open` with platform-specific URL schemes
+- REQUIREMENTS.md DATA-04 checkbox should be ticked when this is delivered
+
+---
+
+### B-003 · Merge-Based Sync (Replace Full-Replace with Last-Write-Wins)
+
+**Source:** Phase 3 verification — ROADMAP SC-2 described "merged with last-write-wins conflict resolution" but implementation uses full replace (D-47, intentionally locked for v1 simplicity)
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** Replace the current full-replace import strategy (D-47) with a proper merge: when importing a backup, compare incoming records with existing DB records by ID and timestamp, keep the most-recently-updated version of each record (last-write-wins), and append any records not present locally. History entries merge by union rather than replace.
+
+**Why:** Full replace is safe for the single-device case but breaks down with two active household members — if both add medicines between syncs, the later importer silently loses all records added by the first. Merge-based sync preserves all additions while still resolving conflicts deterministically.
+
+**Open questions when this gets planned:**
+
+- Should conflict resolution be automatic (last-write-wins by `updatedAt`) or user-facing (show a diff and let the user pick)?
+- How are deletions handled — does a `deletedAt` on one side propagate to the other?
+- Should history entries be deduplicated by ID, or always unioned (duplicate actions are visible but harmless)?
+- What is the migration path for existing backups created with the full-replace schema?
+
+**Implementation notes:**
+
+- `importFromJSON` in `dataOps.ts` needs a new `merge` mode alongside the existing `replace` mode
+- BackupSchema already captures `deletedAt` and `updatedAt` — no schema changes needed
+- UI: ImportJSONSection AlertDialog needs to differentiate between "Replace all" and "Merge" modes
+- ROADMAP.md SC-2 wording should be updated when this is delivered
