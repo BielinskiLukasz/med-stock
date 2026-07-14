@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-15 (B-004, B-005 added after Phase 3 UAT — CSV column auto-mapping + mapper column headers)
-Last assigned ID: **B-005** — next new item must be **B-006**
+Last updated: 2026-07-15 (B-006–B-009 added — audit log, batch creation, custom categories, iOS home screen prompt)
+Last assigned ID: **B-009** — next new item must be **B-010**
 
 ---
 
@@ -139,3 +139,106 @@ Last assigned ID: **B-005** — next new item must be **B-006**
 - Left cell: `<span className="text-xs font-semibold text-muted-foreground w-1/2 shrink-0">Your file column</span>`
 - Right cell: `<span className="text-xs font-semibold text-muted-foreground w-full">App field</span>`
 - No logic changes; purely presentational
+
+---
+
+### B-006 · Per-Medicine Change History / Audit Log
+
+**Source:** product planning — Phase 2 scope candidate
+**Status:** captured · not scheduled
+**Earliest sensible slot:** Phase 2 (Search, Dashboard & Audit)
+
+**What:** Each medicine record carries a timestamped log of every change made to it — creation, edits (with before/after values), status transitions (active → expired, active → used-up), and deletions. A user can tap into a medicine and see its full history.
+
+**Why:** Without a history, it is impossible to know when a medicine was opened, when it was marked used-up, or what value was changed and by whom. This is especially useful in a household where two people manage the same inventory and need to understand each other's actions without coordinating in real time.
+
+**Open questions when this gets planned:**
+
+- How many history entries to retain per medicine — all, or capped (e.g., last 50)?
+- Should history entries survive a full-replace sync import (B-003 merge question)?
+- UI surface: inline collapsible panel on the medicine detail view, or a separate history drawer?
+- Should system-generated events (e.g., status auto-expired at expiry date) be logged alongside user-initiated events?
+
+**Implementation notes:**
+
+- Dexie schema: add a `history` table keyed by `medicineId` + `timestamp`; each row stores `field`, `oldValue`, `newValue`, `action` (`created | edited | status_changed | deleted`), `timestamp`
+- All write operations in `db.ts` (add, update, delete) must write a corresponding history row in the same transaction
+- MedicineDetailView gains a "History" tab or expandable section rendering the log newest-first
+- Export/import schema must include history entries to survive sync
+
+---
+
+### B-007 · Batch Medicine Creation
+
+**Source:** product planning — v2 scope candidate
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** Allow the user to add multiple packages of the same medicine in one operation — for example, adding 3 identical boxes of Ibuprofen 400mg all at once by specifying a count rather than repeating the add-medicine form three times.
+
+**Why:** Users restocking from a shopping trip often buy 2–3 packages of the same item. Today they must submit the form once per package, which is repetitive and error-prone (easy to miss one or introduce small typos across duplicates).
+
+**Open questions when this gets planned:**
+
+- Should all copies be identical (same expiry date) or should the user be prompted for different expiry dates per copy?
+- Maximum batch size to prevent accidental data explosion?
+- Should batch copies get distinct IDs immediately, or be grouped under a parent record?
+
+**Implementation notes:**
+
+- Add a "Quantity to add" spinner (default 1) to the bottom of `AddMedicineForm`
+- On submit, loop `quantity` times and call `db.medicines.add(...)` in a Dexie transaction
+- No changes to the medicine data model; each copy is an independent record
+
+---
+
+### B-008 · Custom Categories
+
+**Source:** product planning — v2 scope candidate
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** Let users define their own medicine categories in addition to (or replacing) the built-in list. A settings screen lists existing categories and allows adding, renaming, and deleting them.
+
+**Why:** The built-in category list reflects a generic household medicine cabinet. Families with specific needs (e.g., veterinary medicines, sports supplements, baby products) cannot organise their inventory accurately with fixed categories, which reduces the value of filtering and dashboard grouping.
+
+**Open questions when this gets planned:**
+
+- Are built-in categories locked (protected from deletion) or can the user fully replace them?
+- What happens to existing medicines whose category is deleted — reset to "Other", or keep the orphaned string?
+- Should custom categories be included in JSON export/import so they survive a device switch?
+- Is a drag-to-reorder list needed for category display order in filters and forms?
+
+**Implementation notes:**
+
+- New Dexie table `categories` with `id`, `name`, `isBuiltIn`, `sortOrder`
+- Seed the table on first run with the current hardcoded list marked `isBuiltIn: true`
+- Category dropdowns in `AddMedicineForm` / `EditMedicineForm` / filter UI read from Dexie instead of a static array
+- Settings screen: `CategoriesSettings.tsx` — list with add/rename/delete actions; block delete if `isBuiltIn` or if medicines reference the category
+- BackupSchema must include the `categories` table
+
+---
+
+### B-009 · In-App iOS "Add to Home Screen" Guidance Prompt
+
+**Source:** product planning — v2 scope candidate
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** On iOS Safari, display a contextual banner or bottom-sheet the first time the user opens the app in a browser (not already installed as a PWA), guiding them to tap the Share icon → "Add to Home Screen". Dismiss state is persisted so the prompt never re-appears after the user acts or dismisses.
+
+**Why:** iOS Safari does not support the `beforeinstallprompt` Web API, so the standard PWA install button cannot be shown. Without a prompt, iOS users are unlikely to discover the install path on their own, which means they miss offline capability and the full-screen experience. A one-time nudge closes this gap.
+
+**Open questions when this gets planned:**
+
+- Detection: use `navigator.standalone === false && /iPhone|iPad|iPod/.test(navigator.userAgent)` — is this reliable enough?
+- How long to wait before showing the prompt — immediately on first load, or after the first meaningful interaction (e.g., first medicine added)?
+- Design: bottom sheet with screenshot of the Share icon, or a slim dismissible banner?
+- Should the prompt also appear on Android when the native install prompt is unavailable (e.g., already dismissed by the OS)?
+
+**Implementation notes:**
+
+- New component `InstallPromptBanner.tsx` rendered in `App.tsx` above the main layout
+- Use `localStorage` key `installPromptDismissed` to suppress after user dismisses or after 7 days
+- iOS detection guard: only render on iOS Safari in non-standalone mode
+- No service-worker or manifest changes needed — this is purely a UI nudge
