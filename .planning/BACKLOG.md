@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-13 (B-002, B-003 added after Phase 3 verification — DATA-04 interactive sync flow + proper merge-based sync)
-Last assigned ID: **B-003** — next new item must be **B-004**
+Last updated: 2026-07-15 (B-004, B-005 added after Phase 3 UAT — CSV column auto-mapping + mapper column headers)
+Last assigned ID: **B-005** — next new item must be **B-006**
 
 ---
 
@@ -98,3 +98,44 @@ Last assigned ID: **B-003** — next new item must be **B-004**
 - BackupSchema already captures `deletedAt` and `updatedAt` — no schema changes needed
 - UI: ImportJSONSection AlertDialog needs to differentiate between "Replace all" and "Merge" modes
 - ROADMAP.md SC-2 wording should be updated when this is delivered
+
+---
+
+### B-004 · CSV Column Auto-Mapping by Name
+
+**Source:** Phase 3 UAT — Test 8 (G-01), reported 2026-07-15
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available patch or Phase 4
+
+**What:** When a CSV file is parsed, pre-select each dropdown in the column-mapping UI to the matching medicine field when the CSV column header exactly matches a field name (case-insensitive). Columns with no match default to `(skip)` as today.
+
+**Why:** Users uploading a well-formed CSV (e.g., exported from MedStock itself or from a spreadsheet that follows the field names) must manually map every column even when the names are identical. Auto-mapping eliminates this friction entirely.
+
+**Open questions when this gets planned:**
+
+- Case-insensitive match only, or also fuzzy (e.g., "Expiry Date" → `expiryDate`)?
+- Should a pre-mapped column be visually distinguished (e.g., light background) so the user can spot and override auto-matches?
+
+**Implementation notes:**
+
+- `ImportCSVSection.tsx` line 41: change `initialMapping[h] = SKIP_VALUE` to check `if (MEDICINE_FIELDS.includes(h.toLowerCase())) initialMapping[h] = h.toLowerCase(); else initialMapping[h] = SKIP_VALUE`
+- No changes needed to `csvOps.ts`, `CSVColumnMapper.tsx`, or `CSVPreview.tsx`
+
+---
+
+### B-005 · CSV Mapper Column Header Labels
+
+**Source:** Phase 3 UAT — Test 8 (G-02), reported 2026-07-15
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available patch or alongside B-004
+
+**What:** Add a header row above the column-mapping list in `CSVColumnMapper.tsx` that labels the two sides: "Your file column" on the left and "App field" on the right. This makes the mapping direction immediately obvious without needing to read surrounding text.
+
+**Why:** During UAT the user found the two-column layout confusing — it was unclear which side was the CSV source and which was the medicine field target. A simple header row resolves this without changing any logic.
+
+**Implementation notes:**
+
+- Add a `<div className="flex items-center gap-3 ...">` header row before the `headers.map(...)` block in `CSVColumnMapper.tsx`
+- Left cell: `<span className="text-xs font-semibold text-muted-foreground w-1/2 shrink-0">Your file column</span>`
+- Right cell: `<span className="text-xs font-semibold text-muted-foreground w-full">App field</span>`
+- No logic changes; purely presentational
