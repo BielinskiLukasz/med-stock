@@ -2,7 +2,7 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-15 (B-006–B-009 added — audit log, batch creation, custom categories, iOS home screen prompt)
+Last updated: 2026-07-19 (B-002, B-003 marked deferred to v1.1 — v1.0 shipped with gaps, Option B decision)
 Last assigned ID: **B-009** — next new item must be **B-010**
 
 ---
@@ -53,8 +53,8 @@ Last assigned ID: **B-009** — next new item must be **B-010**
 ### B-002 · Interactive Guided Sync Flow (DATA-04 Enhancement)
 
 **Source:** Phase 3 verification — DATA-04 requirement left open; D-44 locked delivery as static text-only instructions
-**Status:** captured · not scheduled
-**Earliest sensible slot:** v2.0 milestone or a later Phase 4 iteration
+**Status:** captured · deferred to v1.1 — v1.0 shipped with static instructions only (Option B decision, 2026-07-19)
+**Earliest sensible slot:** v1.1 milestone
 
 **What:** Upgrade the "Sync with household" section from static instructional text to an interactive guided flow. Users tap through steps with context-aware prompts (e.g., detect if a backup was recently exported, surface a direct "Go to Files" deep link, guide the receiving device through importing).
 
@@ -78,8 +78,8 @@ Last assigned ID: **B-009** — next new item must be **B-010**
 ### B-003 · Merge-Based Sync (Replace Full-Replace with Last-Write-Wins)
 
 **Source:** Phase 3 verification — ROADMAP SC-2 described "merged with last-write-wins conflict resolution" but implementation uses full replace (D-47, intentionally locked for v1 simplicity)
-**Status:** captured · not scheduled
-**Earliest sensible slot:** v2.0 milestone
+**Status:** captured · deferred to v1.1 — v1.0 shipped with full-replace gap (Option B decision, 2026-07-19)
+**Earliest sensible slot:** v1.1 milestone
 
 **What:** Replace the current full-replace import strategy (D-47) with a proper merge: when importing a backup, compare incoming records with existing DB records by ID and timestamp, keep the most-recently-updated version of each record (last-write-wins), and append any records not present locally. History entries merge by union rather than replace.
 
