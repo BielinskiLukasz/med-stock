@@ -8,40 +8,26 @@ MedStock is a privacy-first Progressive Web App for managing a household medicin
 
 At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
 
+## Current State
+
+**v1.0 shipped** — 2026-07-13
+
+The full household medicine inventory app is working and installable. A user can install it on any device, add medicines with automatic expiry tracking, search by name from a pharmacy, filter/sort by status or location, see a dashboard of expiry alerts, restore from Trash, export/import JSON backups, and bulk-import from CSV. 33 of 35 requirements satisfied.
+
+Known gaps carried to v1.1: interactive Sync Now flow (B-002), JSON import merge strategy (B-003), CSV auto-mapping (B-004).
+
+## Next Milestone Goals (v1.1)
+
+To be defined via `/gsd-new-milestone`. Candidates from backlog:
+- B-002: DATA-04 — Interactive guided Sync Now flow
+- B-003: DATA-02 — JSON import with last-write-wins merge
+- B-004: CSV column header auto-mapping
+- B-005: CSV column mapper header labels
+
 ## Requirements
 
-### Validated
-
-(None yet — ship to validate)
-
-### Active
-
-- [ ] User can search medicines by name and instantly see stock + validity status
-- [ ] User can add a medicine package with name, category, location, expiration date, opened date, quantity, and notes
-- [ ] User can edit and delete medicine packages (soft delete to Trash Bin)
-- [ ] User can restore or permanently delete items from Trash Bin
-- [ ] User can add multiple packages of the same medicine in one flow (batch creation)
-- [ ] App automatically calculates validity based on expiration date, opened date, and period-after-opening
-- [ ] App displays medicines with status: Active, Opened, Expired, Used Up, Disposed, Archived
-- [ ] User can filter and sort the medicine list by category, location, and status
-- [ ] Dashboard shows total count, expired count, expiring-soon count, exceeded-open-period count, and recently added
-- [ ] Every change to a medicine record is stored in a history log
-- [ ] User can manage predefined and custom locations and categories
-- [ ] User can export full inventory as JSON backup
-- [ ] User can import inventory from JSON backup (restore)
-- [ ] User can import initial inventory from CSV file with column mapping
-- [ ] User can manually sync inventory with a shared OneDrive folder (export + import flow)
-- [ ] App works fully offline as an installable PWA on Android, iOS, Windows, macOS, Linux
-
-### Out of Scope
-
-- Photo capture and storage — deferred to v2; adds complexity without changing core value
-- OCR (expiration date, medicine name, barcode) — strictly deferred; v1 is manual data entry
-- Automatic background sync — manual "Sync Now" is sufficient for MVP
-- Medication reminders and adherence tracking — different product category; MedStock is inventory, not scheduling
-- Household user profiles — future; current model is a shared inventory per device
-- Drug interaction information — out of scope; requires maintained medical database
-- Multiple photos per package — deferred with photo feature
+v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](.planning/milestones/v1.0-REQUIREMENTS.md).  
+Next milestone requirements defined via `/gsd-new-milestone`.
 
 ## Context
 
@@ -65,12 +51,14 @@ At a glance, from anywhere, know whether you already have a valid medicine — s
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Local-first with IndexedDB | Privacy, offline support, no server costs | — Pending |
-| OneDrive sync via manual JSON export/import | Simplest cross-device family sharing without a backend | — Pending |
-| Each physical package is a separate record | Enables per-package expiry and location tracking; batch creation handles the UX | — Pending |
-| No photos in v1 | Reduces scope; doesn't affect core value of knowing what you have and whether it's valid | — Pending |
-| PWA over native app | Cross-platform coverage (Android, iOS, Windows, macOS, Linux) with one codebase | — Pending |
-| Soft delete (Trash Bin) | Preserves history; prevents accidental permanent data loss | — Pending |
+| Local-first with IndexedDB | Privacy, offline support, no server costs | Validated — Dexie.js v4, all data local, 69 tests pass |
+| OneDrive sync via manual JSON export/import | Simplest cross-device family sharing without a backend | Partially validated — export/import works; interactive flow deferred to v1.1 |
+| Each physical package is a separate record | Enables per-package expiry and location tracking; batch creation handles the UX | Validated — MedicineForm handles single add; batch deferred to v2 |
+| No photos in v1 | Reduces scope; doesn't affect core value of knowing what you have and whether it's valid | Validated — out of scope confirmed |
+| PWA over native app | Cross-platform coverage (Android, iOS, Windows, macOS, Linux) with one codebase | Validated — installable on all platforms |
+| Soft delete (Trash Bin) | Preserves history; prevents accidental permanent data loss | Validated — TrashBin + historyOps fully operational |
+| JSON import as full replace (D-47) | Simpler implementation for MVP | Gap identified in UAT — merge was the intent; deferred to v1.1 B-003 |
+| Two-step query+memo pattern | Dexie reactivity + Zustand filter state changes are separate concerns | Validated — prevents unnecessary DB re-reads on filter click |
 
 ## Evolution
 
@@ -90,4 +78,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-29 after initialization*
+*Last updated: 2026-07-19 — v1.0 milestone completion*
