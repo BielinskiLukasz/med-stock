@@ -15,6 +15,8 @@ export function SearchBar({
   return (
     <div className="relative flex items-center">
       <Input
+        id="medicine-search"
+        name="medicine-search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
