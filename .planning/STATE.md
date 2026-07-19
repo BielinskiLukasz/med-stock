@@ -1,105 +1,51 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: milestone
-current_phase: 02
-current_phase_name: search-dashboard-audit
-status: complete
-stopped_at: Phase 2 UAT complete — all 15 tests passed (1 gap found and fixed: ExceededOpenPeriod distinct status)
-last_updated: "2026-07-05T00:00:00.000Z"
-last_activity: 2026-07-05
-last_activity_desc: Phase 02 UAT complete — ready for Phase 3 planning
+current_phase: null
+current_phase_name: null
+status: idle
+stopped_at: v1.0 milestone complete — awaiting v1.1 kickoff
+last_updated: "2026-07-19T00:00:00Z"
+last_activity: 2026-07-19
+last_activity_desc: v1.0 milestone archived
 progress:
-  total_phases: 3
-  completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
-  percent: 67
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-06-29)
+See: .planning/PROJECT.md (updated 2026-07-19)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 02 — search-dashboard-audit
+**Current focus:** v1.1 — awaiting requirements definition
 
 ## Current Position
 
-Phase: 02 (search-dashboard-audit) — EXECUTING
-Plan: 2 of 4
-Status: Ready to execute
-Last activity: 2026-06-30 — Phase 02 execution started
+v1.0 complete and archived on 2026-07-19.  
+No active phase.
 
-Progress: [░░░░░░░░░░] 0%
+To start v1.1: run `/gsd-new-milestone`
 
-## Performance Metrics
+## v1.0 Summary
 
-**Velocity:**
-
-- Total plans completed: 4
-- Average duration: -
-- Total execution time: 0 hours
-
-**By Phase:**
-
-| Phase | Plans | Total | Avg/Plan |
-|-------|-------|-------|----------|
-| 01 | 4 | - | - |
-
-**Recent Trend:**
-
-- Last 5 plans: -
-- Trend: -
-
-*Updated after each plan completion*
-| Phase 01 P02 | 9min | 2 tasks | 2 files |
-| Phase 01 P03 | 35min | 2 tasks | 14 files |
-| Phase 02 P02 | 29min | 2 tasks | 10 files |
-| Phase 02 P03 | 6min | 2 tasks | 2 files |
-| Phase 02 P04 | 20min | 2 tasks | 6 files |
-
-## Accumulated Context
-
-### Decisions
-
-Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
-
-- Roadmap: Stack is Vite + React 18 + TypeScript + Dexie.js 4 + Zustand + shadcn/ui + Tailwind + React Hook Form + Zod + vite-plugin-pwa
-- Roadmap: All dates stored as YYYY-MM-DD strings (timezone safety for expiry calculations)
-- Roadmap: Persistent storage request on first launch is mandatory (iOS Safari 7-day eviction risk)
-- Roadmap: Phase 3 (OneDrive sync) — plan a short testing spike for iOS Safari standalone File Picker behavior before committing to approach
-- [Phase ?]: .planning/phases/01-pwa-foundation-inventory-crud/01-02-SUMMARY.md
-- [Phase ?]: NULL_SENTINEL='__NULL__' pattern in Radix Select for nullable location/category (D-17 compliance)
-- [Phase ?]: calculateStatus() called inside MedicineCard — status co-located with display, card owns calculation (D-11/D-12)
-- [Phase ?]: Zustand v5 uses useShallow(selector) wrapper instead of useStore(selector, shallow) — second-arg API removed in v5
-- [Phase ?]: shadcn Sheet CLI placed files in wrong @/ directory — created manually via @radix-ui/react-dialog
-- [Phase ?]: Two-step query+memo: useLiveQuery for DB reactivity, useMemo for Zustand filter state changes
-- [Phase ?]: calculateStatus() inside useLiveQuery for Dashboard (Pattern 9): updates on DB change not timer ticks
-- [Phase ?]: DashboardCard interactive prop: false renders div (Total), true renders button (alert cards)
-- [Phase ?]: softDeleteMedicine() replaces Phase 1 manualStatus='Disposed' delete — deletedAt set, medicine moves to Trash (D-25)
-- [Phase ?]: TrashScreen toCollection().filter(m => m.deletedAt !== null) — null is not a valid IndexedDB key (Pitfall 1)
-- [Phase ?]: permanentDeleteMedicine preserves history entries forever — T-02-07 mitigated, D-38 compliance confirmed
-
-### Pending Todos
-
-None yet.
-
-### Blockers/Concerns
-
-- Phase 3: OneDrive File Picker API behavior in standalone PWA on iOS Safari is unverified — plan device test spike before Phase 3 execution
+- Timeline: 2026-06-29 → 2026-07-13 (20 days)
+- 3 phases · 12 plans · 121 commits · 152 files
+- Requirements: 33/35 satisfied
+- Gaps deferred to v1.1: B-002 (DATA-04), B-003 (DATA-02 merge), B-004 (CSV auto-map), B-005 (CSV labels)
+- Archive: .planning/milestones/v1.0-ROADMAP.md
 
 ## Deferred Items
 
-| Category | Item | Status | Deferred At |
-|----------|------|--------|-------------|
-| *(none)* | | | |
-
-## Session Continuity
-
-Last session: 2026-07-04T22:45:04.326Z
-Stopped at: Phase 2 Plan 02-04 complete — Trash Bin + Change History wired
-Resume file: None
+| Backlog | Category | Item | Phase |
+|---------|----------|------|-------|
+| B-002 | gap | Interactive "Sync Now" triggered flow (DATA-04) | v1.1 |
+| B-003 | gap | JSON import last-write-wins merge (DATA-02) | v1.1 |
+| B-004 | major | CSV column auto-mapping by header name | v1.1 |
+| B-005 | cosmetic | CSV column mapper header labels | v1.1 |

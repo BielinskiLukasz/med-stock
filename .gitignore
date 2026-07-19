@@ -1,3 +1,8 @@
+# Local data files (root-level only)
+/data/
+# Allow src/routes/data/ source directory
+!src/routes/data/
+
 # Logs
 logs
 *.log
@@ -22,9 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# plan.md — local plan file (one-time Markdown-converted in Phase 5)
-plan.md
 
 # Per-developer Claude Code permission overrides — never commit personal allows.
 .claude/settings.local.json
