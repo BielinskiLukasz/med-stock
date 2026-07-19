@@ -1,7 +1,7 @@
 # MedStock
 
-![Status](https://img.shields.io/badge/status-early_development-orange)
-![Version](https://img.shields.io/badge/version-0.1.0-blue)
+![Status](https://img.shields.io/badge/status-v1.0_complete-brightgreen)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.4-3178C6?logo=typescript&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-offline--first-5A0FC8?logo=pwa&logoColor=white)
@@ -10,7 +10,7 @@
 A privacy-first Progressive Web App for managing a household medicine inventory.  
 No backend. No accounts. No cloud. Works fully offline on any device.
 
-> **Status:** Early development — planning complete, implementation starting.
+> **Status:** v1.0 shipped (2026-07-13) — all three phases complete. Active development continues on v1.1.
 
 ---
 
@@ -23,8 +23,6 @@ Two people in a household buy medicines independently. Stock accumulates across 
 ---
 
 ## Features
-
-> Features below reflect the planned v1 scope. The app is under active development.
 
 ### Phase 1 — PWA Foundation & Inventory CRUD
 - Add medicine packages with name, category, location, expiry date, opened date, period-after-opening, quantity, and notes
@@ -43,9 +41,9 @@ Two people in a household buy medicines independently. Stock accumulates across 
 
 ### Phase 3 — Data & Household Sync
 - Export full inventory as a single JSON backup file
-- Import JSON backup with last-write-wins merge and schema validation
+- Import JSON backup with schema validation
 - CSV bulk import with interactive column mapping and preview
-- Guided "Sync Now" flow for sharing inventory between two devices via a shared OneDrive folder
+- Step-by-step "Sync Now" guide for sharing inventory between devices via a shared OneDrive folder
 
 ---
 
@@ -119,17 +117,25 @@ med-stock/
 ├── public/               # Static assets and PWA icons
 ├── src/
 │   ├── components/       # Reusable UI components (shadcn/ui + custom)
-│   ├── db/               # Dexie.js schema and database instance
+│   │   └── ui/           # shadcn/ui primitives (Button, Input, Select, …)
+│   ├── routes/           # Top-level route/screen components
+│   │   ├── dashboard/    # Dashboard screen
+│   │   ├── medicines/    # Medicine list, detail, add/edit screens
+│   │   ├── locations/    # Location management screen
+│   │   ├── trash/        # Trash Bin screen
+│   │   └── data/         # Import / Export / Sync screen
 │   ├── stores/           # Zustand state stores
-│   ├── pages/            # Top-level route/page components
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Utility functions and helpers
+│   ├── lib/              # Business logic and database helpers
+│   │   ├── db.ts         # Dexie.js schema and database instance
+│   │   ├── expiry.ts     # Validity status calculation
+│   │   ├── historyOps.ts # Change-history writes and reads
+│   │   ├── locationOps.ts# Location CRUD helpers
+│   │   ├── dataOps.ts    # JSON export / import
+│   │   └── csvOps.ts     # CSV parse and column-mapping logic
 │   └── types/            # Shared TypeScript type definitions
 ├── vite.config.ts        # Vite + PWA plugin configuration
 └── tsconfig.json         # TypeScript configuration (strict mode)
 ```
-
-> The structure above reflects planned conventions. It will be populated as Phase 1 is implemented.
 
 ---
 
@@ -137,9 +143,10 @@ med-stock/
 
 | Phase | Goal | Status |
 |-------|------|--------|
-| 1 — PWA Foundation & Inventory CRUD | Installable offline app with full add/edit/delete and expiry calculation | In planning |
-| 2 — Search, Dashboard & Audit | Pharmacy-use-case search, expiry dashboard, trash bin, change history | Not started |
-| 3 — Data & Household Sync | JSON backup, CSV import, OneDrive shared-folder sync flow | Not started |
+| 1 — PWA Foundation & Inventory CRUD | Installable offline app with full add/edit/delete and expiry calculation | Complete |
+| 2 — Search, Dashboard & Audit | Pharmacy-use-case search, expiry dashboard, trash bin, change history | Complete |
+| 3 — Data & Household Sync | JSON backup, CSV import, OneDrive shared-folder sync flow | Complete |
+| v1.1 | Last-write-wins JSON merge, interactive sync flow, CSV auto-mapping | Backlog |
 
 ---
 
