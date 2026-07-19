@@ -107,7 +107,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Name *</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Ibuprofen 400mg" {...field} />
+                <Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -137,6 +137,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Category</FormLabel>
               <Select
+                name={field.name}
                 value={field.value ?? NULL_SENTINEL}
                 onValueChange={(val) =>
                   field.onChange(val === NULL_SENTINEL ? null : val)
@@ -169,6 +170,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Location</FormLabel>
               <Select
+                name={field.name}
                 value={field.value ?? NULL_SENTINEL}
                 onValueChange={(val) => {
                   if (val === '__ADD_NEW__') {
@@ -203,6 +205,7 @@ export function MedicineForm({
                 <div className="flex gap-2 mt-2">
                   <Input
                     placeholder="New location name"
+                    autoComplete="off"
                     value={newLocationInput}
                     onChange={(e) => setNewLocationInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -291,6 +294,7 @@ export function MedicineForm({
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <Select
+                    name={field.name}
                     value={field.value ?? NULL_SENTINEL}
                     onValueChange={(val) =>
                       field.onChange(
@@ -350,6 +354,7 @@ export function MedicineForm({
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <Select
+                    name={field.name}
                     value={field.value ?? NULL_SENTINEL}
                     onValueChange={(val) => {
                       if (val === '__CUSTOM__') {
