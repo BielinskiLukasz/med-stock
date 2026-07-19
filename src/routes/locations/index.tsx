@@ -78,6 +78,9 @@ export function LocationsScreen() {
       {showAddInput ? (
         <div className="flex gap-2 mb-4">
           <Input
+            id="new-location-name"
+            name="new-location-name"
+            autoComplete="off"
             value={addValue}
             onChange={(e) => setAddValue(e.target.value)}
             placeholder="Location name"
