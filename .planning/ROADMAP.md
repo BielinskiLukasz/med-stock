@@ -25,7 +25,7 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 
 ## Phases
 
-- [ ] **Phase 4: Database Migration & Schema v3** - Dexie schema redesign with catalog + stock tables, automatic data migration, updated mutation layer
+- [x] **Phase 4: Database Migration & Schema v3** - Dexie schema redesign with catalog + stock tables, automatic data migration, updated mutation layer (completed 2026-07-29)
 - [ ] **Phase 5: Stock & Catalog Management** - CRUD for stock entries and catalog entries, aggregated list view, detail view, two-step add flow
 - [ ] **Phase 6: Backup & Restore** - JSON export/import for new schema, backward compatibility with pre-v1.1 backups
 
@@ -49,7 +49,7 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 4. HistoryOps.ts updated to accept explicit medicineName parameter (Phase 5 callers provide name from catalog context)
 5. TypeScript interfaces (MedicineCatalog, Medicine) updated to match new schema; no `any` types in schema-related code
 
-**Plans**: 2/2 plans executed
+**Plans**: 2/2 plans complete
 
 Plans:
 
@@ -112,7 +112,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Database Migration & Schema v3 | 2/2 | In Progress|  |
+| 4. Database Migration & Schema v3 | 2/2 | Complete   | 2026-07-29 |
 | 5. Stock & Catalog Management | 0/TBD | Pending | - |
 | 6. Backup & Restore | 0/TBD | Pending | - |
 
