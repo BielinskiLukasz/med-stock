@@ -45,11 +45,15 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 
 1. Dexie schema v3 is defined with `medicine_catalog` table (id, name, category, form, notes, createdAt, updatedAt) and updated `medicines` table (id, catalogId FK, quantity, quantityUnit, expiryDate, openedDate, pao, location, manualStatus, notes, createdAt, updatedAt, deletedAt)
 2. On first open after upgrade, all existing v1.0 medicines are migrated — each unique medicine name becomes one catalog entry; each existing medicine row becomes one stock entry linked by catalogId
-3. Migration deduplicates by exact name match — multiple v1.0 rows with the same name produce a single catalog entry, with all stock instances preserved
-4. HistoryOps.ts updated to accept catalogId context and record stock-level mutations (add/update/delete stock entries)
+3. Migration deduplicates by case-insensitive + trimmed name match — multiple v1.0 rows with the same normalized name produce a single catalog entry, with all stock instances preserved
+4. HistoryOps.ts updated to accept explicit medicineName parameter (Phase 5 callers provide name from catalog context)
 5. TypeScript interfaces (MedicineCatalog, Medicine) updated to match new schema; no `any` types in schema-related code
 
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 04-01-PLAN.md — End-to-end v2→v3 migration tracer with deduplication + MedicineCatalog interface
+- [ ] 04-02-PLAN.md — Update historyOps mutation signatures for Phase 5 callers
 
 **UI hint**: no
 
@@ -107,9 +111,9 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Database Migration & Schema v3 | 0/TBD | Not started | - |
-| 5. Stock & Catalog Management | 0/TBD | Not started | - |
-| 6. Backup & Restore | 0/TBD | Not started | - |
+| 4. Database Migration & Schema v3 | 0/2 | Planning complete | 2026-07-28 |
+| 5. Stock & Catalog Management | 0/TBD | Pending | - |
+| 6. Backup & Restore | 0/TBD | Pending | - |
 
 ---
 
