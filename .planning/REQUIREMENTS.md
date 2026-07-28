@@ -48,31 +48,29 @@
 
 ## Traceability
 
-Phases TBD — populated by gsd-roadmapper in next step.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MIGR-01 | TBD | Pending |
-| MIGR-02 | TBD | Pending |
-| CAT-01 | TBD | Pending |
-| CAT-02 | TBD | Pending |
-| CAT-03 | TBD | Pending |
-| STOCK-01 | TBD | Pending |
-| STOCK-02 | TBD | Pending |
-| STOCK-03 | TBD | Pending |
-| STOCK-04 | TBD | Pending |
-| FLOW-01 | TBD | Pending |
-| FLOW-02 | TBD | Pending |
-| FLOW-03 | TBD | Pending |
-| DATA-01 | TBD | Pending |
-| DATA-02 | TBD | Pending |
-| DATA-03 | TBD | Pending |
+| MIGR-01 | 4 | Pending |
+| MIGR-02 | 4 | Pending |
+| CAT-01 | 5 | Pending |
+| CAT-02 | 5 | Pending |
+| CAT-03 | 5 | Pending |
+| STOCK-01 | 5 | Pending |
+| STOCK-02 | 5 | Pending |
+| STOCK-03 | 5 | Pending |
+| STOCK-04 | 5 | Pending |
+| FLOW-01 | 5 | Pending |
+| FLOW-02 | 5 | Pending |
+| FLOW-03 | 5 | Pending |
+| DATA-01 | 6 | Pending |
+| DATA-02 | 6 | Pending |
+| DATA-03 | 6 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 15 total
-- Mapped to phases: 0 (roadmap pending)
-- Unmapped: 15 ⚠️
+- Mapped to phases: 15 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-28*
-*Last updated: 2026-07-28 after initial definition*
+*Last updated: 2026-07-28 after roadmap creation*
