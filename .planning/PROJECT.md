@@ -16,18 +16,23 @@ The full household medicine inventory app is working and installable. A user can
 
 Known gaps carried to v1.1: interactive Sync Now flow (B-002), JSON import merge strategy (B-003), CSV auto-mapping (B-004).
 
-## Next Milestone Goals (v1.1)
+## Current Milestone: v1.1 Catalog + Stock Model
 
-To be defined via `/gsd-new-milestone`. Candidates from backlog:
-- B-002: DATA-04 — Interactive guided Sync Now flow
-- B-003: DATA-02 — JSON import with last-write-wins merge
-- B-004: CSV column header auto-mapping
-- B-005: CSV column mapper header labels
+**Goal:** Replace the flat medicines table with a two-layer catalog + stock model so users never re-enter medicine details when adding new boxes and can track quantities split across multiple locations.
+
+**Target features:**
+- `medicine_catalog` table: name, category, form, notes (the reusable template)
+- `medicines` becomes stock entries: quantity, expiryDate, location, catalogId
+- Two-step add flow: autocomplete from catalog → fill stock fields
+- Detail view: lists all stock entries per medicine
+- Split / Move flow: move N units from one location to another
+- Dexie v3 migration with deduplication by name
+- Backup / restore updated to include catalog table
 
 ## Requirements
 
 v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](.planning/milestones/v1.0-REQUIREMENTS.md).  
-Next milestone requirements defined via `/gsd-new-milestone`.
+v1.1 requirements defined at [REQUIREMENTS.md](.planning/REQUIREMENTS.md).
 
 ## Context
 
@@ -78,4 +83,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-19 — v1.0 milestone completion*
+*Last updated: 2026-07-28 — v1.1 milestone started (Catalog + Stock Model)*

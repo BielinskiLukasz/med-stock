@@ -1,14 +1,10 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.1
-milestone_name: milestone
-current_phase: null
-current_phase_name: null
-status: idle
-stopped_at: v1.0 milestone complete — awaiting v1.1 kickoff
-last_updated: "2026-07-19T00:00:00Z"
-last_activity: 2026-07-19
-last_activity_desc: v1.0 milestone archived
+milestone_name: Catalog + Stock Model
+status: planning
+last_updated: "2026-07-28T13:48:49.256Z"
+last_activity: 2026-07-28
 progress:
   total_phases: 0
   completed_phases: 0
@@ -28,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-07-19)
 
 ## Current Position
 
-v1.0 complete and archived on 2026-07-19.  
-No active phase.
-
-To start v1.1: run `/gsd-new-milestone`
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-07-28 — Milestone v1.1 started
 
 ## v1.0 Summary
 
