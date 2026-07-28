@@ -88,6 +88,7 @@ export function mergeCSVRowsToMedicines(
     }
 
     medicines.push({
+      catalogId: 0,  // Temporary; will be migrated to proper catalogs in Phase 5
       name: nameValue,
       category: categoryVal || null,
       location: locationVal || null,

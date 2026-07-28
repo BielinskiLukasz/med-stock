@@ -10,6 +10,7 @@ export function MedicineNew() {
     try {
       const now = new Date().toISOString()
       const newId = await db.medicines.add({
+        catalogId: 1,  // TODO: Phase 5 — use actual catalog selection
         name: data.name,
         expiryDate: data.expiryDate,
         category: data.category ?? null,

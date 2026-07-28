@@ -30,6 +30,7 @@ describe('deleteLocation', () => {
   it('deletes a custom location and sets affected medicines.location to null', async () => {
     const locId = await db.locations.add({ name: 'Living Room', isDefault: false })
     const med1Id = await db.medicines.add({
+      catalogId: 1,
       name: 'Med A',
       category: null,
       location: 'Living Room',
@@ -45,6 +46,7 @@ describe('deleteLocation', () => {
       deletedAt: null,
     })
     const med2Id = await db.medicines.add({
+      catalogId: 1,
       name: 'Med B',
       category: null,
       location: 'Living Room',
@@ -60,6 +62,7 @@ describe('deleteLocation', () => {
       deletedAt: null,
     })
     await db.medicines.add({
+      catalogId: 1,
       name: 'Med C',
       category: null,
       location: 'Kitchen',
@@ -95,6 +98,7 @@ describe('renameLocation', () => {
   it('renames a custom location and updates all medicines referencing the old name', async () => {
     const locId = await db.locations.add({ name: 'Bed Room', isDefault: false })
     const med1Id = await db.medicines.add({
+      catalogId: 1,
       name: 'Med A',
       category: null,
       location: 'Bed Room',
@@ -110,6 +114,7 @@ describe('renameLocation', () => {
       deletedAt: null,
     })
     const med2Id = await db.medicines.add({
+      catalogId: 1,
       name: 'Med B',
       category: null,
       location: 'Bed Room',

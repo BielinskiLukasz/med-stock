@@ -3,8 +3,27 @@ import { Dexie, type EntityTable } from 'dexie'
 export type PAO = { value: number; unit: 'days' | 'weeks' | 'months' }
 export type ManualStatus = 'UsedUp' | 'Disposed' | 'Archived' | null
 
+export const MedicineForm = {
+  Tablet: 'Tablet',
+  Capsule: 'Capsule',
+  Syrup: 'Syrup',
+  Cream: 'Cream',
+  Drops: 'Drops',
+  Spray: 'Spray',
+  Powder: 'Powder',
+  Gel: 'Gel',
+  Ointment: 'Ointment',
+  Patch: 'Patch',
+  Inhaler: 'Inhaler',
+  Suppository: 'Suppository',
+  Other: 'Other',
+} as const
+
+export type MedicineForm = typeof MedicineForm[keyof typeof MedicineForm]
+
 export interface Medicine {
   id: number
+  catalogId: number             // D-06: references medicine_catalog entry
   name: string
   category: string | null
   location: string | null       // null = "Other" (D-17); NEVER store 'Other' string
@@ -33,6 +52,16 @@ export interface Location {
   isDefault: boolean            // D-18: predefined locations cannot be renamed/deleted
 }
 
+export interface MedicineCatalog {
+  id: number
+  name: string                  // title-cased (D-02)
+  category: string | null       // most-common from stock entries during migration (D-04)
+  form: MedicineForm | null     // null for all migrated entries (D-11)
+  notes: string | null          // null for all migrated entries (D-05)
+  createdAt: string             // ISO timestamp
+  updatedAt: string             // ISO timestamp
+}
+
 // Phase 2: audit history (D-36, D-38)
 export interface HistoryEntry {
   id?: number
@@ -45,6 +74,7 @@ export interface HistoryEntry {
 
 const db = new Dexie('MedStockDB') as Dexie & {
   medicines: EntityTable<Medicine, 'id'>
+  medicine_catalog: EntityTable<MedicineCatalog, 'id'>
   locations: EntityTable<Location, 'id'>
   history:   EntityTable<HistoryEntry, 'id'>
 }
@@ -70,10 +100,92 @@ db.version(2)
     history:   '++id, medicineId, timestamp',
   })
   .upgrade(tx =>
-    tx.table('medicines').toCollection().modify((m: Medicine) => {
+    tx.table('medicines').toCollection().modify((m: any) => {
       m.deletedAt = null
+      // D-04 context: catalogId will be set in v3 upgrade; placeholder here
+      m.catalogId = 0  // temporary; v3 upgrade will set real catalogId
     })
   )
+
+db.version(3)
+  .stores({
+    medicines: '++id, catalogId, location, expiryDate, manualStatus',
+    medicine_catalog: '++id, name',
+    history: '++id, medicineId, timestamp',
+  })
+  .upgrade(tx => {
+    // Step 1: Read all v2 medicines
+    return tx.table('medicines').toCollection().toArray().then((medicines: any[]) => {
+      // Step 2: Deduplicate by normalized name (case-insensitive + trimmed)
+      const catalogMap: Map<string, {
+        medicines: any[]
+        categories: Map<string, number>
+      }> = new Map()
+
+      for (const med of medicines) {
+        const normalized = med.name.trim().toLowerCase()
+        if (!catalogMap.has(normalized)) {
+          catalogMap.set(normalized, { medicines: [], categories: new Map() })
+        }
+        const group = catalogMap.get(normalized)!
+        group.medicines.push(med)
+        const cat = med.category || null
+        group.categories.set(cat as string, (group.categories.get(cat as string) ?? 0) + 1)
+      }
+
+      // Step 3: Create catalog entries and map to stock IDs
+      const catalogEntries: MedicineCatalog[] = []
+      const medicineUpdates: { id: number, catalogId: number }[] = []
+      let nextCatalogId = 1
+
+      for (const [normalized, group] of catalogMap) {
+        // Title-case the name (D-02)
+        const titleCased = normalized
+          .split(/\s+/)
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ')
+
+        // Find most-common category (D-04)
+        let mostCommonCategory: string | null = null
+        let maxCount = 0
+        let lowestIdForTiebreak = Infinity
+
+        for (const [cat, count] of group.categories) {
+          if (count > maxCount || (count === maxCount && group.medicines.find(m => m.category === cat)?.id < lowestIdForTiebreak)) {
+            mostCommonCategory = cat
+            maxCount = count
+            lowestIdForTiebreak = group.medicines.find(m => m.category === cat)?.id ?? Infinity
+          }
+        }
+
+        // Create catalog entry
+        const now = new Date().toISOString()
+        catalogEntries.push({
+          id: nextCatalogId,
+          name: titleCased,
+          category: mostCommonCategory,
+          form: null,      // D-11: no heuristic inference
+          notes: null,     // D-05: migrated notes stay in stock entries
+          createdAt: now,
+          updatedAt: now,
+        })
+
+        // Create stock entry updates
+        for (const med of group.medicines) {
+          medicineUpdates.push({
+            id: med.id,
+            catalogId: nextCatalogId,
+          })
+        }
+
+        nextCatalogId++
+      }
+
+      // Step 4: Bulk insert catalog and update medicines
+      return tx.table('medicine_catalog').bulkAdd(catalogEntries)
+        .then(() => tx.table('medicines').bulkUpdate(medicineUpdates.map(m => ({ key: m.id, changes: { catalogId: m.catalogId } }))))
+    })
+  })
 
 // Seed predefined locations on first open (D-18, LOC-01)
 db.on('populate', async () => {

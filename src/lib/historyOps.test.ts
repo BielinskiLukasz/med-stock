@@ -12,6 +12,7 @@ import {
 } from '@/lib/historyOps'
 
 const baseMedicine: Omit<Medicine, 'id'> = {
+  catalogId: 1,  // Will be updated in migration tests
   name: 'Ibuprofen',
   category: 'Painkiller',
   location: 'Bathroom Cabinet',
@@ -195,5 +196,138 @@ describe('addMedicineHistory', () => {
     expect(entries[0].action).toBe('created')
     expect(entries[0].changedFields).toEqual([])
     expect(entries[0].medicineName).toBe('Ibuprofen')
+  })
+})
+
+describe('v2→v3 migration', () => {
+  // Helper function to simulate the migration logic
+  async function simulateMigration() {
+    // Read all v2 medicines (currently all with catalogId=0)
+    const medicines = await db.medicines.toArray() as any[]
+
+    // Deduplicate by normalized name (case-insensitive + trimmed)
+    const catalogMap: Map<string, {
+      medicines: any[]
+      categories: Map<string, number>
+    }> = new Map()
+
+    for (const med of medicines) {
+      const normalized = med.name.trim().toLowerCase()
+      if (!catalogMap.has(normalized)) {
+        catalogMap.set(normalized, { medicines: [], categories: new Map() })
+      }
+      const group = catalogMap.get(normalized)!
+      group.medicines.push(med)
+      const cat = med.category || null
+      group.categories.set(cat as string, (group.categories.get(cat as string) ?? 0) + 1)
+    }
+
+    // Create catalog entries and map to stock IDs
+    const catalogEntries: any[] = []
+    const medicineUpdates: { id: number, catalogId: number }[] = []
+    let nextCatalogId = 1
+
+    for (const [normalized, group] of catalogMap) {
+      // Title-case the name (D-02)
+      const titleCased = normalized
+        .split(/\s+/)
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+
+      // Find most-common category (D-04)
+      let mostCommonCategory: string | null = null
+      let maxCount = 0
+      let lowestIdForTiebreak = Infinity
+
+      for (const [cat, count] of group.categories) {
+        if (count > maxCount || (count === maxCount && group.medicines.find(m => m.category === cat)?.id < lowestIdForTiebreak)) {
+          mostCommonCategory = cat
+          maxCount = count
+          lowestIdForTiebreak = group.medicines.find(m => m.category === cat)?.id ?? Infinity
+        }
+      }
+
+      // Create catalog entry
+      const now = new Date().toISOString()
+      catalogEntries.push({
+        id: nextCatalogId,
+        name: titleCased,
+        category: mostCommonCategory,
+        form: null,      // D-11: no heuristic inference
+        notes: null,     // D-05: migrated notes stay in stock entries
+        createdAt: now,
+        updatedAt: now,
+      })
+
+      // Create stock entry updates
+      for (const med of group.medicines) {
+        medicineUpdates.push({
+          id: med.id,
+          catalogId: nextCatalogId,
+        })
+      }
+
+      nextCatalogId++
+    }
+
+    // Bulk insert catalog and update medicines
+    await db.medicine_catalog.bulkAdd(catalogEntries)
+    await db.medicines.bulkUpdate(medicineUpdates.map(m => ({ key: m.id, changes: { catalogId: m.catalogId } })))
+  }
+
+  it('deduplicates by case-insensitive name and creates one catalog entry', async () => {
+    // Add 4 medicines: "Paracetamol" variants and "IBUPROFEN"
+    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Paracetamol', category: 'Painkiller', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 2, name: 'paracetamol', category: 'Painkiller', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 3, name: ' Paracetamol ', category: 'Painkiller', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 4, name: 'IBUPROFEN', category: 'Painkiller', catalogId: 0 })
+
+    // Run the migration logic
+    await simulateMigration()
+
+    // Verify results
+    const catalogCount = await db.medicine_catalog.count()
+    expect(catalogCount).toBe(2)
+
+    // Check catalog entries are title-cased
+    const catalogs = await db.medicine_catalog.toArray()
+    const paracetamolCatalog = catalogs.find(c => c.name === 'Paracetamol')
+    const ibuprofenCatalog = catalogs.find(c => c.name === 'Ibuprofen')
+    expect(paracetamolCatalog).toBeDefined()
+    expect(ibuprofenCatalog).toBeDefined()
+
+    // Check all medicines point to correct catalogs
+    const medicines = await db.medicines.toArray() as any[]
+    expect(medicines.filter(m => m.catalogId === paracetamolCatalog!.id)).toHaveLength(3)
+    expect(medicines.filter(m => m.catalogId === ibuprofenCatalog!.id)).toHaveLength(1)
+  })
+
+  it('resolves category conflicts to most-common category', async () => {
+    // Add 3 medicines with same normalized name but different categories
+    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Aspirin', category: 'Painkiller', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 2, name: 'aspirin', category: 'Fever', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 3, name: 'ASPIRIN', category: 'Painkiller', catalogId: 0 })
+
+    // Run the migration logic
+    await simulateMigration()
+
+    // Verify catalog has most-common category
+    const catalogs = await db.medicine_catalog.toArray()
+    expect(catalogs).toHaveLength(1)
+    expect(catalogs[0].category).toBe('Painkiller')
+  })
+
+  it('tiebreaks by lowest id when categories equally frequent', async () => {
+    // Add 2 medicines with same normalized name but different categories
+    await db.medicines.add({ ...baseMedicine, id: 5, name: 'Vitamin C', category: 'Vitamin', catalogId: 0 })
+    await db.medicines.add({ ...baseMedicine, id: 6, name: 'vitamin c', category: 'Supplement', catalogId: 0 })
+
+    // Run the migration logic
+    await simulateMigration()
+
+    // Verify catalog uses category from lowest id (id=5)
+    const catalogs = await db.medicine_catalog.toArray()
+    expect(catalogs).toHaveLength(1)
+    expect(catalogs[0].category).toBe('Vitamin')
   })
 })

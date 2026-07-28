@@ -6,6 +6,7 @@ import type { Medicine } from './db'
 function makeMed(overrides: Partial<Medicine> = {}): Medicine {
   return {
     id: 1,
+    catalogId: 1,
     name: 'Test Medicine',
     category: null,
     location: null,

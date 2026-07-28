@@ -10,6 +10,7 @@ export const BackupSchema = z.object({
   medicines: z.array(
     z.object({
       id: z.number(),
+      catalogId: z.number().optional(),  // Optional for v1.0 compatibility; set during migration
       name: z.string(),
       category: z.string().nullable(),
       location: z.string().nullable(),
@@ -89,16 +90,24 @@ export async function exportToJSON(): Promise<void> {
 // Uses a single 3-table Dexie transaction (D-47 — atomic, all-or-nothing).
 // NOTE: Zod validation is the CALLER'S responsibility. This function accepts
 // already-validated BackupData and does not validate internally.
+// For v1.0 imports (without catalogId), assigns temporary catalogId=0 (will be
+// migrated to proper catalogs in a later phase).
 
 export async function importFromJSON(
   data: BackupData
 ): Promise<{ medicineCount: number; locationCount: number }> {
+  // Ensure all medicines have a catalogId (v1.0 compat: assign temporary 0)
+  const medicinesWithCatalogId = data.medicines.map(m => ({
+    ...m,
+    catalogId: m.catalogId ?? 0,
+  })) as Medicine[]
+
   await db.transaction('rw', db.medicines, db.locations, db.history, async () => {
     await db.medicines.clear()
     await db.locations.clear()
     await db.history.clear()
 
-    await db.medicines.bulkAdd(data.medicines)
+    await db.medicines.bulkAdd(medicinesWithCatalogId)
     await db.locations.bulkAdd(data.locations)
     await db.history.bulkAdd(data.history)
   })
