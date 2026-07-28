@@ -49,11 +49,12 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 4. HistoryOps.ts updated to accept explicit medicineName parameter (Phase 5 callers provide name from catalog context)
 5. TypeScript interfaces (MedicineCatalog, Medicine) updated to match new schema; no `any` types in schema-related code
 
-**Plans**: 2 plans
+**Plans**: 2/2 plans executed
 
 Plans:
-- [ ] 04-01-PLAN.md — End-to-end v2→v3 migration tracer with deduplication + MedicineCatalog interface
-- [ ] 04-02-PLAN.md — Update historyOps mutation signatures for Phase 5 callers
+
+- [x] 04-01-PLAN.md — End-to-end v2→v3 migration tracer with deduplication + MedicineCatalog interface
+- [x] 04-02-PLAN.md — Update historyOps mutation signatures for Phase 5 callers
 
 **UI hint**: no
 
@@ -111,7 +112,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 4. Database Migration & Schema v3 | 0/2 | Planning complete | 2026-07-28 |
+| 4. Database Migration & Schema v3 | 2/2 | In Progress|  |
 | 5. Stock & Catalog Management | 0/TBD | Pending | - |
 | 6. Backup & Restore | 0/TBD | Pending | - |
 
