@@ -41,14 +41,15 @@ export function diffMedicine(
 export async function updateMedicineWithHistory(
   id: number,
   before: Medicine,
-  changes: Partial<Medicine>
+  changes: Partial<Medicine>,
+  medicineName: string
 ): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', db.medicines, db.history, async () => {
     await db.medicines.update(id, { ...changes, updatedAt: now })
     await db.history.add({
       medicineId: id,
-      medicineName: before.name,
+      medicineName: medicineName,
       action: 'updated',
       changedFields: diffMedicine(before, changes),
       timestamp: now,
@@ -60,13 +61,13 @@ export async function updateMedicineWithHistory(
  * Soft-delete a medicine by setting deletedAt to the current timestamp.
  * Writes a history entry with action='deleted'.
  */
-export async function softDeleteMedicine(medicine: Medicine): Promise<void> {
+export async function softDeleteMedicine(medicine: Medicine, medicineName: string): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', db.medicines, db.history, async () => {
     await db.medicines.update(medicine.id, { deletedAt: now, updatedAt: now })
     await db.history.add({
       medicineId: medicine.id,
-      medicineName: medicine.name,
+      medicineName: medicineName,
       action: 'deleted',
       changedFields: [],
       timestamp: now,
@@ -79,13 +80,13 @@ export async function softDeleteMedicine(medicine: Medicine): Promise<void> {
  * Writes a history entry with action='restored'.
  * NOTE: manualStatus is NOT changed — user's override is preserved (D-28).
  */
-export async function restoreMedicine(medicine: Medicine): Promise<void> {
+export async function restoreMedicine(medicine: Medicine, medicineName: string): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', db.medicines, db.history, async () => {
     await db.medicines.update(medicine.id, { deletedAt: null, updatedAt: now })
     await db.history.add({
       medicineId: medicine.id,
-      medicineName: medicine.name,
+      medicineName: medicineName,
       action: 'restored',
       changedFields: [],
       timestamp: now,
@@ -98,12 +99,12 @@ export async function restoreMedicine(medicine: Medicine): Promise<void> {
  * CRITICAL: writes history entry FIRST, then deletes the medicine.
  * NEVER deletes history entries — they are preserved forever (D-38, Pitfall 6).
  */
-export async function permanentDeleteMedicine(medicine: Medicine): Promise<void> {
+export async function permanentDeleteMedicine(medicine: Medicine, medicineName: string): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', db.medicines, db.history, async () => {
     await db.history.add({
       medicineId: medicine.id,
-      medicineName: medicine.name,
+      medicineName: medicineName,
       action: 'deleted',
       changedFields: [],
       timestamp: now,
@@ -118,13 +119,14 @@ export async function permanentDeleteMedicine(medicine: Medicine): Promise<void>
  */
 export async function addMedicineHistory(
   medicine: Medicine,
+  medicineName: string,
   action: 'created'
 ): Promise<void> {
   const now = new Date().toISOString()
   await db.transaction('rw', db.history, async () => {
     await db.history.add({
       medicineId: medicine.id,
-      medicineName: medicine.name,
+      medicineName: medicineName,
       action,
       changedFields: [],
       timestamp: now,

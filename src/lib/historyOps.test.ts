@@ -77,7 +77,7 @@ describe('softDeleteMedicine', () => {
   it('sets deletedAt to a non-null ISO string', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await softDeleteMedicine(medicine)
+    await softDeleteMedicine(medicine, medicine.name)
     const updated = await db.medicines.get(id)
     expect(updated?.deletedAt).not.toBeNull()
     expect(typeof updated?.deletedAt).toBe('string')
@@ -86,7 +86,7 @@ describe('softDeleteMedicine', () => {
   it('writes a history entry with action="deleted" and empty changedFields', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await softDeleteMedicine(medicine)
+    await softDeleteMedicine(medicine, medicine.name)
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('deleted')
@@ -100,7 +100,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine)
+    await restoreMedicine(medicine, medicine.name)
     const updated = await db.medicines.get(id)
     expect(updated?.deletedAt).toBeNull()
   })
@@ -109,7 +109,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine)
+    await restoreMedicine(medicine, medicine.name)
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('restored')
@@ -120,7 +120,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now, manualStatus: 'Archived' })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine)
+    await restoreMedicine(medicine, medicine.name)
     const updated = await db.medicines.get(id)
     expect(updated?.manualStatus).toBe('Archived')
   })
@@ -130,7 +130,7 @@ describe('permanentDeleteMedicine', () => {
   it('removes the medicine record', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine)
+    await permanentDeleteMedicine(medicine, medicine.name)
     const deleted = await db.medicines.get(id)
     expect(deleted).toBeUndefined()
   })
@@ -138,7 +138,7 @@ describe('permanentDeleteMedicine', () => {
   it('preserves history entries after permanent delete (D-38)', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine)
+    await permanentDeleteMedicine(medicine, medicine.name)
     const count = await db.history.where('medicineId').equals(id).count()
     expect(count).toBeGreaterThan(0)
   })
@@ -146,7 +146,7 @@ describe('permanentDeleteMedicine', () => {
   it('writes a history entry with action="deleted" before deleting medicine', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine)
+    await permanentDeleteMedicine(medicine, medicine.name)
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('deleted')
@@ -159,7 +159,7 @@ describe('updateMedicineWithHistory', () => {
   it('applies changes to the medicine record', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const before = await db.medicines.get(id) as Medicine
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' })
+    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
     const updated = await db.medicines.get(id)
     expect(updated?.name).toBe('Aspirin')
   })
@@ -167,7 +167,7 @@ describe('updateMedicineWithHistory', () => {
   it('writes a history entry with action="updated" and changedFields from diffMedicine', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const before = await db.medicines.get(id) as Medicine
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' })
+    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('updated')
@@ -180,7 +180,7 @@ describe('updateMedicineWithHistory', () => {
     const oldUpdatedAt = before.updatedAt
     // Ensure time difference
     await new Promise(r => setTimeout(r, 10))
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' })
+    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
     const updated = await db.medicines.get(id)
     expect(updated?.updatedAt).not.toBe(oldUpdatedAt)
   })
@@ -190,7 +190,7 @@ describe('addMedicineHistory', () => {
   it('writes a history entry with action="created" and empty changedFields', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await addMedicineHistory(medicine, 'created')
+    await addMedicineHistory(medicine, medicine.name, 'created')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('created')

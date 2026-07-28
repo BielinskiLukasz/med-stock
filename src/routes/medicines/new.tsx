@@ -30,7 +30,7 @@ export function MedicineNew() {
       })
       const newMedicine = await db.medicines.get(newId)
       if (newMedicine) {
-        await addMedicineHistory(newMedicine, 'created')
+        await addMedicineHistory(newMedicine, newMedicine.name, 'created')
       }
       void navigate('/medicines')
     } catch (err) {

@@ -29,7 +29,7 @@ export function MedicineDetail() {
   async function handleDelete() {
     if (!medicine) return
     try {
-      await softDeleteMedicine(medicine)
+      await softDeleteMedicine(medicine, medicine.name)
       void navigate('/medicines')
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI

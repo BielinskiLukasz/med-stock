@@ -27,7 +27,7 @@ export function TrashScreen() {
 
   async function handleRestore(medicine: Medicine) {
     try {
-      await restoreMedicine(medicine)
+      await restoreMedicine(medicine, medicine.name)
     } catch (err) {
       console.error('Failed to restore medicine:', err)
     }
@@ -35,7 +35,7 @@ export function TrashScreen() {
 
   async function handlePermanentDelete(medicine: Medicine) {
     try {
-      await permanentDeleteMedicine(medicine)
+      await permanentDeleteMedicine(medicine, medicine.name)
     } catch (err) {
       console.error('Failed to permanently delete medicine:', err)
     }

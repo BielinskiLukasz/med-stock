@@ -28,7 +28,7 @@ export function MedicineEdit() {
         quantity: data.quantity ?? null,
         quantityUnit: data.quantityUnit ?? null,
         notes: data.notes ?? null,
-      })
+      }, before.name)
       void navigate(`/medicines/${id}`)
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI
