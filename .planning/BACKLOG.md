@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-29 (B-011, B-012 added — Polish language, location management)
-Last assigned ID: **B-012** — next new item must be **B-013**
+Last updated: 2026-07-29 (B-013 added — app version display)
+Last assigned ID: **B-013** — next new item must be **B-014**
 
 ---
 
@@ -339,3 +339,27 @@ Last assigned ID: **B-012** — next new item must be **B-013**
 - Medicine add/edit location dropdown filters `hidden: true` locations out; the Locations management screen shows all including hidden
 - BackupSchema must include the `locations` table so custom names and order survive export/import
 - Relates to: B-011 (i18n — predefined location display names may need translation keys)
+
+---
+
+### B-013 · App Version Number Display
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available patch or alongside any Data tab work
+
+**What:** Show the current app version (from `package.json`) somewhere visible in the UI — most naturally in the Data tab footer or a dedicated "About" section. The version string should match the `version` field in `package.json` exactly (e.g., `v1.2.0`).
+
+**Why:** Without a visible version, users cannot report "which version broke X" and the developer cannot correlate bug reports to releases. A one-line version badge costs almost nothing to add and eliminates ambiguity when debugging issues reported by household members.
+
+**Open questions when this gets planned:**
+
+- Where exactly: Data tab footer, a small badge in the tab bar, or a dedicated "About" card/section?
+- Should the build date or git commit hash be shown alongside the version for dev builds?
+- Tap-to-copy behaviour — useful for bug reports?
+
+**Implementation notes:**
+
+- Vite exposes `package.json` version via `import.meta.env` if added to `vite.config.ts` as `define: { __APP_VERSION__: JSON.stringify(pkg.version) }` — no runtime fetch needed.
+- Alternatively, import the version directly: `import { version } from '../../package.json'` (TypeScript resolveJsonModule must be on, which it already is in this project).
+- Render as a small `<p className="text-xs text-muted-foreground">v{version}</p>` — no new component needed.
