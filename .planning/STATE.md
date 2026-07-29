@@ -2,36 +2,36 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Catalog + Stock Model
-current_phase: 04
-status: completed
+current_phase: 5
+current_phase_name: Stock & Catalog Management
+status: planning
 stopped_at: Completed Phase 04 Plan 02 (historyOps mutation signatures)
-last_updated: "2026-07-28T23:01:58.105Z"
+last_updated: "2026-07-29T20:24:43.681Z"
 last_activity: 2026-07-29
-last_activity_desc: Phase 04 marked complete
+last_activity_desc: Phase 04 complete, transitioned to Phase 5
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 2
   completed_plans: 2
   percent: 33
-current_phase_name: database-migration-schema-v3
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-28)
+See: .planning/PROJECT.md (updated 2026-07-29)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 04 — database-migration-schema-v3
+**Current focus:** Phase 05 — stock-&-catalog-management
 
 ## Current Position
 
-Phase: 04 — COMPLETE
-Plan: 2 of 2
-Status: Phase 04 complete
-Last activity: 2026-07-29 — Phase 04 marked complete
+Phase: 5 — Stock & Catalog Management
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-07-29 — Phase 04 complete, transitioned to Phase 5
 
 ## v1.0 Summary
 
@@ -44,7 +44,7 @@ Last activity: 2026-07-29 — Phase 04 marked complete
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 4 | Database Migration & Schema v3 | MIGR-01, MIGR-02 | 1 of 2 plans complete |
+| 4 | Database Migration & Schema v3 | MIGR-01, MIGR-02 | Complete ✓ |
 | 5 | Stock & Catalog Management | CAT-01–03, STOCK-01–04, FLOW-01–03 | Pending |
 | 6 | Backup & Restore | DATA-01–03 | Pending |
 
@@ -67,8 +67,8 @@ Last activity: 2026-07-29 — Phase 04 marked complete
 
 ## Session
 
-**Last session:** 2026-07-28T22:41:08.440Z
-**Stopped at:** Completed Phase 04 Plan 02 (historyOps mutation signatures)
+**Last session:** 2026-07-29
+**Stopped at:** Phase 04 complete, ready to plan Phase 05
 **Resume file:** None
 
 ## Performance Metrics

@@ -64,6 +64,10 @@ v1.1 requirements defined at [REQUIREMENTS.md](.planning/REQUIREMENTS.md).
 | Soft delete (Trash Bin) | Preserves history; prevents accidental permanent data loss | Validated — TrashBin + historyOps fully operational |
 | JSON import as full replace (D-47) | Simpler implementation for MVP | Gap identified in UAT — merge was the intent; deferred to v1.1 B-003 |
 | Two-step query+memo pattern | Dexie reactivity + Zustand filter state changes are separate concerns | Validated — prevents unnecessary DB re-reads on filter click |
+| Case-insensitive + trimmed deduplication (D-01) | Prevents duplicate catalog entries from data-entry variations | Applied in v2→v3 migration — Phase 4 |
+| MedicineForm as `as const` type, not enum (D-10) | `enum` keyword incompatible with `erasableSyntaxOnly` compiler flag | Applied — equivalent type safety, zero behavioral change — Phase 4 |
+| No heuristic form inference during migration (D-11) | Avoids wrong guesses — form is optional and user-supplied in Phase 5 | Applied — all migrated catalog entries have `form: null` — Phase 4 |
+| historyOps accepts explicit `medicineName` parameter (D-06) | Decouples mutation layer from catalog/stock lookup; Phase 5 callers supply name from their context | Applied — all 5 mutation functions updated — Phase 4 |
 
 ## Evolution
 
@@ -83,4 +87,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-28 — v1.1 milestone started (Catalog + Stock Model)*
+*Last updated: 2026-07-29 — after Phase 04 (Database Migration & Schema v3)*
