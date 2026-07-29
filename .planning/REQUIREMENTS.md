@@ -7,8 +7,8 @@
 
 ### Migration
 
-- [ ] **MIGR-01**: On first open after upgrade, existing medicines are automatically migrated — each unique medicine name becomes one catalog entry; each existing medicine row becomes one stock entry linked by catalogId
-- [ ] **MIGR-02**: Migration deduplicates by exact name match — multiple rows with the same name produce a single catalog entry
+- [x] **MIGR-01**: On first open after upgrade, existing medicines are automatically migrated — each unique medicine name becomes one catalog entry; each existing medicine row becomes one stock entry linked by catalogId
+- [x] **MIGR-02**: Migration deduplicates by exact name match — multiple rows with the same name produce a single catalog entry
 
 ### Catalog
 
@@ -50,8 +50,8 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MIGR-01 | 4 | Pending |
-| MIGR-02 | 4 | Pending |
+| MIGR-01 | 4 | Complete |
+| MIGR-02 | 4 | Complete |
 | CAT-01 | 5 | Pending |
 | CAT-02 | 5 | Pending |
 | CAT-03 | 5 | Pending |
@@ -67,6 +67,7 @@
 | DATA-03 | 6 | Pending |
 
 **Coverage:**
+
 - v1.1 requirements: 15 total
 - Mapped to phases: 15 ✓
 - Unmapped: 0
