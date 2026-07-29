@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-29 (B-010 added — medicine name memory with category sync)
-Last assigned ID: **B-010** — next new item must be **B-011**
+Last updated: 2026-07-29 (B-011, B-012 added — Polish language, location management)
+Last assigned ID: **B-012** — next new item must be **B-013**
 
 ---
 
@@ -277,3 +277,65 @@ Last assigned ID: **B-010** — next new item must be **B-011**
 - Toast via `sonner`: `toast.success(`Category updated across ${count} "${name}" entries`)` when count > 1.
 - No changes to `BackupSchema` needed for the propagation behaviour; `medicineNameCatalog` is a derived/cache table and can be rebuilt from `medicines` on import.
 - Relates to: B-001 (autocomplete, prerequisite), B-008 (custom categories, interaction risk)
+
+---
+
+### B-011 · Polish Language Support (i18n)
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** Add a language switcher that lets the user toggle the app UI between English and Polish. All visible strings — labels, placeholders, toasts, error messages, status names, and screen titles — are translated. The selected language is persisted in `localStorage` and applied on next load without a full reload.
+
+**Why:** The primary users are a Polish-speaking household. Displaying the UI in Polish reduces cognitive friction and makes the app feel native rather than a foreign-language tool. English remains available for developer use and for sharing the app beyond the household.
+
+**Open questions when this gets planned:**
+
+- Framework choice: lightweight key-map approach (`i18next` / `react-i18next`) vs. a hand-rolled `t()` helper with JSON locale files?
+- Should the language be stored in Dexie (survives export/import) or `localStorage` (device-local, simpler)?
+- Should the built-in category names and location names be translated or kept as-is (user-entered strings are always stored verbatim)?
+- Date and number formatting: Polish date format is `DD.MM.YYYY` — should `YYYY-MM-DD` display format change per locale?
+- Where is the switcher surfaced — a Settings screen, the Data tab, or a small flag in the tab bar?
+
+**Implementation notes:**
+
+- Two locale JSON files: `src/locales/en.json` and `src/locales/pl.json`; keys are dot-namespaced by screen (`medicines.search_placeholder`, `dashboard.expires_soon`, etc.)
+- `i18next` + `react-i18next` is the safe default: large ecosystem, TypeScript types via `i18next-resources-to-backend`, tree-shakeable
+- A `useTranslation()` hook replaces all inline string literals; existing component signatures stay unchanged
+- Built-in category list and default location list should have translation keys so they render in the active language (without changing the stored value)
+- Zustand `uiStore` gains a `language: 'en' | 'pl'` field backed by `localStorage`
+
+---
+
+### B-012 · Full Location Management (Including Predefined)
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+
+**What:** Extend the existing Locations screen (`/locations`) to give users full control over all locations — both user-created and predefined. Capabilities:
+
+1. **Rename** any location, including predefined ones (e.g., rename "Bathroom cabinet" → "Łazienka").
+2. **Delete** any location; if medicines reference the deleted location, the user is warned and offered a reassign-or-clear choice before deletion proceeds.
+3. **Hide / show** predefined locations that are irrelevant to a household (e.g., hide "Car first-aid kit" if not applicable) without deleting them permanently.
+4. **Reorder** — drag-to-reorder the full list so the most-used locations appear first in add/edit forms.
+
+**Why:** The current Locations screen supports adding and deleting user-created locations but predefined ones are locked. Users whose household vocabulary doesn't match the built-in names must work around this by adding duplicate entries. Full editability lets the app adapt to each household without workarounds.
+
+**Open questions when this gets planned:**
+
+- Should predefined locations be stored in Dexie from first run (fully editable records) or kept as constants and shadowed by user overrides?
+- If a predefined location is renamed, does the original English name remain as a fallback key for B-011 (i18n) translations?
+- Delete-with-reassign UX: modal with a target-location dropdown, or a separate "Reassign medicines" flow?
+- Should hidden locations still appear grayed-out in the locations list for discoverability, or disappear entirely?
+- Reorder persistence: `sortOrder` integer on each location row, updated on drag-end via a single Dexie transaction.
+
+**Implementation notes:**
+
+- `locationOps.ts`: add `renameLocation(id, newName)`, `hideLocation(id)`, `showLocation(id)`, `reorderLocations(orderedIds)` helpers — all go through Dexie transactions
+- On first run (or a Dexie version bump), seed predefined locations as regular Dexie rows with an `isBuiltIn: boolean` flag and `hidden: boolean` flag; `sortOrder` initialized from seed order
+- `LocationsScreen.tsx`: swap static list for a drag-enabled list (e.g., `@dnd-kit/sortable`); add inline rename (tap-to-edit) and a context menu / swipe actions for hide/delete
+- Medicine add/edit location dropdown filters `hidden: true` locations out; the Locations management screen shows all including hidden
+- BackupSchema must include the `locations` table so custom names and order survive export/import
+- Relates to: B-011 (i18n — predefined location display names may need translation keys)
