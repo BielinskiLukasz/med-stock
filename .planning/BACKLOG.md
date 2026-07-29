@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-19 (B-002, B-003 marked deferred to v1.1 — v1.0 shipped with gaps, Option B decision)
-Last assigned ID: **B-009** — next new item must be **B-010**
+Last updated: 2026-07-29 (B-010 added — medicine name memory with category sync)
+Last assigned ID: **B-010** — next new item must be **B-011**
 
 ---
 
@@ -242,3 +242,38 @@ Last assigned ID: **B-009** — next new item must be **B-010**
 - Use `localStorage` key `installPromptDismissed` to suppress after user dismisses or after 7 days
 - iOS detection guard: only render on iOS Safari in non-standalone mode
 - No service-worker or manifest changes needed — this is purely a UI nudge
+
+---
+
+### B-010 · Medicine Name Memory with Shared-Name Category Sync
+
+**Source:** product idea — reported 2026-07-29; extends B-001 (autocomplete) with category synchronisation semantics
+**Status:** captured · not scheduled
+**Earliest sensible slot:** same milestone as or after B-001 lands (autocomplete is a prerequisite)
+
+**What:** Three linked behaviours:
+
+1. **Name memory** — the name field on Add/Edit form suggests names from all existing medicines (same as B-001, deduplicated).
+2. **Auto-fill category on name pick** — selecting a name from the dropdown auto-selects the category used by medicines with that name (see conflict rule below). The user can override before saving.
+3. **Propagate category change across same-name medicines** — when the user edits a medicine's category, all medicines sharing the exact same name (case-insensitive) in the DB are updated to the new category in one atomic Dexie transaction. A toast confirms how many records were updated (e.g., "Category updated for 3 Ibum entries").
+
+**Migration rule (merging conflicting categories):** On first run after this feature ships, if medicines that share a name currently have *different* categories (legacy inconsistency), the feature detects this and merges them: the set of all distinct categories held by that name is stored on a new `medicineNameCatalog` table (one row per canonical name, `categories: string[]`). The auto-fill value shown on pick is the *first* category in that merged set. The user's next manual category save on any same-name medicine collapses the set back to one value and propagates to all siblings.
+
+**Why:** Users buy the same medicine repeatedly under the same brand name (e.g., "Ibum"). Without synchronised categories, each package may end up in a different category depending on when it was added or who added it, breaking filter reliability. Name memory with auto-fill prevents the problem going forward; the propagation rule fixes drift retroactively; the merge strategy avoids data loss during migration.
+
+**Open questions when this gets planned:**
+
+- Should propagation be opt-in (a confirmation dialog: "Update category for all 3 Ibum entries?") or automatic?
+- What is the canonical name key — exact string, or case-insensitive normalised form?
+- How should the `medicineNameCatalog` table interact with B-008 (Custom Categories)? If a category is deleted, remove it from the merged set.
+- Should propagation touch trashed/soft-deleted medicines or only active ones?
+- If a medicine has `manualStatus` set, should propagation skip it or still update just the category field?
+
+**Implementation notes:**
+
+- New Dexie table `medicineNameCatalog`: `{ name: string (pk, lowercase), categories: string[] }`. Seed on first run by scanning all `medicines` rows, grouping by `name.toLowerCase()`, collecting unique `category` values per group.
+- `AddMedicineForm` / `EditMedicineForm`: after user selects a name suggestion, query `medicineNameCatalog` by name and pre-fill category with `categories[0]`.
+- `historyOps.ts` `updateMedicine`: after saving the edited medicine, if the category field changed, run a secondary `db.transaction('rw', db.medicines, db.history, db.medicineNameCatalog, ...)` to update all sibling rows and collapse `medicineNameCatalog.categories` to the new single value.
+- Toast via `sonner`: `toast.success(`Category updated across ${count} "${name}" entries`)` when count > 1.
+- No changes to `BackupSchema` needed for the propagation behaviour; `medicineNameCatalog` is a derived/cache table and can be rebuilt from `medicines` on import.
+- Relates to: B-001 (autocomplete, prerequisite), B-008 (custom categories, interaction risk)
