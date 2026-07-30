@@ -5,16 +5,16 @@ milestone_name: Catalog + Stock Model
 current_phase: 05
 current_phase_name: stock-catalog-management
 status: executing
-stopped_at: 05-04 complete — TDD stockOps (add/edit/soft-delete/move) all passing
-last_updated: "2026-07-30T23:45:00.000Z"
+stopped_at: 05-05 complete — 3-step add flow state machine + CatalogAutocomplete
+last_updated: "2026-07-30T23:55:00.000Z"
 last_activity: 2026-07-30
-last_activity_desc: Plans 05-03 and 05-04 executed — CatalogFields/StockFields/MedicineCardAggregate, stockOps TDD
+last_activity_desc: Plans 05-03 through 05-05 executed — form components, stockOps TDD, add flow wizard
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 8
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 87
 ---
 
 # Project State
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-29)
 ## Current Position
 
 Phase: 05 (stock-catalog-management) — EXECUTING
-Plan: 4 of 6
-Status: Executing Phase 05 — Waves 1+2 complete, Wave 3 next (05-05: add flow state machine)
-Last activity: 2026-07-30 — 05-03 + 05-04 complete: CatalogFields/StockFields/MedicineCardAggregate + stockOps TDD
+Plan: 5 of 6
+Status: Executing Phase 05 — Waves 1–3 complete, Wave 4 next (05-06: edit sheets + detail actions)
+Last activity: 2026-07-30 — 05-05 complete: CatalogAutocomplete + 3-step add flow state machine
 
 ## v1.0 Summary
 
