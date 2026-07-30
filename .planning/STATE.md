@@ -2,19 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Catalog + Stock Model
-current_phase: 5
-current_phase_name: Stock & Catalog Management
-status: planned
-stopped_at: Phase 5 planning complete — 6 plans ready for execution
-last_updated: "2026-07-30T12:00:00.000Z"
+current_phase: 05
+current_phase_name: stock-catalog-management
+status: executing
+stopped_at: 05-01 complete — schema v4 + detail view tracer slice
+last_updated: "2026-07-30T22:40:00.000Z"
 last_activity: 2026-07-30
-last_activity_desc: Phase 05 planning complete, 6 PLAN.md files committed
+last_activity_desc: Plan 05-01 executed — schema v4 in place, detail view loads by catalogId
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 8
-  completed_plans: 2
-  percent: 33
+  completed_plans: 3
+  percent: 37
 ---
 
 # Project State
@@ -24,14 +24,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 05 — stock-&-catalog-management
+**Current focus:** Phase 05 — stock-catalog-management
 
 ## Current Position
 
-Phase: 5 — Stock & Catalog Management
-Plan: Not started (planning complete — ready to execute)
-Status: Planned — 6 PLAN.md files ready
-Last activity: 2026-07-30 — Phase 05 planning complete, 6 plans committed
+Phase: 05 (stock-catalog-management) — EXECUTING
+Plan: 2 of 6
+Status: Executing Phase 05 — 05-01 done, moving to Wave 2
+Last activity: 2026-07-30 — 05-01 complete: schema v4 + detail view by catalogId
 
 ## v1.0 Summary
 
