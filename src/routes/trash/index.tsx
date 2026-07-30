@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import { db } from '@/lib/db'
 import { restoreMedicine, permanentDeleteMedicine } from '@/lib/historyOps'
 import { Button } from '@/components/ui/button'
@@ -88,7 +89,11 @@ export function TrashScreen() {
                 : ''}
             </p>
 
-            <div className="flex gap-2 mt-3">
+            <div className="flex gap-2 mt-3 flex-wrap">
+              {/* D-12: View link uses catalogId (not stock entry id) so detail screen resolves correctly */}
+              <Button variant="outline" size="sm" asChild>
+                <Link to={`/medicines/${medicine.catalogId}`}>View</Link>
+              </Button>
               <Button
                 size="sm"
                 onClick={() => void handleRestore(medicine, catalog?.name ?? 'Unknown')}
