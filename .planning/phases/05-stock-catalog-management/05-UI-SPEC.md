@@ -50,10 +50,12 @@ Exceptions: None — use standard Tailwind scale throughout Phase 5.
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body / default text | 14px (text-sm) | 400 (regular) | 1.5 (default) |
-| Body / emphasis | 14px (text-sm) | 500 (medium) | 1.5 |
-| Label (form label, field label, description) | 12px (text-xs) | 500 (medium) | 1.5 |
+| Body / emphasis | 14px (text-sm) | 400 (regular) | 1.5 |
+| Label (form label, field label, description) | 12px (text-xs) | 400 (regular) | 1.5 |
 | Heading (section title, detail header) | 20px (text-xl) | 600 (semibold) | 1.2 |
-| Badge / tag / status | 12px (text-xs) | 500 (medium) | 1.2 |
+| Badge / tag / status | 12px (text-xs) | 400 (regular) | 1.2 |
+
+**Font weights declared:** 2 (400 regular, 600 semibold)
 
 All new text in Phase 5 must use one of these roles. No other sizes or weights.
 
@@ -143,6 +145,28 @@ Applicable state coverage for Phase 5:
 | **overflow** | many locations in location picker | 🧪 backstop | Location picker (Select + searchable) filters live as user types. If 100+ locations, picker remains functional. Assumed acceptable. |
 | **zero-one-many** | quantity display on card | ✅ covered | Show aggregate quantity: "1 tablet" (singular) or "20 tablets" (plural); add "across N locations" suffix if stock spans multiple locations. Pluralization rule: quantity === 1 → singular unit name, else plural |
 | **zero-one-many** | status badge on card | ✅ covered | Status derived from nearest-expiry active stock entry (single status per catalog). If all stock deleted, no active entry exists; detail screen shows "No stock". |
+
+### Focal Points & Accessibility
+
+**List View (`/medicines`):**
+- Primary focal point: **MedicineCardAggregate** (catalog name card) — most prominent element; displays catalog name, status badge, and aggregate quantity. Clicking card navigates to detail view. No additional visual emphasis needed beyond standard card styling (shadow, rounded corners).
+
+**Detail View (`/medicines/:catalogId`):**
+- Primary focal point: **Catalog header** with catalog name + edit icon — positioned at top of screen. Catalog name uses Heading typography (20px, semibold, 1.2 line-height). Edit icon opens CatalogEditSheet on click.
+- Secondary focal point: **Add Stock button** or "No stock" empty state CTA (bottom of screen or prominent below header).
+
+**Add Flow (`/medicines/new`):**
+- Step 1 (Search) — Primary focal point: **CatalogSearchAutocomplete input field** — placed at top with autofocus on screen load. Input field uses medium visual weight (focus ring in accent color).
+- Step 2 (Create Catalog) — Primary focal point: **Catalog name input field** — pre-filled with user-typed name. Focused on step transition; user ready to select category.
+- Step 3 (Stock Form) — Primary focal point: **Quantity input field** — first form field; user enters quantity immediately after catalog selection/creation.
+
+**Icon Action Accessibility:**
+- Stock entry row action icons ("Open box", "Move/Split") are **icon-only buttons** with the following accessibility contract:
+  - Each icon button includes `aria-label` attribute with descriptive text: `aria-label="Open box"` and `aria-label="Move or split stock entry"`
+  - Icons use lucide-react (e.g., `<Button variant="ghost" size="sm" aria-label="Open box"><Package className="h-4 w-4" /></Button>`)
+  - No visible text label on the icon (space-constrained card layout)
+  - On hover, browser-native tooltip (via title attribute) or custom Tooltip component shows action label for desktop users
+  - Mobile users access action via VoiceOver / TalkBack using aria-label; icon clickable area at least 44px × 44px per WCAG touch target guidance
 
 ---
 
