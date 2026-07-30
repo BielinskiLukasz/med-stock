@@ -81,7 +81,16 @@ Plans:
 9. Soft-deleted stock entries appear in Trash and can be restored with full history preserved
 10. Adding, editing, moving, and deleting stock entries record history with catalogId context so changes are auditable
 
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+
+- [ ] 05-01-PLAN.md — Tracer: Schema v4 migration + catalog detail view (catalogId-based load, stock list with nearest-expiry status)
+- [ ] 05-02-PLAN.md — TDD: Catalog-first aggregation (nearest-expiry selection + quantity summation)
+- [ ] 05-03-PLAN.md — List view catalog-first join with aggregate card, component decomposition (CatalogFields, StockFields)
+- [ ] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording)
+- [ ] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form)
+- [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete)
 
 **UI hint**: yes
 
