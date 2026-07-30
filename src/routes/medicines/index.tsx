@@ -3,13 +3,14 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { SlidersHorizontal } from 'lucide-react'
 import { db } from '@/lib/db'
+import type { Medicine, MedicineCatalog } from '@/lib/db'
 import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterBottomSheet } from '@/components/FilterBottomSheet'
 import { FilterChips } from '@/components/FilterChips'
+import { MedicineCardAggregate } from '@/components/MedicineCardAggregate'
 import { useUIStore, useActiveFilterCount, useShallow } from '@/stores/uiStore'
-import { calculateStatus } from '@/lib/expiry'
-import type { Medicine } from '@/lib/db'
+import { computeCatalogAggregate } from '@/lib/aggregation'
 
 export function MedicineList() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -35,7 +36,7 @@ export function MedicineList() {
 
   // STEP 3: In-memory join and aggregation (D-01: per-catalog nearest-expiry status + total quantity)
   interface CatalogWithStock {
-    catalog: { id: number; name: string; category: string | null; form: string | null; notes: string | null; createdAt: string; updatedAt: string }
+    catalog: MedicineCatalog
     stockEntries: Medicine[]
     nearestExpiryStock: Medicine | null
     aggregateStatus: string
@@ -47,7 +48,6 @@ export function MedicineList() {
     if (!catalogs || !activeStock) return [] as CatalogWithStock[]
 
     const q = searchQuery.toLowerCase().trim()
-    const now = new Date()
 
     // Build catalog + aggregates
     return catalogs
@@ -55,22 +55,15 @@ export function MedicineList() {
         // Get all active stock entries for this catalog
         const stockForCatalog = activeStock.filter(s => s.catalogId === catalog.id)
 
-        // Find nearest-expiry stock
-        const nearestExpiryStock = stockForCatalog.length > 0
-          ? stockForCatalog.reduce((nearest, current) => {
-              if (!current.expiryDate) return nearest
-              if (!nearest.expiryDate) return current
-              return current.expiryDate < nearest.expiryDate ? current : nearest
-            })
-          : null
+        // Use shared aggregation function for status + totalQty (D-01)
+        const { status: aggregateStatus, totalQty: totalQuantity } = computeCatalogAggregate(catalog, stockForCatalog)
 
-        // Compute aggregate status (from nearest-expiry)
-        const aggregateStatus = nearestExpiryStock
-          ? calculateStatus(nearestExpiryStock, now)
-          : 'Active'
-
-        // Compute total quantity
-        const totalQuantity = stockForCatalog.reduce((sum, s) => sum + (s.quantity ?? 0), 0)
+        // Find nearest-expiry stock (needed for card display)
+        const nearestExpiryStock = stockForCatalog.reduce<Medicine | null>((nearest, current) => {
+          if (!current.expiryDate) return nearest
+          if (!nearest?.expiryDate) return current
+          return current.expiryDate < nearest.expiryDate ? current : nearest
+        }, null)
 
         // Get unique locations
         const locations = [...new Set(stockForCatalog.map(s => s.location ?? 'Other'))]
@@ -205,17 +198,12 @@ export function MedicineList() {
               to={`/medicines/${item.catalog.id}`}
               className="block bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:border-gray-300 transition-colors"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 truncate">{item.catalog.name}</h3>
-                  {item.catalog.category && (
-                    <p className="text-sm text-gray-500 mt-0.5">{item.catalog.category}</p>
-                  )}
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {item.totalQuantity} {item.nearestExpiryStock?.quantityUnit || 'units'} across {item.stockEntries.length} {item.stockEntries.length === 1 ? 'location' : 'locations'}
-                  </p>
-                </div>
-              </div>
+              <MedicineCardAggregate
+                catalog={item.catalog}
+                nearestExpiryStock={item.nearestExpiryStock}
+                totalQuantity={item.totalQuantity}
+                stockCount={item.stockEntries.length}
+              />
             </Link>
           ))}
         </div>

@@ -24,6 +24,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+// TODO: Phase 5 — CatalogFields and StockFields have been extracted as reusable components.
+// This monolithic form is kept for backward compat during Phase 5 transition.
+// Replace with CatalogFields + StockFields composition once add/edit flows are updated (Plans 05-05, 05-06).
+
 // Zod schema — all optional fields are nullable; location uses null as 'Other' sentinel (D-17)
 export const medicineSchema = z.object({
   name: z.string().min(1, 'Name is required'),

@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { shallow } from 'zustand/shallow'
 import { useShallow } from 'zustand/react/shallow'
 
-export type SortField = 'name' | 'expiryDate' | 'category'
+export type SortField = 'name' | 'expiryDate' | 'category' | 'status'
 export type SortDirection = 'asc' | 'desc'
 
 interface UIState {
@@ -46,6 +46,8 @@ export const useUIStore = create<UIState>()((set) => ({
     })),
   toggleLocation: (value) =>
     set((s) => ({
+      // Location filter uses match-any semantics: a catalog passes if ANY of its
+      // stock entries is at the selected location (not ALL).
       selectedLocations: s.selectedLocations.includes(value)
         ? s.selectedLocations.filter((v) => v !== value)
         : [...s.selectedLocations, value],
