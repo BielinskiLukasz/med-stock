@@ -83,14 +83,17 @@ Plans:
 
 **Plans**: 6 plans
 
-Plans:
+Wave execution order (each wave parallelizable within):
 
-- [ ] 05-01-PLAN.md — Tracer: Schema v4 migration + catalog detail view (catalogId-based load, stock list with nearest-expiry status)
-- [ ] 05-02-PLAN.md — TDD: Catalog-first aggregation (nearest-expiry selection + quantity summation)
-- [ ] 05-03-PLAN.md — List view catalog-first join with aggregate card, component decomposition (CatalogFields, StockFields)
-- [ ] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording)
-- [ ] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form)
-- [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete)
+- **Wave 1** (start here):
+  - [ ] 05-01-PLAN.md — Tracer: Schema v4 migration + catalog detail view (catalogId-based load, stock list with nearest-expiry status) `[reversibility checkpoint: D-16 one-way, D-11 costly]`
+  - [ ] 05-02-PLAN.md — TDD: Catalog-first aggregation (nearest-expiry selection + quantity summation) `[depends: 05-01]`
+- **Wave 2** (after Wave 1):
+  - [ ] 05-03-PLAN.md — List view catalog-first join with aggregate card, component decomposition (CatalogFields, StockFields) `[depends: 05-01, 05-02]`
+  - [ ] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording) `[depends: 05-01]`
+- **Wave 3** (after Wave 2):
+  - [ ] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form) `[depends: 05-01, 05-03, 05-04]`
+  - [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete), Trash "View" link fix (D-12) `[depends: 05-01, 05-03, 05-04, 05-05]`
 
 **UI hint**: yes
 
@@ -122,7 +125,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
-| 5. Stock & Catalog Management | 0/TBD | Pending | - |
+| 5. Stock & Catalog Management | 0/6 | Planned | - |
 | 6. Backup & Restore | 0/TBD | Pending | - |
 
 ---
