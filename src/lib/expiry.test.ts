@@ -7,8 +7,6 @@ function makeMed(overrides: Partial<Medicine> = {}): Medicine {
   return {
     id: 1,
     catalogId: 1,
-    name: 'Test Medicine',
-    category: null,
     location: null,
     expiryDate: '2030-12-31',
     openedDate: null,

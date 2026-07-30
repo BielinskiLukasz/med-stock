@@ -1,10 +1,9 @@
 import Papa from 'papaparse'
 import type { Medicine } from './db'
 
-// Valid medicine field names for CSV column mapping (D-52)
+// Valid medicine (stock entry) field names for CSV column mapping (D-52)
+// Note: 'name' and 'category' belong to the catalog, not the stock entry (D-16)
 export const MEDICINE_FIELDS: string[] = [
-  'name',
-  'category',
   'location',
   'expiryDate',
   'openedDate',
@@ -49,20 +48,7 @@ export function mergeCSVRowsToMedicines(
   const medicines: Omit<Medicine, 'id'>[] = []
   let skippedCount = 0
 
-  // Find the CSV header that maps to the 'name' field
-  const nameCsvHeader = Object.entries(columnMapping).find(
-    ([, fieldName]) => fieldName === 'name'
-  )?.[0]
-
   for (const row of rows) {
-    // Resolve the name value from the mapped column
-    const nameValue = nameCsvHeader ? (row[nameCsvHeader] ?? '').trim() : ''
-
-    if (!nameValue) {
-      skippedCount++
-      continue
-    }
-
     // Helper to get mapped field value (returns empty string if mapped to SKIP_VALUE or absent)
     const getMappedValue = (fieldName: string): string => {
       const csvHeader = Object.entries(columnMapping).find(
@@ -72,7 +58,10 @@ export function mergeCSVRowsToMedicines(
       return (row[csvHeader] ?? '').trim()
     }
 
-    const categoryVal = getMappedValue('category')
+    // Note: name and category are now catalog fields, not stock entry fields (D-16)
+    // For CSV import, we create stock entries without explicit name/category
+    // TODO Phase 5: CSV import should create catalog entries from name/category columns
+
     const locationVal = getMappedValue('location')
     const expiryDateVal = getMappedValue('expiryDate')
     const openedDateVal = getMappedValue('openedDate')
@@ -87,10 +76,9 @@ export function mergeCSVRowsToMedicines(
       quantity = isFinite(parsed) ? parsed : null
     }
 
+    // For now, create stock entries without catalog assignment (catalogId will be 1 as placeholder)
     medicines.push({
-      catalogId: 0,  // Temporary; will be migrated to proper catalogs in Phase 5
-      name: nameValue,
-      category: categoryVal || null,
+      catalogId: 1,  // TODO Phase 5: derive catalogId from CSV name/category columns with dedup
       location: locationVal || null,
       expiryDate: expiryDateVal || null,
       openedDate: openedDateVal || null,

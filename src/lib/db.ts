@@ -24,8 +24,6 @@ export type MedicineForm = typeof MedicineForm[keyof typeof MedicineForm]
 export interface Medicine {
   id: number
   catalogId: number             // D-06: references medicine_catalog entry
-  name: string
-  category: string | null
   location: string | null       // null = "Other" (D-17); NEVER store 'Other' string
   expiryDate: string | null     // YYYY-MM-DD — required for add, nullable for import edge cases
   openedDate: string | null     // YYYY-MM-DD
@@ -185,6 +183,14 @@ db.version(3)
       return tx.table('medicine_catalog').bulkAdd(catalogEntries)
         .then(() => tx.table('medicines').bulkUpdate(medicineUpdates.map(m => ({ key: m.id, changes: { catalogId: m.catalogId } }))))
     })
+  })
+
+db.version(4)
+  .stores({
+    // D-16: Remove name and category from medicines index (now denormalized in medicine_catalog only)
+    medicines: '++id, catalogId, location, expiryDate, manualStatus',
+    medicine_catalog: '++id, name',
+    history: '++id, medicineId, timestamp',
   })
 
 // Seed predefined locations on first open (D-18, LOC-01)

@@ -10,9 +10,7 @@ export const BackupSchema = z.object({
   medicines: z.array(
     z.object({
       id: z.number(),
-      catalogId: z.number().optional(),  // Optional for v1.0 compatibility; set during migration
-      name: z.string(),
-      category: z.string().nullable(),
+      catalogId: z.number().optional().default(0),  // D-16: optional for v1/v2 backup compat
       location: z.string().nullable(),
       expiryDate: z.string().nullable(),
       openedDate: z.string().nullable(),
@@ -31,6 +29,20 @@ export const BackupSchema = z.object({
       deletedAt: z.string().nullable(),
     })
   ),
+  medicine_catalog: z.array(
+    z.object({
+      id: z.number(),
+      name: z.string(),
+      category: z.string().nullable(),
+      form: z.enum([
+        'Tablet', 'Capsule', 'Syrup', 'Cream', 'Drops', 'Spray', 'Powder',
+        'Gel', 'Ointment', 'Patch', 'Inhaler', 'Suppository', 'Other'
+      ]).nullable(),
+      notes: z.string().nullable(),
+      createdAt: z.string(),
+      updatedAt: z.string(),
+    })
+  ).optional().default([]),  // optional for backward compat with v1/v2 backups
   locations: z.array(
     z.object({
       id: z.number(),
@@ -64,13 +76,14 @@ export type BackupData = z.infer<typeof BackupSchema>
 // No library used — Blob API + anchor pattern (D-46).
 
 export async function exportToJSON(): Promise<void> {
-  const [medicines, locations, history] = await Promise.all([
+  const [medicines, medicine_catalog, locations, history] = await Promise.all([
     db.medicines.toArray() as Promise<Medicine[]>,
+    db.medicine_catalog.toArray(),
     db.locations.toArray() as Promise<Location[]>,
     db.history.toArray() as Promise<HistoryEntry[]>,
   ])
 
-  const backup: BackupData = { medicines, locations, history }
+  const backup: BackupData = { medicines, medicine_catalog, locations, history }
   const jsonStr = JSON.stringify(backup, null, 2)
 
   const blob = new Blob([jsonStr], { type: 'application/json' })
@@ -102,11 +115,13 @@ export async function importFromJSON(
     catalogId: m.catalogId ?? 0,
   })) as Medicine[]
 
-  await db.transaction('rw', db.medicines, db.locations, db.history, async () => {
+  await db.transaction('rw', db.medicines, db.medicine_catalog, db.locations, db.history, async () => {
     await db.medicines.clear()
+    await db.medicine_catalog.clear()
     await db.locations.clear()
     await db.history.clear()
 
+    await db.medicine_catalog.bulkAdd(data.medicine_catalog)
     await db.medicines.bulkAdd(medicinesWithCatalogId)
     await db.locations.bulkAdd(data.locations)
     await db.history.bulkAdd(data.history)

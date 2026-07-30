@@ -31,8 +31,6 @@ describe('deleteLocation', () => {
     const locId = await db.locations.add({ name: 'Living Room', isDefault: false })
     const med1Id = await db.medicines.add({
       catalogId: 1,
-      name: 'Med A',
-      category: null,
       location: 'Living Room',
       expiryDate: '2030-01-01',
       openedDate: null,
@@ -47,8 +45,6 @@ describe('deleteLocation', () => {
     })
     const med2Id = await db.medicines.add({
       catalogId: 1,
-      name: 'Med B',
-      category: null,
       location: 'Living Room',
       expiryDate: '2030-01-01',
       openedDate: null,
@@ -63,8 +59,6 @@ describe('deleteLocation', () => {
     })
     await db.medicines.add({
       catalogId: 1,
-      name: 'Med C',
-      category: null,
       location: 'Kitchen',
       expiryDate: '2030-01-01',
       openedDate: null,
@@ -99,8 +93,6 @@ describe('renameLocation', () => {
     const locId = await db.locations.add({ name: 'Bed Room', isDefault: false })
     const med1Id = await db.medicines.add({
       catalogId: 1,
-      name: 'Med A',
-      category: null,
       location: 'Bed Room',
       expiryDate: '2030-01-01',
       openedDate: null,
@@ -115,8 +107,6 @@ describe('renameLocation', () => {
     })
     const med2Id = await db.medicines.add({
       catalogId: 1,
-      name: 'Med B',
-      category: null,
       location: 'Bed Room',
       expiryDate: '2030-01-01',
       openedDate: null,

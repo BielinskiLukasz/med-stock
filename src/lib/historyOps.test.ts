@@ -13,8 +13,6 @@ import {
 
 const baseMedicine: Omit<Medicine, 'id'> = {
   catalogId: 1,  // Will be updated in migration tests
-  name: 'Ibuprofen',
-  category: 'Painkiller',
   location: 'Bathroom Cabinet',
   expiryDate: '2027-01-01',
   openedDate: null,
@@ -36,9 +34,9 @@ beforeEach(async () => {
 describe('diffMedicine', () => {
   it('detects changed string fields', () => {
     const before = { ...baseMedicine, id: 1 } as Medicine
-    const changes = { name: 'Ibuprofen Plus' }
+    const changes = { expiryDate: '2028-06-01' }
     const result = diffMedicine(before, changes)
-    expect(result).toEqual([{ field: 'name', oldValue: 'Ibuprofen', newValue: 'Ibuprofen Plus' }])
+    expect(result).toEqual([{ field: 'expiryDate', oldValue: '2027-01-01', newValue: '2028-06-01' }])
   })
 
   it('returns empty array when no tracked fields changed', () => {
@@ -65,11 +63,11 @@ describe('diffMedicine', () => {
 
   it('detects multiple changed fields', () => {
     const before = { ...baseMedicine, id: 1 } as Medicine
-    const changes = { name: 'Aspirin', category: 'Blood Thinner' }
+    const changes = { expiryDate: '2028-06-01', location: 'Kitchen Drawer' }
     const result = diffMedicine(before, changes)
     expect(result).toHaveLength(2)
-    expect(result.find(f => f.field === 'name')).toEqual({ field: 'name', oldValue: 'Ibuprofen', newValue: 'Aspirin' })
-    expect(result.find(f => f.field === 'category')).toEqual({ field: 'category', oldValue: 'Painkiller', newValue: 'Blood Thinner' })
+    expect(result.find(f => f.field === 'expiryDate')).toEqual({ field: 'expiryDate', oldValue: '2027-01-01', newValue: '2028-06-01' })
+    expect(result.find(f => f.field === 'location')).toEqual({ field: 'location', oldValue: 'Bathroom Cabinet', newValue: 'Kitchen Drawer' })
   })
 })
 
@@ -77,7 +75,7 @@ describe('softDeleteMedicine', () => {
   it('sets deletedAt to a non-null ISO string', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await softDeleteMedicine(medicine, medicine.name)
+    await softDeleteMedicine(medicine, 'Ibuprofen')
     const updated = await db.medicines.get(id)
     expect(updated?.deletedAt).not.toBeNull()
     expect(typeof updated?.deletedAt).toBe('string')
@@ -86,7 +84,7 @@ describe('softDeleteMedicine', () => {
   it('writes a history entry with action="deleted" and empty changedFields', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await softDeleteMedicine(medicine, medicine.name)
+    await softDeleteMedicine(medicine, 'Ibuprofen')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('deleted')
@@ -100,7 +98,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine, medicine.name)
+    await restoreMedicine(medicine, 'Ibuprofen')
     const updated = await db.medicines.get(id)
     expect(updated?.deletedAt).toBeNull()
   })
@@ -109,7 +107,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine, medicine.name)
+    await restoreMedicine(medicine, 'Ibuprofen')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('restored')
@@ -120,7 +118,7 @@ describe('restoreMedicine', () => {
     const now = new Date().toISOString()
     const id = await db.medicines.add({ ...baseMedicine, deletedAt: now, manualStatus: 'Archived' })
     const medicine = await db.medicines.get(id) as Medicine
-    await restoreMedicine(medicine, medicine.name)
+    await restoreMedicine(medicine, 'Ibuprofen')
     const updated = await db.medicines.get(id)
     expect(updated?.manualStatus).toBe('Archived')
   })
@@ -130,7 +128,7 @@ describe('permanentDeleteMedicine', () => {
   it('removes the medicine record', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine, medicine.name)
+    await permanentDeleteMedicine(medicine, 'Ibuprofen')
     const deleted = await db.medicines.get(id)
     expect(deleted).toBeUndefined()
   })
@@ -138,7 +136,7 @@ describe('permanentDeleteMedicine', () => {
   it('preserves history entries after permanent delete (D-38)', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine, medicine.name)
+    await permanentDeleteMedicine(medicine, 'Ibuprofen')
     const count = await db.history.where('medicineId').equals(id).count()
     expect(count).toBeGreaterThan(0)
   })
@@ -146,7 +144,7 @@ describe('permanentDeleteMedicine', () => {
   it('writes a history entry with action="deleted" before deleting medicine', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await permanentDeleteMedicine(medicine, medicine.name)
+    await permanentDeleteMedicine(medicine, 'Ibuprofen')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('deleted')
@@ -159,19 +157,19 @@ describe('updateMedicineWithHistory', () => {
   it('applies changes to the medicine record', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const before = await db.medicines.get(id) as Medicine
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
+    await updateMedicineWithHistory(id, before, { expiryDate: '2028-06-01' }, 'Ibuprofen')
     const updated = await db.medicines.get(id)
-    expect(updated?.name).toBe('Aspirin')
+    expect(updated?.expiryDate).toBe('2028-06-01')
   })
 
   it('writes a history entry with action="updated" and changedFields from diffMedicine', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const before = await db.medicines.get(id) as Medicine
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
+    await updateMedicineWithHistory(id, before, { expiryDate: '2028-06-01' }, 'Ibuprofen')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('updated')
-    expect(entries[0].changedFields).toEqual([{ field: 'name', oldValue: 'Ibuprofen', newValue: 'Aspirin' }])
+    expect(entries[0].changedFields).toEqual([{ field: 'expiryDate', oldValue: '2027-01-01', newValue: '2028-06-01' }])
   })
 
   it('sets updatedAt on the medicine record', async () => {
@@ -180,7 +178,7 @@ describe('updateMedicineWithHistory', () => {
     const oldUpdatedAt = before.updatedAt
     // Ensure time difference
     await new Promise(r => setTimeout(r, 10))
-    await updateMedicineWithHistory(id, before, { name: 'Aspirin' }, before.name)
+    await updateMedicineWithHistory(id, before, { expiryDate: '2028-06-01' }, 'Ibuprofen')
     const updated = await db.medicines.get(id)
     expect(updated?.updatedAt).not.toBe(oldUpdatedAt)
   })
@@ -190,7 +188,7 @@ describe('addMedicineHistory', () => {
   it('writes a history entry with action="created" and empty changedFields', async () => {
     const id = await db.medicines.add({ ...baseMedicine })
     const medicine = await db.medicines.get(id) as Medicine
-    await addMedicineHistory(medicine, medicine.name, 'created')
+    await addMedicineHistory(medicine, 'Ibuprofen', 'created')
     const entries = await db.history.where('medicineId').equals(id).toArray()
     expect(entries).toHaveLength(1)
     expect(entries[0].action).toBe('created')
@@ -276,11 +274,11 @@ describe('v2→v3 migration', () => {
   }
 
   it('deduplicates by case-insensitive name and creates one catalog entry', async () => {
-    // Add 4 medicines: "Paracetamol" variants and "IBUPROFEN"
-    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Paracetamol', category: 'Painkiller', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 2, name: 'paracetamol', category: 'Painkiller', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 3, name: ' Paracetamol ', category: 'Painkiller', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 4, name: 'IBUPROFEN', category: 'Painkiller', catalogId: 0 })
+    // Add 4 medicines: "Paracetamol" variants and "IBUPROFEN" (legacy v2 format with name/category)
+    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Paracetamol', category: 'Painkiller', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 2, name: 'paracetamol', category: 'Painkiller', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 3, name: ' Paracetamol ', category: 'Painkiller', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 4, name: 'IBUPROFEN', category: 'Painkiller', catalogId: 0 } as any)
 
     // Run the migration logic
     await simulateMigration()
@@ -303,10 +301,10 @@ describe('v2→v3 migration', () => {
   })
 
   it('resolves category conflicts to most-common category', async () => {
-    // Add 3 medicines with same normalized name but different categories
-    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Aspirin', category: 'Painkiller', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 2, name: 'aspirin', category: 'Fever', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 3, name: 'ASPIRIN', category: 'Painkiller', catalogId: 0 })
+    // Add 3 medicines with same normalized name but different categories (legacy v2 format)
+    await db.medicines.add({ ...baseMedicine, id: 1, name: 'Aspirin', category: 'Painkiller', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 2, name: 'aspirin', category: 'Fever', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 3, name: 'ASPIRIN', category: 'Painkiller', catalogId: 0 } as any)
 
     // Run the migration logic
     await simulateMigration()
@@ -318,9 +316,9 @@ describe('v2→v3 migration', () => {
   })
 
   it('tiebreaks by lowest id when categories equally frequent', async () => {
-    // Add 2 medicines with same normalized name but different categories
-    await db.medicines.add({ ...baseMedicine, id: 5, name: 'Vitamin C', category: 'Vitamin', catalogId: 0 })
-    await db.medicines.add({ ...baseMedicine, id: 6, name: 'vitamin c', category: 'Supplement', catalogId: 0 })
+    // Add 2 medicines with same normalized name but different categories (legacy v2 format)
+    await db.medicines.add({ ...baseMedicine, id: 5, name: 'Vitamin C', category: 'Vitamin', catalogId: 0 } as any)
+    await db.medicines.add({ ...baseMedicine, id: 6, name: 'vitamin c', category: 'Supplement', catalogId: 0 } as any)
 
     // Run the migration logic
     await simulateMigration()

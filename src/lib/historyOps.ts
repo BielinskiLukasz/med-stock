@@ -2,8 +2,6 @@ import { db } from './db'
 import type { Medicine, HistoryEntry } from './db'
 
 const TRACKED_FIELDS: (keyof Medicine)[] = [
-  'name',
-  'category',
   'location',
   'expiryDate',
   'openedDate',
