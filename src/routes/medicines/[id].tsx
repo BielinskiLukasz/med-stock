@@ -1,43 +1,40 @@
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useMemo } from 'react'
 import { db } from '@/lib/db'
-import { softDeleteMedicine } from '@/lib/historyOps'
 import { calculateStatus } from '@/lib/expiry'
 import { StatusBadge } from '@/components/StatusBadge'
-import { ChangeHistory } from '@/components/ChangeHistory'
 import { Button } from '@/components/ui/button'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
 
 export function MedicineDetail() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
+  const catalogId = Number(id)
 
-  // Load medicine live from Dexie
-  const medicine = useLiveQuery(() => db.medicines.get(Number(id)), [id])
+  // D-11: Load catalog by catalogId (not stock entry ID)
+  const catalog = useLiveQuery(() => db.medicine_catalog.get(catalogId), [id])
 
-  // Soft-delete: moves medicine to Trash Bin (sets deletedAt) — record is preserved (D-25)
-  async function handleDelete() {
-    if (!medicine) return
-    try {
-      await softDeleteMedicine(medicine, medicine.name)
-      void navigate('/medicines')
-    } catch (err) {
-      // T-03-04: never expose raw Dexie errors to UI
-      console.error('Failed to delete medicine:', err)
-    }
-  }
+  // D-11: Load active stock entries for this catalog
+  const stockEntries = useLiveQuery(
+    () => db.medicines
+      .where('catalogId')
+      .equals(catalogId)
+      .filter(m => m.deletedAt === null)
+      .toArray(),
+    [id]
+  )
 
-  if (medicine === undefined) {
+  // D-02: Find stock entry with nearest-expiry date
+  const nearestExpiryStock = useMemo(() => {
+    if (!stockEntries || stockEntries.length === 0) return null
+    return stockEntries.reduce((nearest, current) => {
+      if (!current.expiryDate) return nearest
+      if (!nearest.expiryDate) return current
+      return current.expiryDate < nearest.expiryDate ? current : nearest
+    })
+  }, [stockEntries])
+
+  // Loading states
+  if (catalog === undefined || stockEntries === undefined) {
     return (
       <div className="flex items-center justify-center h-full p-8">
         <p className="text-gray-500">Loading...</p>
@@ -45,11 +42,11 @@ export function MedicineDetail() {
     )
   }
 
-  // T-03-02: invalid :id returns undefined from Dexie — show "not found" gracefully
-  if (medicine === null) {
+  // Not found states
+  if (catalog === null) {
     return (
       <div className="p-4">
-        <p className="text-gray-500">Medicine not found.</p>
+        <p className="text-gray-500">Catalog not found.</p>
         <Button asChild className="mt-4">
           <Link to="/medicines">Back to list</Link>
         </Button>
@@ -57,111 +54,72 @@ export function MedicineDetail() {
     )
   }
 
-  // D-11: status computed at render time — NEVER stored in DB (D-12)
-  const status = calculateStatus(medicine)
+  // D-02: status computed from nearest-expiry stock at render time — NEVER stored in DB (D-12)
+  const status = nearestExpiryStock ? calculateStatus(nearestExpiryStock) : 'Active'
 
   return (
     <div className="p-4 space-y-6">
-      {/* Header */}
+      {/* Catalog Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <h1 className="text-xl font-semibold text-gray-900 break-words">
-            {medicine.name}
+            {catalog.name}
           </h1>
+          {catalog.category && (
+            <p className="text-sm text-gray-500 mt-1">{catalog.category}</p>
+          )}
         </div>
         <StatusBadge status={status} />
       </div>
 
-      {/* Field list */}
-      <dl className="space-y-3">
-        <div>
-          <dt className="text-sm font-medium text-gray-500">Category</dt>
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.category ?? 'None'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-gray-500">Location</dt>
-          {/* D-17: location null means 'Other' */}
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.location ?? 'Other'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-gray-500">Expiry Date</dt>
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.expiryDate ?? 'Not set'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-gray-500">Date Opened</dt>
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.openedDate ?? 'Not opened'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-gray-500">
-            Period After Opening (PAO)
-          </dt>
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.pao
-              ? `${medicine.pao.value} ${medicine.pao.unit}`
-              : 'Not set'}
-          </dd>
-        </div>
-        <div>
-          <dt className="text-sm font-medium text-gray-500">Quantity</dt>
-          <dd className="mt-0.5 text-sm text-gray-900">
-            {medicine.quantity != null
-              ? `${medicine.quantity}${medicine.quantityUnit ? ` ${medicine.quantityUnit}` : ''}`
-              : 'Not set'}
-          </dd>
-        </div>
-        {medicine.notes && (
-          <div>
-            <dt className="text-sm font-medium text-gray-500">Notes</dt>
-            <dd className="mt-0.5 text-sm text-gray-900 whitespace-pre-wrap">
-              {medicine.notes}
-            </dd>
+      {/* Stock Entries List */}
+      <div className="space-y-3">
+        <h2 className="text-sm font-medium text-gray-500">Stock Entries</h2>
+        {stockEntries.length === 0 ? (
+          <p className="text-sm text-gray-500 py-4">No stock</p>
+        ) : (
+          <div className="space-y-3">
+            {stockEntries.map(stock => {
+              const stockStatus = calculateStatus(stock)
+              return (
+                <div key={stock.id} className="bg-white rounded-lg shadow-sm p-3 border border-gray-100">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-medium text-gray-900">
+                          {stock.quantity} {stock.quantityUnit || 'units'}
+                        </p>
+                        <span className="text-xs text-gray-500">
+                          {stock.location ?? 'Other'}
+                        </span>
+                      </div>
+                      {stock.expiryDate && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Expires: {stock.expiryDate}
+                        </p>
+                      )}
+                      {stock.openedDate && (
+                        <p className="text-xs text-gray-500">
+                          Opened: {stock.openedDate}
+                        </p>
+                      )}
+                    </div>
+                    <StatusBadge status={stockStatus} />
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )}
-      </dl>
-
-      <ChangeHistory medicineId={medicine.id} />
-
-      {/* Actions */}
-      <div className="flex gap-3 pt-2">
-        <Button asChild className="flex-1">
-          <Link to={`/medicines/${id}/edit`}>Edit</Link>
-        </Button>
-
-        {/* Soft-delete with confirmation dialog (prevents accidental deletion) */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="flex-1">
-              Delete
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Delete medicine?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This will move <strong>{medicine.name}</strong> to the Trash
-                Bin. You can restore it from Trash.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                onClick={() => void handleDelete()}
-              >
-                Delete
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
       </div>
+
+      {/* Catalog Details */}
+      {catalog.notes && (
+        <div className="space-y-2">
+          <h2 className="text-sm font-medium text-gray-500">Notes</h2>
+          <p className="text-sm text-gray-900 whitespace-pre-wrap">{catalog.notes}</p>
+        </div>
+      )}
 
       {/* Back link */}
       <div className="pt-2">

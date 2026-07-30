@@ -3,7 +3,6 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Link } from 'react-router-dom'
 import { SlidersHorizontal } from 'lucide-react'
 import { db } from '@/lib/db'
-import { MedicineCard } from '@/components/MedicineCard'
 import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterBottomSheet } from '@/components/FilterBottomSheet'
@@ -22,47 +21,117 @@ export function MedicineList() {
   const { sortField, sortDirection, setFilterSheetOpen } = useUIStore()
   const filterCount = useActiveFilterCount()
 
-  // STEP 1: Dexie reactive query — re-runs when DB data changes OR searchQuery changes
-  // D-41 amendment: do NOT use where('deletedAt').equals(null) — null is not a valid IndexedDB key (Pitfall 1)
-  // D-11/Pitfall 3: do NOT call calculateStatus() inside the querier
-  const medicines = useLiveQuery(
-    () => {
-      const q = searchQuery.toLowerCase().trim()
-      return db.medicines
-        .toCollection()
-        .filter((m) => {
-          if (m.deletedAt !== null) return false // active only (D-25)
-          if (q && !m.name.toLowerCase().includes(q)) return false // D-21: substring match
-          return true
-        })
-        .toArray()
-    },
-    [searchQuery], // re-run only when searchQuery changes; Zustand filter changes handled in useMemo
+  // STEP 1: Query catalogs (D-01: catalog-first join)
+  const catalogs = useLiveQuery(() => db.medicine_catalog.toArray(), [])
+
+  // STEP 2: Query active stock entries for all catalogs
+  const activeStock = useLiveQuery(
+    () => db.medicines
+      .toCollection()
+      .filter((m) => m.deletedAt === null)
+      .toArray(),
+    []
   )
 
-  // STEP 2: In-memory post-filter for status/category/location (Pitfall 3 guard — calculateStatus at render time)
+  // STEP 3: In-memory join and aggregation (D-01: per-catalog nearest-expiry status + total quantity)
+  interface CatalogWithStock {
+    catalog: { id: number; name: string; category: string | null; form: string | null; notes: string | null; createdAt: string; updatedAt: string }
+    stockEntries: Medicine[]
+    nearestExpiryStock: Medicine | null
+    aggregateStatus: string
+    totalQuantity: number
+    locations: string[]
+  }
+
   const filtered = useMemo(() => {
-    if (!medicines) return []
+    if (!catalogs || !activeStock) return [] as CatalogWithStock[]
+
+    const q = searchQuery.toLowerCase().trim()
     const now = new Date()
-    return medicines
-      .filter((m) => {
-        const status = calculateStatus(m, now)
-        if (selectedStatuses.length > 0 && !selectedStatuses.includes(status)) return false
-        if (selectedCategories.length > 0 && !selectedCategories.includes(m.category ?? 'Other'))
-          return false
-        if (selectedLocations.length > 0 && !selectedLocations.includes(m.location ?? 'Other'))
-          return false
+
+    // Build catalog + aggregates
+    return catalogs
+      .map(catalog => {
+        // Get all active stock entries for this catalog
+        const stockForCatalog = activeStock.filter(s => s.catalogId === catalog.id)
+
+        // Find nearest-expiry stock
+        const nearestExpiryStock = stockForCatalog.length > 0
+          ? stockForCatalog.reduce((nearest, current) => {
+              if (!current.expiryDate) return nearest
+              if (!nearest.expiryDate) return current
+              return current.expiryDate < nearest.expiryDate ? current : nearest
+            })
+          : null
+
+        // Compute aggregate status (from nearest-expiry)
+        const aggregateStatus = nearestExpiryStock
+          ? calculateStatus(nearestExpiryStock, now)
+          : 'Active'
+
+        // Compute total quantity
+        const totalQuantity = stockForCatalog.reduce((sum, s) => sum + (s.quantity ?? 0), 0)
+
+        // Get unique locations
+        const locations = [...new Set(stockForCatalog.map(s => s.location ?? 'Other'))]
+
+        return {
+          catalog,
+          stockEntries: stockForCatalog,
+          nearestExpiryStock,
+          aggregateStatus,
+          totalQuantity,
+          locations,
+        }
+      })
+      .filter(item => {
+        // Filter by search query (catalog name)
+        if (q && !item.catalog.name.toLowerCase().includes(q)) return false
+        return item.stockEntries.length > 0 // only show catalogs with active stock
+      })
+      .filter(item => {
+        // Filter by selected statuses
+        if (selectedStatuses.length > 0 && !selectedStatuses.includes(item.aggregateStatus)) return false
+        return true
+      })
+      .filter(item => {
+        // Filter by selected categories
+        if (selectedCategories.length > 0 && !selectedCategories.includes(item.catalog.category ?? 'Other')) return false
+        return true
+      })
+      .filter(item => {
+        // Filter by selected locations (match-any semantics: catalog has stock in selected location)
+        if (selectedLocations.length > 0) {
+          const hasLocation = item.locations.some(loc => selectedLocations.includes(loc))
+          if (!hasLocation) return false
+        }
         return true
       })
       .sort((a, b) => {
         const dir = sortDirection === 'asc' ? 1 : -1
-        const va = String((a[sortField as keyof Medicine] as string | number | null) ?? '')
-        const vb = String((b[sortField as keyof Medicine] as string | number | null) ?? '')
-        return va.localeCompare(vb) * dir
-      })
-  }, [medicines, selectedStatuses, selectedCategories, selectedLocations, sortField, sortDirection])
 
-  if (medicines === undefined) {
+        let va: string | number = ''
+        let vb: string | number = ''
+
+        if (sortField === 'name') {
+          va = a.catalog.name
+          vb = b.catalog.name
+        } else if (sortField === 'category') {
+          va = a.catalog.category ?? 'Other'
+          vb = b.catalog.category ?? 'Other'
+        } else if (sortField === 'expiryDate') {
+          va = a.nearestExpiryStock?.expiryDate ?? ''
+          vb = b.nearestExpiryStock?.expiryDate ?? ''
+        } else if (sortField === 'status') {
+          va = a.aggregateStatus
+          vb = b.aggregateStatus
+        }
+
+        return String(va).localeCompare(String(vb)) * dir
+      })
+  }, [catalogs, activeStock, searchQuery, selectedStatuses, selectedCategories, selectedLocations, sortField, sortDirection])
+
+  if (catalogs === undefined || activeStock === undefined) {
     return (
       <div className="flex items-center justify-center h-full p-8">
         <p className="text-gray-500">Loading...</p>
@@ -108,7 +177,7 @@ export function MedicineList() {
       </div>
 
       {/* Empty state: no medicines at all (initial state) */}
-      {filtered.length === 0 && searchQuery === '' && filterCount === 0 ? (
+      {(filtered ?? []).length === 0 && searchQuery === '' && filterCount === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 p-8 text-center">
           <p className="text-gray-500">
             No medicines yet. Tap + to add your first medicine.
@@ -117,22 +186,37 @@ export function MedicineList() {
             <Link to="/medicines/new">Add Medicine</Link>
           </Button>
         </div>
-      ) : filtered.length === 0 && searchQuery !== '' ? (
+      ) : (filtered ?? []).length === 0 && searchQuery !== '' ? (
         /* Empty state: search returned no results */
         <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
           <p className="text-gray-500">No medicines match your search.</p>
         </div>
-      ) : filtered.length === 0 ? (
+      ) : (filtered ?? []).length === 0 ? (
         /* Empty state: filters returned no results */
         <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
           <p className="text-gray-500">No medicines match your filters.</p>
         </div>
       ) : (
-        /* D-22: Search results use existing MedicineCard component */
+        /* D-01: Search results render catalog cards with aggregate data */
         <div className="px-4 space-y-3">
-          {/* D-11: calculateStatus() computed inside MedicineCard at render time */}
-          {filtered.map((med) => (
-            <MedicineCard key={med.id} medicine={med} />
+          {(filtered ?? []).map((item) => (
+            <Link
+              key={item.catalog.id}
+              to={`/medicines/${item.catalog.id}`}
+              className="block bg-white rounded-lg shadow-sm p-4 border border-gray-100 hover:border-gray-300 transition-colors"
+            >
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-medium text-gray-900 truncate">{item.catalog.name}</h3>
+                  {item.catalog.category && (
+                    <p className="text-sm text-gray-500 mt-0.5">{item.catalog.category}</p>
+                  )}
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {item.totalQuantity} {item.nearestExpiryStock?.quantityUnit || 'units'} across {item.stockEntries.length} {item.stockEntries.length === 1 ? 'location' : 'locations'}
+                  </p>
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       )}

@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
+import { useMemo } from 'react'
 import { db } from '@/lib/db'
 import { restoreMedicine, permanentDeleteMedicine } from '@/lib/historyOps'
 import { Button } from '@/components/ui/button'
@@ -21,31 +22,42 @@ export function TrashScreen() {
       db.medicines
         .toCollection()
         .filter(m => m.deletedAt !== null)
-        .sortBy('name'),
+        .toArray(),
     [],
   )
 
-  async function handleRestore(medicine: Medicine) {
+  const catalogs = useLiveQuery(() => db.medicine_catalog.toArray(), [])
+
+  // Map medicines to their catalog data
+  const deletedWithCatalogs = useMemo(() => {
+    if (!deletedMedicines || !catalogs) return []
+    return deletedMedicines.map(med => {
+      const catalog = catalogs.find(c => c.id === med.catalogId)
+      return { medicine: med, catalog }
+    })
+  }, [deletedMedicines, catalogs])
+
+  async function handleRestore(medicine: Medicine, catalogName: string) {
     try {
-      await restoreMedicine(medicine, medicine.name)
+      await restoreMedicine(medicine, catalogName)
     } catch (err) {
       console.error('Failed to restore medicine:', err)
     }
   }
 
-  async function handlePermanentDelete(medicine: Medicine) {
+  async function handlePermanentDelete(medicine: Medicine, catalogName: string) {
     try {
-      await permanentDeleteMedicine(medicine, medicine.name)
+      await permanentDeleteMedicine(medicine, catalogName)
     } catch (err) {
       console.error('Failed to permanently delete medicine:', err)
     }
   }
 
-  if (deletedMedicines === undefined) {
+  if (deletedMedicines === undefined || catalogs === undefined) {
     return <div className="p-4">Loading...</div>
   }
 
-  if (deletedMedicines.length === 0) {
+  if (deletedWithCatalogs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
         <p className="text-gray-500">Trash is empty.</p>
@@ -58,12 +70,17 @@ export function TrashScreen() {
       <h1 className="text-xl font-semibold p-4">Trash</h1>
 
       <div className="space-y-3 p-4">
-        {deletedMedicines.map(medicine => (
+        {deletedWithCatalogs.map(({ medicine, catalog }) => (
           <div
             key={medicine.id}
             className="border rounded-lg p-4 bg-white shadow-sm"
           >
-            <p className="font-medium text-gray-900">{medicine.name}</p>
+            <p className="font-medium text-gray-900">
+              {catalog?.name ?? 'Unknown Medicine'}
+            </p>
+            <p className="text-sm text-gray-500 mt-0.5">
+              {medicine.quantity} {medicine.quantityUnit || 'units'} at {medicine.location ?? 'Other'}
+            </p>
             <p className="text-sm text-gray-500 mt-0.5">
               Deleted{' '}
               {medicine.deletedAt
@@ -74,7 +91,7 @@ export function TrashScreen() {
             <div className="flex gap-2 mt-3">
               <Button
                 size="sm"
-                onClick={() => void handleRestore(medicine)}
+                onClick={() => void handleRestore(medicine, catalog?.name ?? 'Unknown')}
               >
                 Restore
               </Button>
@@ -98,7 +115,7 @@ export function TrashScreen() {
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      onClick={() => void handlePermanentDelete(medicine)}
+                      onClick={() => void handlePermanentDelete(medicine, catalog?.name ?? 'Unknown')}
                     >
                       Delete Permanently
                     </AlertDialogAction>
