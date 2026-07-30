@@ -132,19 +132,54 @@ All new text in Phase 5 must use one of these roles. No other sizes or weights.
 
 ## UI Considerations
 
-Applicable state coverage for Phase 5:
+Applicable state coverage for Phase 5 (probe-resolved 2026-07-30, 50 applicable items):
 
-| Category | Element(s) | Status | Resolution |
-|----------|------------|--------|-----------|
-| **empty** | medicines list | ✅ covered | Render "No medicines yet" copy from copywriting contract above |
-| **empty** | catalog search results (autocomplete) | ✅ covered | When 0 matches to typed query, show "Create '[name]'" option inline |
-| **empty** | stock entries list (detail view) | ✅ covered | Render "No stock" copy when catalog has no active stock entries |
-| **long-text** | medicine name (card + detail header) | ✅ covered | Use `truncate` on list card (one line max); use `break-words` on detail header (allow wrapping) |
-| **long-text** | catalog name in add flow autocomplete | ✅ covered | Display full name in dropdown; wrap if needed (no truncation in dropdown) |
-| **overflow** | many stock entries in detail view | 🧪 backstop | Detail screen lists all active stock entries in a scrollable list; no pagination. If 50+ entries, list may become long but remains usable (scrollable). Assumed acceptable; if not, escalate to planner as pagination scope. |
-| **overflow** | many locations in location picker | 🧪 backstop | Location picker (Select + searchable) filters live as user types. If 100+ locations, picker remains functional. Assumed acceptable. |
-| **zero-one-many** | quantity display on card | ✅ covered | Show aggregate quantity: "1 tablet" (singular) or "20 tablets" (plural); add "across N locations" suffix if stock spans multiple locations. Pluralization rule: quantity === 1 → singular unit name, else plural |
-| **zero-one-many** | status badge on card | ✅ covered | Status derived from nearest-expiry active stock entry (single status per catalog). If all stock deleted, no active entry exists; detail screen shows "No stock". |
+**Loading states:** All 8 elements dismissed — local-only IndexedDB via Dexie `useLiveQuery`; reads are near-instant, no network calls, no skeleton/spinner needed.
+
+| Category | Element | Status | Resolution |
+|----------|---------|--------|-----------|
+| **empty** | E1 CatalogSearchAutocomplete | ✅ covered | "No results" text + "Create '[name]'" option inline; → Copywriting Contract |
+| **empty** | E2 CatalogForm | ✅ covered | Fresh form is empty state; placeholders shown, submit disabled until required fields valid |
+| **empty** | E3 StockForm | ✅ covered | Fresh form; quantity/expiry/location required; submit disabled until all required fields valid |
+| **empty** | E6 MedicineList | ✅ covered | "No medicines yet" (no items) or "No matches" (filtered); → Copywriting Contract |
+| **empty** | E7 MedicineDetail | ✅ covered | "No stock" copy when catalog has no active stock entries; → Copywriting Contract |
+| **empty** | E8 MedicineAdd | ✅ covered | All 3 steps start with autofocus and empty/pre-filled state; autocomplete empty handled by E1 rule |
+| **empty** | E4 StockEntryCard | dismissed | Always rendered with data; parent MedicineDetail controls whether any cards are shown |
+| **empty** | E5 MedicineCardAggregate | dismissed | Always rendered with data; parent MedicineList controls empty state |
+| **error** | E1 CatalogSearchAutocomplete | ✅ covered | "A medicine with this name already exists" + offer to jump back to search; → Copywriting Contract |
+| **error** | E2 CatalogForm | ✅ covered | Field-level errors for name-required and category-required; → Copywriting Contract |
+| **error** | E3 StockForm | ✅ covered | Field-level errors for quantity/expiry/location required + validation; → Copywriting Contract |
+| **error** | E8 MedicineAdd | ✅ covered | All form validation errors across all 3 steps in Copywriting Contract; navigation errors N/A |
+| **error** | E4 StockEntryCard | dismissed | Individual card does not handle read errors; parent list handles IndexedDB errors |
+| **error** | E5 MedicineCardAggregate | dismissed | Individual card does not handle read errors; parent list handles IndexedDB errors |
+| **error** | E6 MedicineList | 🧪 backstop | IndexedDB error boundary or catch block shows fallback UI; wired evidence required at verify time |
+| **error** | E7 MedicineDetail | 🧪 backstop | IndexedDB error boundary shows fallback UI (e.g., catalogId not found); wired evidence required |
+| **populated** | E4 StockEntryCard | ✅ covered | Shows quantity+unit, expiry date, location, status badge, "Open box" and "Move/Split" action icons |
+| **populated** | E5 MedicineCardAggregate | ✅ covered | Shows catalog name, nearest-expiry status badge, aggregate quantity ("20 tablets across 2 locations") |
+| **populated** | E6 MedicineList | ✅ covered | List of MedicineCardAggregate cards with consistent 8px gap spacing |
+| **populated** | E7 MedicineDetail | ✅ covered | Catalog header (name + edit icon) + scrollable list of StockEntryCard below header |
+| **partial** | E1 CatalogSearchAutocomplete | ✅ covered | Partial input (mid-typing) is normal state; dropdown filters live; no special handling needed |
+| **partial** | E2 CatalogForm | ✅ covered | Submit disabled until all required fields valid; React Hook Form inline validation on blur/change |
+| **partial** | E3 StockForm | ✅ covered | Submit disabled until all required fields valid; React Hook Form inline validation on blur/change |
+| **partial** | E8 MedicineAdd | ✅ covered | Submit disabled per step; back arrow discards current step data; multi-step flow validates before advancing |
+| **partial** | E5 MedicineCardAggregate | ✅ covered | Optional fields missing on stock entries simply absent from card aggregate display |
+| **partial** | E6 MedicineList | ✅ covered | Optional catalog/stock fields absent from cards; card layout handles missing optionals gracefully |
+| **partial** | E7 MedicineDetail | ✅ covered | StockEntryCard shows absent optional fields as hidden/empty; catalog header always shows name |
+| **partial** | E4 StockEntryCard | 🧪 backstop | Optional fields (notes, PAO, paoUnit) absent when not set; test card renders cleanly with minimal fields (quantity+expiry+location only) |
+| **overflow** | E5 MedicineCardAggregate | ✅ covered | CSS `truncate` on catalog name (one line max with ellipsis) |
+| **overflow** | E8 MedicineAdd | dismissed | Each step is a full-screen view; forms scroll natively; no container overflow concern |
+| **overflow** | E4 StockEntryCard | 🧪 backstop | Notes field on card row could be long; test card layout with very long notes doesn't break row |
+| **overflow** | E6 MedicineList | 🧪 backstop | Test that 50+ item list scrolls without layout breaks (scrollable container) |
+| **overflow** | E7 MedicineDetail | 🧪 backstop | Test that 50+ stock entries list scrolls without layout breaks (scrollable container) |
+| **zero-one-many** | E5 MedicineCardAggregate | ✅ covered | "1 tablet" (singular) vs "20 tablets" (plural); "across N locations" suffix when multiple locations. Pluralization rule: quantity === 1 → singular unit name, else plural |
+| **zero-one-many** | E4 StockEntryCard | dismissed | Single card, not a collection; parent MedicineDetail handles item count |
+| **zero-one-many** | E6 MedicineList | 🧪 backstop | Test 1-item and 10-item lists render without layout breaks (spacing, last-card border radius) |
+| **zero-one-many** | E7 MedicineDetail | 🧪 backstop | Test 1-entry and 10-entry stock lists render without layout breaks |
+| **long-text** | E1 CatalogSearchAutocomplete | ✅ covered | Full name displayed in dropdown; wraps if needed; no truncation in dropdown list |
+| **long-text** | E2 CatalogForm | ✅ covered | Standard HTML input overflow; browser truncates long typed values in input field |
+| **long-text** | E3 StockForm | ✅ covered | Notes textarea scrolls for long content; other inputs use standard browser overflow |
+| **long-text** | E4 StockEntryCard | ✅ covered | Medicine name and notes use CSS `truncate` on card row; full value accessible in edit sheet |
+| **long-text** | E8 MedicineAdd | ✅ covered | Steps 1/2/3 follow E1/E2/E3 rules; standard input/textarea overflow behavior |
 
 ### Focal Points & Accessibility
 
@@ -335,11 +370,11 @@ No third-party registries declared. All components use shadcn official.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved (2026-07-30)
