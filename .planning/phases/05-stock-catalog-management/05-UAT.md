@@ -1,14 +1,19 @@
 ---
-status: pending
+status: testing
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
-started: null
-updated: 2026-07-31T00:15:00Z
+started: 2026-08-01T00:00:00Z
+updated: 2026-08-01T00:00:00Z
 ---
 
 ## Current Test
+<!-- OVERWRITE each test - shows where we are -->
 
-[pending — testing not yet started]
+number: 1
+name: Add flow — select existing catalog
+expected: |
+  Navigate to /medicines/new. Type a name that matches an existing catalog entry. Select it from the dropdown. Stock form opens pre-filled with the catalog name. Fill in expiry date and submit. App navigates to the catalog's detail view showing the new stock entry.
+awaiting: user response
 
 ## Tests
 
