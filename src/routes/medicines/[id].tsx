@@ -8,7 +8,7 @@ import { db } from '@/lib/db'
 import type { Medicine } from '@/lib/db'
 import { calculateStatus } from '@/lib/expiry'
 import { addMedicineHistory, updateMedicineWithHistory } from '@/lib/historyOps'
-import { editStockEntry, softDeleteStock, moveStock } from '@/lib/stockOps'
+import { editStockEntry, softDeleteStock, moveStock, deleteCatalogEntry } from '@/lib/stockOps'
 import { StatusBadge } from '@/components/StatusBadge'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,6 +40,7 @@ export function MedicineDetail() {
   const [selectedStockForMove, setSelectedStockForMove] = useState<Medicine | null>(null)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
   const [selectedStockForDelete, setSelectedStockForDelete] = useState<Medicine | null>(null)
+  const [catalogDeleteOpen, setCatalogDeleteOpen] = useState(false)
 
   // D-11: Load catalog by catalogId (not stock entry ID)
   const catalog = useLiveQuery(() => db.medicine_catalog.get(catalogId), [id])
@@ -101,6 +102,17 @@ export function MedicineDetail() {
     if (!selectedStockForMove || !catalog) return
     await moveStock(selectedStockForMove.id, quantityToMove, targetLocation, selectedStockForMove, catalog.name)
     toast.success('Stock moved')
+  }
+
+  async function handleCatalogDeleteConfirm() {
+    try {
+      await deleteCatalogEntry(catalogId)
+      toast.success('Catalog deleted')
+      void navigate('/medicines')
+    } catch (err) {
+      console.error('Failed to delete catalog:', err)
+      toast.error('Failed to delete catalog. Please try again.')
+    }
   }
 
   // "Open box": split atomically (D-15).
@@ -217,6 +229,14 @@ export function MedicineDetail() {
             aria-label="Edit catalog"
           >
             <Pencil className="h-4 w-4 text-gray-500" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setCatalogDeleteOpen(true)}
+            className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+            aria-label="Delete catalog"
+          >
+            <Trash2 className="h-4 w-4 text-red-500" />
           </button>
         </div>
       </div>
@@ -385,6 +405,40 @@ export function MedicineDetail() {
             >
               Move to Trash
             </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Catalog Delete Confirmation */}
+      <AlertDialog open={catalogDeleteOpen} onOpenChange={setCatalogDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            {(stockEntries?.length ?? 0) > 0 ? (
+              <>
+                <AlertDialogTitle>Cannot delete catalog</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This catalog has active stock entries that must be deleted first. Move all stock entries to Trash before deleting the catalog.
+                </AlertDialogDescription>
+              </>
+            ) : (
+              <>
+                <AlertDialogTitle>Delete catalog?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This permanently removes the catalog entry. This action cannot be undone.
+                </AlertDialogDescription>
+              </>
+            )}
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            {(stockEntries?.length ?? 0) === 0 && (
+              <AlertDialogAction
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                onClick={() => void handleCatalogDeleteConfirm()}
+              >
+                Delete
+              </AlertDialogAction>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
