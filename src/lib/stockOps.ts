@@ -107,3 +107,17 @@ export async function moveStock(
   })
   return newId
 }
+
+export async function deleteCatalogEntry(catalogId: number): Promise<void> {
+  const activeCount = await db.medicines
+    .where('catalogId')
+    .equals(catalogId)
+    .filter(m => m.deletedAt === null)
+    .count()
+  if (activeCount > 0) {
+    throw new Error('Cannot delete catalog with active stock entries')
+  }
+  await db.transaction('rw', db.medicine_catalog, async () => {
+    await db.medicine_catalog.delete(catalogId)
+  })
+}
