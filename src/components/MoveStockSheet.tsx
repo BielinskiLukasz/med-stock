@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { toast } from 'sonner'
 import type { Medicine } from '@/lib/db'
@@ -30,8 +30,16 @@ interface MoveStockSheetProps {
 
 export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockSheetProps) {
   const [quantity, setQuantity] = useState(1)
-  const [targetLocation, setTargetLocation] = useState<string | null>(null)
+  const [targetLocation, setTargetLocation] = useState<string | null>(stock.location)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Re-sync state whenever the sheet opens or the stock prop changes (G-05-7)
+  useEffect(() => {
+    if (open) {
+      setTargetLocation(stock.location)
+      setQuantity(1)
+    }
+  }, [open, stock])
 
   const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
   const maxQty = stock.quantity ?? 0
