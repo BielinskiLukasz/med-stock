@@ -30,6 +30,7 @@ export function StockEditSheet({ stock, onSave, open, onOpenChange }: StockEditS
       paoValue: stock.pao?.value ?? null,
       paoUnit: stock.pao?.unit ?? null,
       quantity: stock.quantity,
+      packCount: stock.packCount,
       quantityUnit: stock.quantityUnit,
       notes: stock.notes,
     },
@@ -45,6 +46,7 @@ export function StockEditSheet({ stock, onSave, open, onOpenChange }: StockEditS
         paoValue: stock.pao?.value ?? null,
         paoUnit: stock.pao?.unit ?? null,
         quantity: stock.quantity,
+        packCount: stock.packCount,
         quantityUnit: stock.quantityUnit,
         notes: stock.notes,
       })
@@ -62,6 +64,7 @@ export function StockEditSheet({ stock, onSave, open, onOpenChange }: StockEditS
             ? { value: data.paoValue, unit: data.paoUnit }
             : null,
         quantity: data.quantity ?? null,
+        packCount: data.packCount ?? null,
         quantityUnit: data.quantityUnit ?? null,
         notes: data.notes ?? null,
       })

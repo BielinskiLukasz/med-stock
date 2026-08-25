@@ -1,5 +1,20 @@
 import 'fake-indexeddb/auto'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+// Mock React hooks and dexie-react-hooks before importing the module
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react')>()
+  return { ...actual, useState: vi.fn(() => [false, vi.fn()]) }
+})
+vi.mock('dexie-react-hooks', () => ({
+  useLiveQuery: vi.fn(() => []),
+}))
+vi.mock('@/lib/db', () => ({
+  db: {
+    locations: { orderBy: vi.fn(() => ({ toArray: vi.fn(() => Promise.resolve([])) })) },
+  },
+}))
+
 import { stockSchema } from './StockFields'
 
 const baseValid = {

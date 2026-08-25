@@ -31,6 +31,7 @@ export const stockSchema = z.object({
   paoValue: z.number().positive().nullable().optional(),
   paoUnit: z.enum(['days', 'weeks', 'months']).nullable().optional(),
   quantity: z.number().positive().nullable().optional(),
+  packCount: z.number().positive().nullable().optional(),
   quantityUnit: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
 })
@@ -311,7 +312,31 @@ export function StockFields({ form }: StockFieldsProps) {
         </div>
       </div>
 
-      {/* 6. Notes (optional) */}
+      {/* 6. Number of boxes (packCount, optional) */}
+      <FormField
+        control={form.control}
+        name="packCount"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Number of boxes</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="e.g. 2"
+                min={1}
+                value={field.value ?? ''}
+                onChange={(e) => {
+                  const val = e.target.value
+                  field.onChange(val === '' ? null : Number(val))
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      {/* 7. Notes (optional) */}
       <FormField
         control={form.control}
         name="notes"
