@@ -81,7 +81,7 @@ Plans:
 9. Soft-deleted stock entries appear in Trash and can be restored with full history preserved
 10. Adding, editing, moving, and deleting stock entries record history with catalogId context so changes are auditable
 
-**Plans**: 6 plans
+**Plans**: 11 plans (6 original + 5 gap closure after UAT)
 
 Wave execution order (each wave parallelizable within):
 
@@ -94,6 +94,17 @@ Wave execution order (each wave parallelizable within):
 - **Wave 3** (after Wave 2):
   - [ ] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form) `[depends: 05-01, 05-03, 05-04]`
   - [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete), Trash "View" link fix (D-12) `[depends: 05-01, 05-03, 05-04, 05-05]`
+
+Gap closure plans (after UAT — 8 gaps found):
+
+- **GAP Wave 1** (parallel, no shared files):
+  - [ ] 05-07-PLAN.md — Simple UI fixes: Open box guard (G-05-1), status filter match-any (G-05-5), ChangeHistory render (G-05-6), MoveStockSheet prefill (G-05-7)
+  - [ ] 05-08-PLAN.md — TDD: Aggregation priority-reduce rewrite (G-05-4)
+  - [ ] 05-09-PLAN.md — packCount schema migration + form fields (G-05-2 schema half)
+- **GAP Wave 2** (after GAP Wave 1):
+  - [ ] 05-10-PLAN.md — Open box pack-level split + aggregate display (G-05-3, G-05-2 display) `[depends: 05-07, 05-08, 05-09]`
+- **GAP Wave 3** (after GAP Wave 2):
+  - [ ] 05-11-PLAN.md — Catalog delete: deleteCatalogEntry + UI AlertDialog (G-05-8) `[depends: 05-10]`
 
 **UI hint**: yes
 
