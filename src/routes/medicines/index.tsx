@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { SlidersHorizontal } from 'lucide-react'
 import { db } from '@/lib/db'
 import type { Medicine, MedicineCatalog } from '@/lib/db'
+import { calculateStatus } from '@/lib/expiry'
 import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterBottomSheet } from '@/components/FilterBottomSheet'
@@ -83,8 +84,8 @@ export function MedicineList() {
         return item.stockEntries.length > 0 // only show catalogs with active stock
       })
       .filter(item => {
-        // Filter by selected statuses
-        if (selectedStatuses.length > 0 && !selectedStatuses.includes(item.aggregateStatus)) return false
+        // Filter by selected statuses (match-any: catalog appears if ANY stock entry matches)
+        if (selectedStatuses.length > 0 && !item.stockEntries.some(e => selectedStatuses.includes(calculateStatus(e)))) return false
         return true
       })
       .filter(item => {
