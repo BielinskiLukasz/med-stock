@@ -19,13 +19,13 @@
 ### Stock
 
 - [ ] **STOCK-01**: User can add a stock entry (quantity, expiry date, location) linked to a catalog entry
-- [ ] **STOCK-02**: User can edit a stock entry's quantity, expiry date, location, PAO, and notes
-- [ ] **STOCK-03**: User can move N units from one stock entry to a different location, splitting into two stock entries
-- [ ] **STOCK-04**: Soft-deleted stock entries appear in Trash and can be restored
+- [x] **STOCK-02**: User can edit a stock entry's quantity, expiry date, location, PAO, and notes
+- [x] **STOCK-03**: User can move N units from one stock entry to a different location, splitting into two stock entries
+- [x] **STOCK-04**: Soft-deleted stock entries appear in Trash and can be restored
 
 ### Add / Edit Flows
 
-- [ ] **FLOW-01**: Medicine list shows one aggregate row per catalog entry, with status derived from the nearest-expiry active stock entry
+- [x] **FLOW-01**: Medicine list shows one aggregate row per catalog entry, with status derived from the nearest-expiry active stock entry
 - [ ] **FLOW-02**: Detail screen lists all stock entries for a catalog entry, each showing quantity, expiry, location, and status
 - [ ] **FLOW-03**: Add flow: catalog autocomplete first → if match selected, jump straight to stock fields; if no match, show catalog fields then stock fields
 
@@ -56,10 +56,10 @@
 | CAT-02 | 5 | Pending |
 | CAT-03 | 5 | Pending |
 | STOCK-01 | 5 | Pending |
-| STOCK-02 | 5 | Pending |
-| STOCK-03 | 5 | Pending |
-| STOCK-04 | 5 | Pending |
-| FLOW-01 | 5 | Pending |
+| STOCK-02 | 5 | Complete |
+| STOCK-03 | 5 | Complete |
+| STOCK-04 | 5 | Complete |
+| FLOW-01 | 5 | Complete |
 | FLOW-02 | 5 | Pending |
 | FLOW-03 | 5 | Pending |
 | DATA-01 | 6 | Pending |

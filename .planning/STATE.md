@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Catalog + Stock Model
 current_phase: 05
 current_phase_name: stock-catalog-management
-status: verifying
-stopped_at: 05-06 implemented — pending human verification checkpoint
-last_updated: "2026-07-31T00:10:00.000Z"
-last_activity: 2026-07-31
-last_activity_desc: All Phase 5 plans implemented — awaiting manual UI verification of detail view actions
+status: executing
+stopped_at: Completed 05-07-PLAN.md
+last_updated: "2026-08-25T18:15:30.751Z"
+last_activity: 2026-08-25
+last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 8
+  total_plans: 13
   completed_plans: 8
-  percent: 100
+  percent: 33
 ---
 
 # Project State
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-29)
 ## Current Position
 
 Phase: 05 (stock-catalog-management) — EXECUTING
-Plan: 6 of 6
-Status: Phase 05 implemented — awaiting manual UI verification checkpoint
-Last activity: 2026-07-31 — 05-06 implemented: CatalogEditSheet, StockEditSheet, MoveStockSheet, detail view wiring, Trash fix
+Plan: 2 of 11
+Status: Ready to execute
+Last activity: 2026-08-25 — Phase 05 execution started
 
 ## v1.0 Summary
 
@@ -67,12 +67,20 @@ Last activity: 2026-07-31 — 05-06 implemented: CatalogEditSheet, StockEditShee
 
 ## Session
 
-**Last session:** 2026-07-30T12:00:00.000Z
-**Stopped at:** Phase 5 planning complete — 6 plans ready for execution
-**Resume file:** .planning/phases/05-stock-catalog-management/05-01-PLAN.md
+**Last session:** 2026-08-25T18:15:30.729Z
+**Stopped at:** Completed 05-07-PLAN.md
+**Resume file:** None
 
 ## Performance Metrics
 
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 04 P02 | 40 | 2 tasks | 6 files |
+| Phase 05 P07 | 8 | 3 tasks | 3 files |
+
+## Decisions
+
+- [Phase ?]: G-05-1: guarded Open box button with !stock.openedDate
+- [Phase ?]: G-05-5: status filter uses match-any via calculateStatus over stockEntries
+- [Phase ?]: G-05-6: ChangeHistory rendered per stock card in detail view
+- [Phase ?]: G-05-7: MoveStockSheet seeded from stock.location with useEffect reset

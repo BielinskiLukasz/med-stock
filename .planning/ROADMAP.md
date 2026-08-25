@@ -81,24 +81,24 @@ Plans:
 9. Soft-deleted stock entries appear in Trash and can be restored with full history preserved
 10. Adding, editing, moving, and deleting stock entries record history with catalogId context so changes are auditable
 
-**Plans**: 11 plans (6 original + 5 gap closure after UAT)
+**Plans**: 6/11 plans executed
 
 Wave execution order (each wave parallelizable within):
 
 - **Wave 1** (start here):
-  - [ ] 05-01-PLAN.md — Tracer: Schema v4 migration + catalog detail view (catalogId-based load, stock list with nearest-expiry status) `[reversibility checkpoint: D-16 one-way, D-11 costly]`
-  - [ ] 05-02-PLAN.md — TDD: Catalog-first aggregation (nearest-expiry selection + quantity summation) `[depends: 05-01]`
+  - [x] 05-01-PLAN.md — Tracer: Schema v4 migration + catalog detail view (catalogId-based load, stock list with nearest-expiry status) `[reversibility checkpoint: D-16 one-way, D-11 costly]`
+  - [x] 05-02-PLAN.md — TDD: Catalog-first aggregation (nearest-expiry selection + quantity summation) `[depends: 05-01]`
 - **Wave 2** (after Wave 1):
-  - [ ] 05-03-PLAN.md — List view catalog-first join with aggregate card, component decomposition (CatalogFields, StockFields) `[depends: 05-01, 05-02]`
-  - [ ] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording) `[depends: 05-01]`
+  - [x] 05-03-PLAN.md — List view catalog-first join with aggregate card, component decomposition (CatalogFields, StockFields) `[depends: 05-01, 05-02]`
+  - [x] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording) `[depends: 05-01]`
 - **Wave 3** (after Wave 2):
-  - [ ] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form) `[depends: 05-01, 05-03, 05-04]`
+  - [x] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form) `[depends: 05-01, 05-03, 05-04]`
   - [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete), Trash "View" link fix (D-12) `[depends: 05-01, 05-03, 05-04, 05-05]`
 
 Gap closure plans (after UAT — 8 gaps found):
 
 - **GAP Wave 1** (parallel, no shared files):
-  - [ ] 05-07-PLAN.md — Simple UI fixes: Open box guard (G-05-1), status filter match-any (G-05-5), ChangeHistory render (G-05-6), MoveStockSheet prefill (G-05-7)
+  - [x] 05-07-PLAN.md — Simple UI fixes: Open box guard (G-05-1), status filter match-any (G-05-5), ChangeHistory render (G-05-6), MoveStockSheet prefill (G-05-7)
   - [ ] 05-08-PLAN.md — TDD: Aggregation priority-reduce rewrite (G-05-4)
   - [ ] 05-09-PLAN.md — packCount schema migration + form fields (G-05-2 schema half)
 - **GAP Wave 2** (after GAP Wave 1):
@@ -136,7 +136,7 @@ Gap closure plans (after UAT — 8 gaps found):
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
-| 5. Stock & Catalog Management | 0/6 | Planned | - |
+| 5. Stock & Catalog Management | 6/11 | In Progress|  |
 | 6. Backup & Restore | 0/TBD | Pending | - |
 
 ---
