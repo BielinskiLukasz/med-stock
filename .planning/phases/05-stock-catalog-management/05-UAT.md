@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
 started: 2026-08-01T00:00:00Z
@@ -78,8 +78,12 @@ blocked: 0
   reason: "User reported: not opened even if I provide opened date in form, need to click open box"
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "openedDate IS saved correctly and status IS set to Opened — but the 'Open box' button in [id].tsx line 241 has no guard for stock.openedDate !== null, so it stays visible even on already-opened entries, making the user think the form had no effect"
+  artifacts:
+    - path: "src/routes/medicines/[id].tsx"
+      issue: "line 241: button guard checks only quantity > 1, missing && !stock.openedDate condition"
+  missing:
+    - "Add !stock.openedDate to Open box button visibility guard"
 
 - gap_id: G-05-2
   truth: "The stock Add form should allow entering number of boxes (packs) in addition to quantity per box"
@@ -87,8 +91,17 @@ blocked: 0
   reason: "User reported: we have quantity where I can put number of tablets in the box but I dont see to field to provide number of boxes (entire medicine box)"
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "Medicine schema has only quantity (units per pack) and quantityUnit — no packCount field exists anywhere in db.ts, StockFields.tsx, or stockSchema"
+  artifacts:
+    - path: "src/lib/db.ts"
+      issue: "Medicine interface has no packCount field"
+    - path: "src/components/StockFields.tsx"
+      issue: "lines 242-311: single quantity section, no box/pack count input"
+  missing:
+    - "New packCount: number | null field via db.version(5) migration"
+    - "Form field in StockFields.tsx and stockSchema update"
+    - "addStockEntry / editStockEntry to persist packCount"
+    - "computeCatalogAggregate and MedicineCardAggregate to show packCount × quantity totals"
 
 - gap_id: G-05-3
   truth: "Open box should operate on the box/pack level, not the per-unit (tablet) level — needs a dialog with multiplier or box count so user can specify how many units are in one box"
@@ -96,17 +109,29 @@ blocked: 0
   reason: "User reported: 'opening' one unit like one tablet — should be separate window with multiplier/boxes concept; confirmed again in test 6"
   severity: major
   test: 1
-  artifacts: []
-  missing: []
+  root_cause: "handleOpenBoxClick in [id].tsx hardcodes quantity: 1 for new entry and (stock.quantity - 1) decrement — no prompt and no packCount field to derive from. Shares root with G-05-2."
+  artifacts:
+    - path: "src/routes/medicines/[id].tsx"
+      issue: "handleOpenBoxClick lines 115 and 130: both hardcoded to 1 unit"
+  missing:
+    - "Once G-05-2 packCount exists: Open box should decrement packCount by 1, create new entry with quantity=stock.quantity and packCount=1"
+    - "Short-term: prompt asking 'Units per box?' before executing"
 
 - gap_id: G-05-4
-  truth: "Catalog card shows worst-case status using the correct priority order: expired > exceeded_open_period > expiring_soon > valid > unknown"
+  truth: "Catalog aggregate status uses priority order: Expired > ExceededOpenPeriod > Opened > Active. Manual statuses (UsedUp, Disposed, Archived) excluded from worst-case or treated as resolved."
   status: failed
-  reason: "User reported: 'expired' correctly shows as worst, but 'exceeded_open_period' is not treated as second-worst — status priority order needs review/discussion"
+  reason: "User reported: 'Expired' shows correctly as worst but 'ExceededOpenPeriod' is not ranked as second-worst. Priority order confirmed: Expired > ExceededOpenPeriod > Opened > Active."
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "computeCatalogAggregate uses nearest-expiry-date proxy: picks whichever stock entry has soonest expiryDate, calls calculateStatus on that one. Drops entries with expiryDate: null (PAO-only), applies no priority ordering, lets manual statuses leak into aggregate."
+  artifacts:
+    - path: "src/lib/aggregation.ts"
+      issue: "lines 9-18: nearest-expiry selection instead of priority-reduce over all entries"
+    - path: "src/lib/aggregation.test.ts"
+      issue: "tests only nearest-expiry contract — no PAO-only, manual-status, or priority-ordering coverage"
+  missing:
+    - "Rewrite computeCatalogAggregate: call calculateStatus() on every entry, filter out ManualStatus results, apply priority map {Expired:4, ExceededOpenPeriod:3, Opened:2, Active:1}, return highest"
+    - "Update aggregation tests to cover new logic"
 
 - gap_id: G-05-5
   truth: "Status filter is match-any: catalog appears if ANY stock entry matches the selected status (same logic as location filter)"
@@ -114,8 +139,13 @@ blocked: 0
   reason: "User reported: status filter only checks aggregated status, not individual stock entries like location filter does"
   severity: major
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "src/routes/medicines/index.tsx lines 85-89: filter checks item.aggregateStatus (single value) instead of iterating all stock entries with calculateStatus()"
+  artifacts:
+    - path: "src/routes/medicines/index.tsx"
+      issue: "lines 85-89: !selectedStatuses.includes(item.aggregateStatus) — should be match-any over stock entries"
+  missing:
+    - "Replace aggregate check with item.stockEntries.some(e => selectedStatuses.includes(calculateStatus(e)))"
+    - "Import calculateStatus directly in index.tsx"
 
 - gap_id: G-05-6
   truth: "Editing a stock entry via the edit sheet records a history entry for the change"
@@ -123,8 +153,14 @@ blocked: 0
   reason: "User reported: stock changes but no history entry is recorded after editing a stock entry"
   severity: major
   test: 5
-  artifacts: []
-  missing: []
+  root_cause: "History IS written correctly by editStockEntry → updateMedicineWithHistory. The ChangeHistory component exists and is correct but is never rendered in the catalog detail view [id].tsx — the JSX has no <ChangeHistory /> anywhere."
+  artifacts:
+    - path: "src/routes/medicines/[id].tsx"
+      issue: "JSX contains no ChangeHistory component — history is written but never displayed"
+    - path: "src/components/ChangeHistory.tsx"
+      issue: "component is correct (accepts medicineId: number) but unused in detail view"
+  missing:
+    - "Add <ChangeHistory medicineId={stock.id} /> inside each stock entry card in [id].tsx"
 
 - gap_id: G-05-7
   truth: "Move/Split sheet pre-fills the location picker with the current stock entry's location"
@@ -132,8 +168,14 @@ blocked: 0
   reason: "User reported: location picker defaults to 'Other' instead of the entry's current location"
   severity: minor
   test: 7
-  artifacts: []
-  missing: []
+  root_cause: "MoveStockSheet.tsx line 33: useState<string | null>(null) — ignores stock.location prop. Also missing useEffect reset when sheet reopens for a different entry."
+  artifacts:
+    - path: "src/components/MoveStockSheet.tsx"
+      issue: "line 33: useState(null) should be useState(stock.location); missing useEffect reset on [open, stock]"
+  missing:
+    - "Change initial state to useState(stock.location)"
+    - "Add useEffect reset: if (open) { setTargetLocation(stock.location); setQuantity(1) }"
+    - "Import useEffect (currently only useState is imported)"
 
 - gap_id: G-05-8
   truth: "There is a way to delete an entire catalog entry (medicine identity) from the UI"
@@ -141,5 +183,14 @@ blocked: 0
   reason: "User asked 'how to delete entire medicine (catalog)?' — no delete catalog action exists in the UI"
   severity: major
   test: 10
-  artifacts: []
-  missing: []
+  root_cause: "Feature entirely absent — no deleteCatalogEntry function exists in any lib module; catalog detail view [id].tsx has only a pencil-icon edit button, no delete affordance"
+  artifacts:
+    - path: "src/routes/medicines/[id].tsx"
+      issue: "lines 178-188: catalog header renders only edit button, no delete"
+    - path: "src/lib/"
+      issue: "no deleteCatalogEntry function anywhere"
+  missing:
+    - "New deleteCatalogEntry(catalogId) in stockOps.ts or catalogOps.ts — guard: block if active stock exists, wrapped in db.transaction"
+    - "Trash2 delete button in catalog header in [id].tsx"
+    - "AlertDialog with guard message + handleCatalogDeleteConfirm handler"
+    - "Navigate to /medicines on success"
