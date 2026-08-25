@@ -81,7 +81,7 @@ Plans:
 9. Soft-deleted stock entries appear in Trash and can be restored with full history preserved
 10. Adding, editing, moving, and deleting stock entries record history with catalogId context so changes are auditable
 
-**Plans**: 9/11 plans executed
+**Plans**: 10/11 plans executed
 
 Wave execution order (each wave parallelizable within):
 
@@ -104,7 +104,7 @@ Gap closure plans (after UAT — 8 gaps found):
 - **GAP Wave 2** (after GAP Wave 1):
   - [x] 05-10-PLAN.md — Open box pack-level split + aggregate display (G-05-3, G-05-2 display) `[depends: 05-07, 05-08, 05-09]`
 - **GAP Wave 3** (after GAP Wave 2):
-  - [ ] 05-11-PLAN.md — Catalog delete: deleteCatalogEntry + UI AlertDialog (G-05-8) `[depends: 05-10]`
+  - [x] 05-11-PLAN.md — Catalog delete: deleteCatalogEntry + UI AlertDialog (G-05-8) `[depends: 05-10]`
 
 **UI hint**: yes
 
@@ -136,7 +136,7 @@ Gap closure plans (after UAT — 8 gaps found):
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
-| 5. Stock & Catalog Management | 9/11 | In Progress|  |
+| 5. Stock & Catalog Management | 10/11 | In Progress|  |
 | 6. Backup & Restore | 0/TBD | Pending | - |
 
 ---

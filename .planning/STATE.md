@@ -5,15 +5,15 @@ milestone_name: Catalog + Stock Model
 current_phase: 05
 current_phase_name: stock-catalog-management
 status: executing
-stopped_at: Completed 05-10-PLAN.md
-last_updated: "2026-08-25T21:41:33.249Z"
+stopped_at: Completed 05-11-PLAN.md
+last_updated: "2026-08-25T22:03:31.496Z"
 last_activity: 2026-08-25
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
   percent: 33
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29)
 ## Current Position
 
 Phase: 05 (stock-catalog-management) — EXECUTING
-Plan: 5 of 11
+Plan: 6 of 11
 Status: Ready to execute
 Last activity: 2026-08-25 — Phase 05 execution started
 
@@ -67,8 +67,8 @@ Last activity: 2026-08-25 — Phase 05 execution started
 
 ## Session
 
-**Last session:** 2026-08-25T21:41:33.178Z
-**Stopped at:** Completed 05-10-PLAN.md
+**Last session:** 2026-08-25T22:03:31.437Z
+**Stopped at:** Completed 05-11-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -80,6 +80,7 @@ Last activity: 2026-08-25 — Phase 05 execution started
 | Phase 05 P08 | 18 | 2 tasks | 2 files |
 | Phase 05 P09 | 52 | 2 tasks | 5 files |
 | Phase 05 P10 | 15 | 2 tasks | 3 files |
+| Phase 05 P11 | 12 | 2 tasks | 2 files |
 
 ## Decisions
 
@@ -91,3 +92,5 @@ Last activity: 2026-08-25 — Phase 05 execution started
 - [Phase ?]: packCount test isolation: vi.mock React/dexie-react-hooks to prevent worker timeout from component-level Dexie initialization
 - [Phase ?]: packCount=null treated as 1 in totalQty for backward compatibility (aggregation.ts)
 - [Phase ?]: Open box guard: ((quantity ?? 0) > 1 || (packCount ?? 0) > 1) && !openedDate (G-05-3)
+- [Phase ?]: deleteCatalogEntry re-checks active stock count server-side before deleting (T-05-11-01)
+- [Phase ?]: AlertDialog branches on stockEntries.length — no extra DB query needed

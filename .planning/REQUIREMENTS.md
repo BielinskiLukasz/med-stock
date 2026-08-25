@@ -14,7 +14,7 @@
 
 - [x] **CAT-01**: User can search for an existing catalog entry by name via autocomplete when starting the add flow
 - [ ] **CAT-02**: User can create a new catalog entry (name, category, form) inline during the add flow when no autocomplete match exists
-- [ ] **CAT-03**: User can edit a catalog entry's name, category, and form from the medicine detail screen
+- [x] **CAT-03**: User can edit a catalog entry's name, category, and form from the medicine detail screen
 
 ### Stock
 
@@ -54,7 +54,7 @@
 | MIGR-02 | 4 | Complete |
 | CAT-01 | 5 | Complete |
 | CAT-02 | 5 | Pending |
-| CAT-03 | 5 | Pending |
+| CAT-03 | 5 | Complete |
 | STOCK-01 | 5 | Complete |
 | STOCK-02 | 5 | Complete |
 | STOCK-03 | 5 | Complete |
