@@ -78,4 +78,88 @@ describe('computeCatalogAggregate', () => {
     expect(result.status).toBe('Active')
     expect(result.totalQty).toBe(15)
   })
+
+  // Priority-ordering tests (G-05-4 — require priority-reduce implementation)
+
+  it('priority: ExceededOpenPeriod wins over Opened and Active', () => {
+    // Opened entry: has openedDate, future expiry, no PAO
+    const openedEntry = makeStock({
+      id: 1,
+      quantity: 5,
+      expiryDate: '2030-12-31',
+      openedDate: '2026-01-01',
+      pao: null,
+    })
+    // ExceededOpenPeriod entry: PAO window elapsed (opened 60 days ago, 1-day PAO)
+    const exceededEntry = makeStock({
+      id: 2,
+      quantity: 5,
+      expiryDate: null,
+      openedDate: '2026-06-01',
+      pao: { value: 1, unit: 'days' },
+    })
+    const result = computeCatalogAggregate(baseCatalog, [openedEntry, exceededEntry])
+    expect(result.status).toBe('ExceededOpenPeriod')
+  })
+
+  it('priority: Expired wins over ExceededOpenPeriod', () => {
+    // Expired entry: past expiryDate
+    const expiredEntry = makeStock({
+      id: 1,
+      quantity: 5,
+      expiryDate: '2020-01-01',
+      openedDate: null,
+      pao: null,
+    })
+    // ExceededOpenPeriod entry: PAO elapsed, no expiryDate
+    const exceededEntry = makeStock({
+      id: 2,
+      quantity: 5,
+      expiryDate: null,
+      openedDate: '2026-06-01',
+      pao: { value: 1, unit: 'days' },
+    })
+    const result = computeCatalogAggregate(baseCatalog, [expiredEntry, exceededEntry])
+    expect(result.status).toBe('Expired')
+  })
+
+  it('manual status is excluded from aggregate; remaining AutoStatus entry wins', () => {
+    // ManualStatus entry — should be skipped
+    const manualEntry = makeStock({
+      id: 1,
+      quantity: 5,
+      manualStatus: 'UsedUp',
+      expiryDate: '2020-01-01', // past date, but manualStatus overrides
+    })
+    // Active entry: future expiry, not opened
+    const activeEntry = makeStock({
+      id: 2,
+      quantity: 10,
+      expiryDate: '2030-12-31',
+      openedDate: null,
+    })
+    const result = computeCatalogAggregate(baseCatalog, [manualEntry, activeEntry])
+    expect(result.status).toBe('Active')
+  })
+
+  it('PAO-only entry (no expiryDate) with elapsed PAO yields ExceededOpenPeriod in aggregate', () => {
+    // PAO elapsed long ago — ExceededOpenPeriod
+    const paoEntry = makeStock({
+      id: 1,
+      quantity: 8,
+      expiryDate: null,
+      openedDate: '2026-01-01',
+      pao: { value: 1, unit: 'days' },
+    })
+    const result = computeCatalogAggregate(baseCatalog, [paoEntry])
+    expect(result.status).toBe('ExceededOpenPeriod')
+  })
+
+  it('all-ManualStatus entries with no AutoStatus entries fall back to Active', () => {
+    const disposed1 = makeStock({ id: 1, quantity: 3, manualStatus: 'Disposed' })
+    const disposed2 = makeStock({ id: 2, quantity: 2, manualStatus: 'Disposed' })
+    const result = computeCatalogAggregate(baseCatalog, [disposed1, disposed2])
+    expect(result.status).toBe('Active')
+    expect(result.totalQty).toBe(5)
+  })
 })
