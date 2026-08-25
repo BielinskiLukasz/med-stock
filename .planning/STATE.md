@@ -5,15 +5,15 @@ milestone_name: Catalog + Stock Model
 current_phase: 05
 current_phase_name: stock-catalog-management
 status: executing
-stopped_at: Completed 05-07-PLAN.md
-last_updated: "2026-08-25T18:15:30.751Z"
+stopped_at: Completed 05-08-PLAN.md
+last_updated: "2026-08-25T18:52:10.954Z"
 last_activity: 2026-08-25
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 3
   completed_phases: 1
   total_plans: 13
-  completed_plans: 8
+  completed_plans: 9
   percent: 33
 ---
 
@@ -29,7 +29,7 @@ See: .planning/PROJECT.md (updated 2026-07-29)
 ## Current Position
 
 Phase: 05 (stock-catalog-management) — EXECUTING
-Plan: 2 of 11
+Plan: 3 of 11
 Status: Ready to execute
 Last activity: 2026-08-25 — Phase 05 execution started
 
@@ -67,8 +67,8 @@ Last activity: 2026-08-25 — Phase 05 execution started
 
 ## Session
 
-**Last session:** 2026-08-25T18:15:30.729Z
-**Stopped at:** Completed 05-07-PLAN.md
+**Last session:** 2026-08-25T18:52:10.899Z
+**Stopped at:** Completed 05-08-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -77,6 +77,7 @@ Last activity: 2026-08-25 — Phase 05 execution started
 |------|----------|-------|-------|
 | Phase 04 P02 | 40 | 2 tasks | 6 files |
 | Phase 05 P07 | 8 | 3 tasks | 3 files |
+| Phase 05 P08 | 18 | 2 tasks | 2 files |
 
 ## Decisions
 
@@ -84,3 +85,4 @@ Last activity: 2026-08-25 — Phase 05 execution started
 - [Phase ?]: G-05-5: status filter uses match-any via calculateStatus over stockEntries
 - [Phase ?]: G-05-6: ChangeHistory rendered per stock card in detail view
 - [Phase ?]: G-05-7: MoveStockSheet seeded from stock.location with useEffect reset
+- [Phase ?]: PRIORITY map drives worst-case reduce in computeCatalogAggregate; MANUAL_STATUSES set gates exclusion
