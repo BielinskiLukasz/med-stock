@@ -30,6 +30,7 @@ export interface Medicine {
   pao: PAO | null               // period-after-opening (D-08)
   quantity: number | null
   quantityUnit: string | null
+  packCount: number | null     // number of boxes/packs (null means not tracked)
   notes: string | null
   manualStatus: ManualStatus    // D-13: takes precedence over auto-calculated status
   createdAt: string             // ISO timestamp
@@ -192,6 +193,19 @@ db.version(4)
     medicine_catalog: '++id, name',
     history: '++id, medicineId, timestamp',
   })
+
+db.version(5)
+  .stores({
+    // packCount is not indexed — not queried by index; schema unchanged
+    medicines: '++id, catalogId, location, expiryDate, manualStatus',
+    medicine_catalog: '++id, name',
+    history: '++id, medicineId, timestamp',
+  })
+  .upgrade(tx =>
+    tx.table('medicines').toCollection().modify((m: any) => {
+      m.packCount = null
+    })
+  )
 
 // Seed predefined locations on first open (D-18, LOC-01)
 db.on('populate', async () => {
