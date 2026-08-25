@@ -18,7 +18,7 @@
 
 ### Stock
 
-- [ ] **STOCK-01**: User can add a stock entry (quantity, expiry date, location) linked to a catalog entry
+- [x] **STOCK-01**: User can add a stock entry (quantity, expiry date, location) linked to a catalog entry
 - [x] **STOCK-02**: User can edit a stock entry's quantity, expiry date, location, PAO, and notes
 - [x] **STOCK-03**: User can move N units from one stock entry to a different location, splitting into two stock entries
 - [x] **STOCK-04**: Soft-deleted stock entries appear in Trash and can be restored
@@ -55,7 +55,7 @@
 | CAT-01 | 5 | Complete |
 | CAT-02 | 5 | Pending |
 | CAT-03 | 5 | Pending |
-| STOCK-01 | 5 | Pending |
+| STOCK-01 | 5 | Complete |
 | STOCK-02 | 5 | Complete |
 | STOCK-03 | 5 | Complete |
 | STOCK-04 | 5 | Complete |
