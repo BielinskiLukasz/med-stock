@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: resolved
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
 started: 2026-08-01T00:00:00Z
-updated: 2026-08-25T12:00:00Z
+updated: 2026-08-26T00:00:00Z
 ---
 
 ## Current Test
@@ -74,7 +74,7 @@ blocked: 0
 
 - gap_id: G-05-1
   truth: "Providing an opened date in the Add Stock form should mark the entry as opened"
-  status: failed
+  status: resolved
   reason: "User reported: not opened even if I provide opened date in form, need to click open box"
   severity: major
   test: 1
@@ -87,7 +87,7 @@ blocked: 0
 
 - gap_id: G-05-2
   truth: "The stock Add form should allow entering number of boxes (packs) in addition to quantity per box"
-  status: failed
+  status: resolved
   reason: "User reported: we have quantity where I can put number of tablets in the box but I dont see to field to provide number of boxes (entire medicine box)"
   severity: major
   test: 1
@@ -105,7 +105,7 @@ blocked: 0
 
 - gap_id: G-05-3
   truth: "Open box should operate on the box/pack level, not the per-unit (tablet) level — needs a dialog with multiplier or box count so user can specify how many units are in one box"
-  status: failed
+  status: resolved
   reason: "User reported: 'opening' one unit like one tablet — should be separate window with multiplier/boxes concept; confirmed again in test 6"
   severity: major
   test: 1
@@ -119,7 +119,7 @@ blocked: 0
 
 - gap_id: G-05-4
   truth: "Catalog aggregate status uses priority order: Expired > ExceededOpenPeriod > Opened > Active. Manual statuses (UsedUp, Disposed, Archived) excluded from worst-case or treated as resolved."
-  status: failed
+  status: resolved
   reason: "User reported: 'Expired' shows correctly as worst but 'ExceededOpenPeriod' is not ranked as second-worst. Priority order confirmed: Expired > ExceededOpenPeriod > Opened > Active."
   severity: major
   test: 3
@@ -135,7 +135,7 @@ blocked: 0
 
 - gap_id: G-05-5
   truth: "Status filter is match-any: catalog appears if ANY stock entry matches the selected status (same logic as location filter)"
-  status: failed
+  status: resolved
   reason: "User reported: status filter only checks aggregated status, not individual stock entries like location filter does"
   severity: major
   test: 3
@@ -149,7 +149,7 @@ blocked: 0
 
 - gap_id: G-05-6
   truth: "Editing a stock entry via the edit sheet records a history entry for the change"
-  status: failed
+  status: resolved
   reason: "User reported: stock changes but no history entry is recorded after editing a stock entry"
   severity: major
   test: 5
@@ -164,7 +164,7 @@ blocked: 0
 
 - gap_id: G-05-7
   truth: "Move/Split sheet pre-fills the location picker with the current stock entry's location"
-  status: failed
+  status: resolved
   reason: "User reported: location picker defaults to 'Other' instead of the entry's current location"
   severity: minor
   test: 7
@@ -179,7 +179,7 @@ blocked: 0
 
 - gap_id: G-05-8
   truth: "There is a way to delete an entire catalog entry (medicine identity) from the UI"
-  status: failed
+  status: resolved
   reason: "User asked 'how to delete entire medicine (catalog)?' — no delete catalog action exists in the UI"
   severity: major
   test: 10
