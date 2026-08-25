@@ -24,6 +24,7 @@ import {
 import { CatalogEditSheet } from '@/components/CatalogEditSheet'
 import { StockEditSheet } from '@/components/StockEditSheet'
 import { MoveStockSheet } from '@/components/MoveStockSheet'
+import { ChangeHistory } from '@/components/ChangeHistory'
 import type { CatalogFormData } from '@/components/CatalogFields'
 
 export function MedicineDetail() {
@@ -238,7 +239,7 @@ export function MedicineDetail() {
 
                   {/* Stock action row */}
                   <div className="flex gap-2 mt-2 flex-wrap">
-                    {(stock.quantity ?? 0) > 1 && (
+                    {(stock.quantity ?? 0) > 1 && !stock.openedDate && (
                       <Button
                         variant="outline"
                         size="sm"
@@ -274,6 +275,7 @@ export function MedicineDetail() {
                       Delete
                     </Button>
                   </div>
+                  <ChangeHistory medicineId={stock.id} />
                 </div>
               )
             })}
