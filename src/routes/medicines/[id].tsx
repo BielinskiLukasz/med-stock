@@ -103,35 +103,67 @@ export function MedicineDetail() {
     toast.success('Stock moved')
   }
 
-  // "Open box": split 1 unit as opened today, decrement original atomically (D-15)
+  // "Open box": split atomically (D-15).
+  // Pack-level path (packCount > 1): open one box from a multi-box entry.
+  //   New entry gets the per-box quantity and packCount=1; original loses one box.
+  // Unit-level path (packCount null or 1): existing behaviour — new entry gets quantity=1.
   async function handleOpenBoxClick(stock: Medicine) {
     if (!catalog) return
     try {
       const today = new Date().toISOString().split('T')[0]
       const now = new Date().toISOString()
       await db.transaction('rw', db.medicines, db.history, async () => {
-        const newId = await db.medicines.add({
-          catalogId: stock.catalogId,
-          quantity: 1,
-          quantityUnit: stock.quantityUnit,
-          expiryDate: stock.expiryDate,
-          openedDate: today,
-          pao: stock.pao,
-          location: stock.location,
-          manualStatus: null,
-          notes: stock.notes,
-          createdAt: now,
-          updatedAt: now,
-          deletedAt: null,
-        })
-        const newStock = await db.medicines.get(newId)
-        if (newStock) await addMedicineHistory(newStock, catalog.name, 'created')
-        await updateMedicineWithHistory(
-          stock.id,
-          stock,
-          { quantity: (stock.quantity ?? 0) - 1, updatedAt: now },
-          catalog.name
-        )
+        if (stock.packCount && stock.packCount > 1) {
+          // Pack-level split: open one box from a multi-box entry
+          const newId = await db.medicines.add({
+            catalogId: stock.catalogId,
+            quantity: stock.quantity,
+            quantityUnit: stock.quantityUnit,
+            expiryDate: stock.expiryDate,
+            openedDate: today,
+            pao: stock.pao,
+            location: stock.location,
+            manualStatus: null,
+            notes: stock.notes,
+            packCount: 1,
+            createdAt: now,
+            updatedAt: now,
+            deletedAt: null,
+          })
+          const newStock = await db.medicines.get(newId)
+          if (newStock) await addMedicineHistory(newStock, catalog.name, 'created')
+          await updateMedicineWithHistory(
+            stock.id,
+            stock,
+            { packCount: stock.packCount - 1, updatedAt: now },
+            catalog.name
+          )
+        } else {
+          // Unit-level split: decrement quantity by 1, new entry gets quantity=1
+          const newId = await db.medicines.add({
+            catalogId: stock.catalogId,
+            quantity: 1,
+            quantityUnit: stock.quantityUnit,
+            expiryDate: stock.expiryDate,
+            openedDate: today,
+            pao: stock.pao,
+            location: stock.location,
+            manualStatus: null,
+            notes: stock.notes,
+            packCount: null,
+            createdAt: now,
+            updatedAt: now,
+            deletedAt: null,
+          })
+          const newStock = await db.medicines.get(newId)
+          if (newStock) await addMedicineHistory(newStock, catalog.name, 'created')
+          await updateMedicineWithHistory(
+            stock.id,
+            stock,
+            { quantity: (stock.quantity ?? 0) - 1, updatedAt: now },
+            catalog.name
+          )
+        }
       })
       toast.success('Box opened')
     } catch (err) {
@@ -204,7 +236,9 @@ export function MedicineDetail() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-medium text-gray-900">
-                          {stock.quantity} {stock.quantityUnit || 'units'}
+                          {stock.packCount && stock.packCount > 0
+                            ? `${stock.packCount} ${stock.packCount === 1 ? 'box' : 'boxes'} × ${stock.quantity} ${stock.quantityUnit || 'units'}`
+                            : `${stock.quantity} ${stock.quantityUnit || 'units'}`}
                         </p>
                         <span className="text-xs text-gray-500">
                           {stock.location ?? 'Other'}
@@ -239,7 +273,7 @@ export function MedicineDetail() {
 
                   {/* Stock action row */}
                   <div className="flex gap-2 mt-2 flex-wrap">
-                    {(stock.quantity ?? 0) > 1 && !stock.openedDate && (
+                    {((stock.quantity ?? 0) > 1 || (stock.packCount ?? 0) > 1) && !stock.openedDate && (
                       <Button
                         variant="outline"
                         size="sm"
