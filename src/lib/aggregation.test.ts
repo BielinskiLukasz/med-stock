@@ -162,4 +162,21 @@ describe('computeCatalogAggregate', () => {
     expect(result.status).toBe('Active')
     expect(result.totalQty).toBe(5)
   })
+
+  // packCount tests (G-05-2 display fix)
+
+  it('multiplies quantity by packCount when packCount is set (G-05-2)', () => {
+    // packCount=2, quantity=30 → contributes 60; packCount=null, quantity=10 → contributes 10
+    const multiBox = makeStock({ id: 1, quantity: 30, packCount: 2, expiryDate: '2030-12-31' })
+    const singleUnit = makeStock({ id: 2, quantity: 10, packCount: null, expiryDate: '2030-12-31' })
+    const result = computeCatalogAggregate(baseCatalog, [multiBox, singleUnit])
+    expect(result.totalQty).toBe(70)
+  })
+
+  it('treats packCount=1 as equivalent to no packCount for totalQty', () => {
+    const explicit1 = makeStock({ id: 1, quantity: 15, packCount: 1, expiryDate: '2030-12-31' })
+    const implicit1 = makeStock({ id: 2, quantity: 15, packCount: null, expiryDate: '2030-12-31' })
+    const result = computeCatalogAggregate(baseCatalog, [explicit1, implicit1])
+    expect(result.totalQty).toBe(30)
+  })
 })

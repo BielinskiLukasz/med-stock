@@ -27,8 +27,12 @@ export function computeCatalogAggregate(
     }
   }
 
-  // null quantity treated as 0 (flagged assumption: D-ASUM-01)
-  const totalQty = activeStocks.reduce((sum, stock) => sum + (stock.quantity ?? 0), 0)
+  // Multiply each entry's quantity by its pack count (packCount ?? 1 when not tracked).
+  // e.g. packCount=2, quantity=30 → contribution is 60 (D-ASUM-01 updated for G-05-2)
+  const totalQty = activeStocks.reduce(
+    (sum, stock) => sum + (stock.packCount ?? 1) * (stock.quantity ?? 0),
+    0
+  )
 
   return { status: worstStatus, totalQty }
 }
