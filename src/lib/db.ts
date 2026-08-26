@@ -99,7 +99,7 @@ db.version(2)
     history:   '++id, medicineId, timestamp',
   })
   .upgrade(tx =>
-    tx.table('medicines').toCollection().modify((m: any) => {
+    tx.table('medicines').toCollection().modify((m: Record<string, unknown>) => {
       m.deletedAt = null
       // D-04 context: catalogId will be set in v3 upgrade; placeholder here
       m.catalogId = 0  // temporary; v3 upgrade will set real catalogId
@@ -114,15 +114,15 @@ db.version(3)
   })
   .upgrade(tx => {
     // Step 1: Read all v2 medicines
-    return tx.table('medicines').toCollection().toArray().then((medicines: any[]) => {
+    return tx.table('medicines').toCollection().toArray().then((medicines: Record<string, unknown>[]) => {
       // Step 2: Deduplicate by normalized name (case-insensitive + trimmed)
       const catalogMap: Map<string, {
-        medicines: any[]
+        medicines: Record<string, unknown>[]
         categories: Map<string, number>
       }> = new Map()
 
       for (const med of medicines) {
-        const normalized = med.name.trim().toLowerCase()
+        const normalized = (med.name as string).trim().toLowerCase()
         if (!catalogMap.has(normalized)) {
           catalogMap.set(normalized, { medicines: [], categories: new Map() })
         }
@@ -150,10 +150,11 @@ db.version(3)
         let lowestIdForTiebreak = Infinity
 
         for (const [cat, count] of group.categories) {
-          if (count > maxCount || (count === maxCount && group.medicines.find(m => m.category === cat)?.id < lowestIdForTiebreak)) {
+          const candidateId = (group.medicines.find(m => m.category === cat)?.id as number | undefined) ?? Infinity
+          if (count > maxCount || (count === maxCount && candidateId < lowestIdForTiebreak)) {
             mostCommonCategory = cat
             maxCount = count
-            lowestIdForTiebreak = group.medicines.find(m => m.category === cat)?.id ?? Infinity
+            lowestIdForTiebreak = candidateId
           }
         }
 
@@ -172,7 +173,7 @@ db.version(3)
         // Create stock entry updates
         for (const med of group.medicines) {
           medicineUpdates.push({
-            id: med.id,
+            id: med.id as number,
             catalogId: nextCatalogId,
           })
         }
@@ -202,7 +203,7 @@ db.version(5)
     history: '++id, medicineId, timestamp',
   })
   .upgrade(tx =>
-    tx.table('medicines').toCollection().modify((m: any) => {
+    tx.table('medicines').toCollection().modify((m: Record<string, unknown>) => {
       m.packCount = null
     })
   )
