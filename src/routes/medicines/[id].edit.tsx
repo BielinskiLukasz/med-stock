@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { toast } from 'sonner'
 import { db } from '@/lib/db'
 import { updateMedicineWithHistory } from '@/lib/historyOps'
 import { MedicineForm, type MedicineFormData } from '@/components/MedicineForm'
@@ -33,10 +34,12 @@ export function MedicineEdit() {
         quantityUnit: data.quantityUnit ?? null,
         notes: data.notes ?? null,
       }, catalog.name)
+      toast.success('Medicine updated')
       void navigate(`/medicines/${id}`)
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI
       console.error('Failed to update medicine:', err)
+      toast.error('Failed to save. Please try again.')
     }
   }
 
