@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
 started: 2026-08-01T00:00:00Z
@@ -24,9 +24,8 @@ result: pass
 
 ### 3. List view — catalog aggregates and filters
 expected: The medicine list shows catalog cards with aggregated status (worst-case across stock entries) and total quantity. Category filter, location filter (match-any: catalog appears if ANY stock entry is at the selected location), and status filter all work correctly. Sort by name, expiry, category, and status all work.
-result: issue
-reported: "order pass, filter still does not work (only filtering aggregated status)"
-severity: major
+result: pass
+notes: "G-05-9 fix confirmed — list-level filter works. New issue found: detail view does not filter stock entries (recorded as G-05-10)"
 
 ### 4. Catalog edit
 expected: Open a catalog's detail view. Click the pencil icon next to the catalog name. A bottom sheet opens with name, category, form, and notes pre-filled. Edit the name. Save. The catalog header on the detail view updates immediately. History is not recorded for catalog edits (catalog is shared metadata, not a stock entry).
@@ -60,7 +59,7 @@ result: pass
 ## Summary
 
 total: 10
-passed: 9
+passed: 10
 issues: 1
 pending: 0
 skipped: 0
@@ -209,6 +208,25 @@ blocked: 0
     - "Trash2 delete button in catalog header in [id].tsx"
     - "AlertDialog with guard message + handleCatalogDeleteConfirm handler"
     - "Navigate to /medicines on success"
+
+- gap_id: G-05-10
+  truth: "Active list-view filters (location, status) carry into the catalog detail view, filtering which stock entries are displayed"
+  status: failed
+  reason: "User reported: filter works for catalogs, but when I open one then filter not reduce stocks for catalog"
+  severity: major
+  test: 3
+  root_cause: "MedicineDetail ([id].tsx) never reads from the Zustand UIStore. Its useLiveQuery (lines 49–56) fetches every active stock entry for the catalog and the component renders all of them unconditionally. No import of useUIStore exists; selectedStatuses and selectedLocations are never read; no useMemo filter step exists between the raw DB results and the render loop (line 261). Status is derived at render time via calculateStatus() — not stored in IndexedDB — so it cannot be pushed into the Dexie query; both status and location filtering must be applied in a useMemo after the live query resolves."
+  artifacts:
+    - path: "src/routes/medicines/[id].tsx"
+      issue: "No import of useUIStore or useShallow. useLiveQuery (lines 49–56) applies only deletedAt===null guard. stockEntries flows to render loop at line 261 with no status or location filter. Existing useMemo (lines 65–72) only computes nearestExpiryStock."
+    - path: "src/stores/uiStore.ts"
+      issue: "selectedStatuses and selectedLocations hold the active filter values (string[]). Never consumed by [id].tsx."
+  missing:
+    - "Import useUIStore and useShallow in [id].tsx"
+    - "Read selectedStatuses and selectedLocations from store with useShallow"
+    - "Add filteredStockEntries useMemo: per entry call calculateStatus() vs selectedStatuses (skip if empty), test stock.location vs selectedLocations (skip if empty)"
+    - "Replace stockEntries in render loop (line 261) and empty-state guard (line 257) with filteredStockEntries"
+    - "Keep nearestExpiryStock useMemo and catalog-delete guard on unfiltered stockEntries (header badge and delete protection must reflect all stock)"
 
 ## Deferred Follow-Ups
 
