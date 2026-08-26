@@ -127,8 +127,7 @@ export function MedicineDetail() {
       await db.transaction('rw', db.medicines, db.history, async () => {
         if (stock.packCount && stock.packCount > 1) {
           if (!stock.quantity) {
-            toast.error('Cannot open box: quantity not set.')
-            return
+            throw new Error('Cannot open box: quantity not set.')
           }
           // Pack-level split: open one box from a multi-box entry
           const newId = await db.medicines.add({
@@ -184,7 +183,8 @@ export function MedicineDetail() {
       toast.success('Box opened')
     } catch (err) {
       console.error('Failed to open box:', err)
-      toast.error('Failed to open box. Please try again.')
+      const msg = err instanceof Error ? err.message : 'Failed to open box. Please try again.'
+      toast.error(msg)
     }
   }
 
