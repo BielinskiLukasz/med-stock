@@ -79,6 +79,9 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
             />
+            {quantity < 1 && (
+              <p className="text-sm text-red-500">Quantity must be at least 1</p>
+            )}
             {quantity > maxQty && (
               <p className="text-sm text-red-500">Cannot exceed {maxQty}</p>
             )}
