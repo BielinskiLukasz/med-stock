@@ -215,7 +215,6 @@ db.on('populate', async () => {
     { name: 'Kitchen Drawer', isDefault: true },
     { name: 'Living Room Cabinet', isDefault: true },
     { name: 'Medicine Box', isDefault: true },
-    { name: 'Other', isDefault: true },
     { name: 'Refrigerator', isDefault: true },
     { name: 'Travel Kit', isDefault: true },
   ])

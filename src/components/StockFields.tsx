@@ -110,11 +110,13 @@ export function StockFields({ form }: StockFieldsProps) {
                 <SelectItem value={NULL_SENTINEL}>
                   No location (Other)
                 </SelectItem>
-                {locations?.map((loc) => (
-                  <SelectItem key={loc.id} value={loc.name}>
-                    {loc.name}
-                  </SelectItem>
-                ))}
+                {locations
+                  ?.filter(loc => loc.name !== 'Other')
+                  .map((loc) => (
+                    <SelectItem key={loc.id} value={loc.name}>
+                      {loc.name}
+                    </SelectItem>
+                  ))}
                 <SelectItem value="__ADD_NEW__">
                   Add new location...
                 </SelectItem>

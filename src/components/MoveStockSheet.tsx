@@ -97,11 +97,13 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={NULL_SENTINEL}>No location (Other)</SelectItem>
-                {locations?.map((loc) => (
-                  <SelectItem key={loc.id} value={loc.name}>
-                    {loc.name}
-                  </SelectItem>
-                ))}
+                {locations
+                  ?.filter(loc => loc.name !== 'Other')
+                  .map((loc) => (
+                    <SelectItem key={loc.id} value={loc.name}>
+                      {loc.name}
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>
