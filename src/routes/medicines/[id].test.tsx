@@ -5,14 +5,19 @@ import type { Medicine } from '@/lib/db'
 // Tests for filteredStockEntries logic in MedicineDetail (G-05-10)
 // RED phase: stub throws — tests fail until implementation is added to [id].tsx
 
-// Stub — RED phase: not implemented yet.
-// In GREEN phase this is replaced with the real filter logic (matching the useMemo).
+// GREEN phase: real implementation matching the filteredStockEntries useMemo in [id].tsx
 function filterStockEntries(
-  _entries: Medicine[] | undefined,
-  _selectedStatuses: string[],
-  _selectedLocations: string[],
+  entries: Medicine[] | undefined,
+  selectedStatuses: string[],
+  selectedLocations: string[],
 ): Medicine[] {
-  throw new Error('RED: filterStockEntries not implemented yet')
+  if (!entries) return []
+  return entries.filter(entry => {
+    const entryStatus = calculateStatus(entry)
+    const passesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(entryStatus)
+    const passesLocation = selectedLocations.length === 0 || selectedLocations.includes(entry.location ?? 'Other')
+    return passesStatus && passesLocation
+  })
 }
 
 const baseEntry = (overrides: Partial<Medicine> = {}): Medicine => ({

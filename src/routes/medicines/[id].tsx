@@ -7,6 +7,7 @@ import { Pencil, Trash2, ArrowRightLeft, Package } from 'lucide-react'
 import { db } from '@/lib/db'
 import type { Medicine } from '@/lib/db'
 import { calculateStatus } from '@/lib/expiry'
+import { useUIStore, useShallow } from '@/stores/uiStore'
 import { addMedicineHistory, updateMedicineWithHistory } from '@/lib/historyOps'
 import { editStockEntry, softDeleteStock, moveStock, deleteCatalogEntry } from '@/lib/stockOps'
 import { StatusBadge } from '@/components/StatusBadge'
@@ -70,6 +71,22 @@ export function MedicineDetail() {
       return current.expiryDate < nearest.expiryDate ? current : nearest
     })
   }, [stockEntries])
+
+  // G-05-10: Read active filter state from Zustand UIStore (unconditional hook calls)
+  const selectedStatuses = useUIStore(useShallow(s => s.selectedStatuses))
+  const selectedLocations = useUIStore(useShallow(s => s.selectedLocations))
+
+  // G-05-10: Filter stock entries by active status and location filters (AND-combined)
+  // Unfiltered stockEntries retained for nearestExpiryStock, header badge, and delete guard
+  const filteredStockEntries = useMemo(() => {
+    if (!stockEntries) return []
+    return stockEntries.filter(entry => {
+      const entryStatus = calculateStatus(entry)
+      const passesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(entryStatus)
+      const passesLocation = selectedLocations.length === 0 || selectedLocations.includes(entry.location ?? 'Other')
+      return passesStatus && passesLocation
+    })
+  }, [stockEntries, selectedStatuses, selectedLocations])
 
   // Handlers
 
@@ -254,11 +271,11 @@ export function MedicineDetail() {
       {/* Stock Entries List */}
       <div className="space-y-3">
         <h2 className="text-sm font-medium text-gray-500">Stock Entries</h2>
-        {stockEntries.length === 0 ? (
+        {filteredStockEntries.length === 0 ? (
           <p className="text-sm text-gray-500 py-4">No stock</p>
         ) : (
           <div className="space-y-3">
-            {stockEntries.map(stock => {
+            {filteredStockEntries.map(stock => {
               const stockStatus = calculateStatus(stock)
               return (
                 <div key={stock.id} className="bg-white rounded-lg shadow-sm p-3 border border-gray-100">
