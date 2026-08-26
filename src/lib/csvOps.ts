@@ -76,6 +76,13 @@ export function mergeCSVRowsToMedicines(
       quantity = isFinite(parsed) ? parsed : null
     }
 
+    // Skip rows where no meaningful data was mapped (all fields empty after mapping)
+    const hasAnyData = locationVal || expiryDateVal || openedDateVal || quantityRaw || quantityUnitVal || notesVal
+    if (!hasAnyData) {
+      skippedCount++
+      continue
+    }
+
     // For now, create stock entries without catalog assignment (catalogId will be 1 as placeholder)
     medicines.push({
       catalogId: 1,  // TODO Phase 5: derive catalogId from CSV name/category columns with dedup
