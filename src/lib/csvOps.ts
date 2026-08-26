@@ -85,6 +85,7 @@ export function mergeCSVRowsToMedicines(
       pao: null, // CSV cannot represent complex PAO object — always null for imported rows
       quantity,
       quantityUnit: quantityUnitVal || null,
+      packCount: null, // CSV cannot represent pack count — always null for imported rows
       notes: notesVal || null,
       manualStatus: null,
       createdAt: now,
