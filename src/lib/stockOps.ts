@@ -79,6 +79,7 @@ export async function moveStock(
       pao: stock.pao,
       location: targetLocation,
       manualStatus: null,
+      packCount: null,
       notes: stock.notes,
       createdAt: now,
       updatedAt: now,
