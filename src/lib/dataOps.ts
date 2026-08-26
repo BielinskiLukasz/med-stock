@@ -22,6 +22,7 @@ export const BackupSchema = z.object({
         .nullable(),
       quantity: z.number().nullable(),
       quantityUnit: z.string().nullable(),
+      packCount: z.number().nullable().optional().default(null), // added: prevent silent data loss on import round-trip
       notes: z.string().nullable(),
       manualStatus: z.enum(['UsedUp', 'Disposed', 'Archived']).nullable(),
       createdAt: z.string(),
