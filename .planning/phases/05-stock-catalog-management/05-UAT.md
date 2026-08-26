@@ -1,9 +1,9 @@
 ---
-status: resolved
+status: complete
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
 started: 2026-08-01T00:00:00Z
-updated: 2026-08-26T00:00:00Z
+updated: 2026-08-26T12:00:00Z
 ---
 
 ## Current Test
@@ -25,7 +25,7 @@ result: pass
 ### 3. List view — catalog aggregates and filters
 expected: The medicine list shows catalog cards with aggregated status (worst-case across stock entries) and total quantity. Category filter, location filter (match-any: catalog appears if ANY stock entry is at the selected location), and status filter all work correctly. Sort by name, expiry, category, and status all work.
 result: issue
-reported: "not worst-case status across all stock is displayed; status filter only checks aggregated status, not individual stock entries (unlike location filter which is match-any)"
+reported: "order pass, filter still does not work (only filtering aggregated status)"
 severity: major
 
 ### 4. Catalog edit
@@ -34,9 +34,7 @@ result: pass
 
 ### 5. Stock entry edit
 expected: On a detail view, click the pencil icon on a stock row. A bottom sheet opens pre-filled with quantity, expiry date, location, PAO, and notes for that entry. Edit a field (e.g. change quantity). Click "Update stock". Sheet closes, stock row updates, a history entry is recorded.
-result: issue
-reported: "stock changes but no history entry is recorded after editing a stock entry"
-severity: major
+result: pass
 
 ### 6. Open box
 expected: Find a stock entry with quantity ≥ 2. Click "Open box". No sheet or dialog appears — it fires immediately. The original entry's quantity decrements by 1. A new entry appears at the same location with quantity=1 and Opened date set to today. Both changes are visible in the stock list without refresh.
@@ -45,9 +43,7 @@ notes: "confirms G-05-3 — open box operates on unit quantity (tablets), user e
 
 ### 7. Move/Split
 expected: Click "Move/Split" on a stock entry. A bottom sheet opens with a quantity input (max = available qty) and a location picker. Enter a quantity less than the full amount. Select a different location. Click "Move N units". The original entry decrements by N. A new entry appears at the target location with quantity=N. Both are visible.
-result: issue
-reported: "works, but location picker defaults to 'Other' instead of pre-filling the current entry's location"
-severity: minor
+result: pass
 
 ### 8. Delete stock entry — goes to Trash
 expected: Click "Delete" on a stock entry. An alert dialog asks for confirmation. Click "Move to Trash". The entry disappears from the detail view. App navigates to /medicines. In the Trash screen, the deleted entry appears with the correct catalog name.
@@ -64,8 +60,8 @@ result: pass
 ## Summary
 
 total: 10
-passed: 7
-issues: 8
+passed: 9
+issues: 1
 pending: 0
 skipped: 0
 blocked: 0
@@ -147,6 +143,25 @@ blocked: 0
     - "Replace aggregate check with item.stockEntries.some(e => selectedStatuses.includes(calculateStatus(e)))"
     - "Import calculateStatus directly in index.tsx"
 
+- gap_id: G-05-9
+  truth: "Status badge on catalog card must reflect worst-case aggregateStatus (priority order: Expired > ExceededOpenPeriod > Opened > Active) — same value used by the filter"
+  status: resolved
+  resolved_by: 05-12-PLAN.md
+  resolved_at: 2026-08-26
+  reason: "User reported: order pass, filter still does not work (only filtering aggregated status). Root: G-05-5 filter fix is correct (.some() match-any at index.tsx:88), but MedicineCardAggregate badge uses calculateStatus(nearestExpiryStock) instead of aggregateStatus from computeCatalogAggregate. For PAO-only entries (no expiryDate), nearestExpiryStock skips them — so badge shows better status than actual worst-case, making the filter appear broken."
+  severity: major
+  test: 3
+  root_cause: "MedicineCardAggregate.tsx line 18 derives badge from calculateStatus(nearestExpiryStock) — ignores the aggregateStatus prop already computed in index.tsx. Fix: pass aggregateStatus as a prop and render it directly instead of recalculating."
+  artifacts:
+    - path: "src/components/MedicineCardAggregate.tsx"
+      issue: "line 18: badge = calculateStatus(nearestExpiryStock) — should use aggregateStatus prop"
+    - path: "src/routes/medicines/index.tsx"
+      issue: "line 202-206: passes nearestExpiryStock to card but not aggregateStatus"
+  missing:
+    - "Add aggregateStatus: MedicineStatus prop to MedicineCardAggregateProps"
+    - "Replace line 18 with: const status = aggregateStatus"
+    - "Pass aggregateStatus={item.aggregateStatus} in index.tsx render (line ~205)"
+
 - gap_id: G-05-6
   truth: "Editing a stock entry via the edit sheet records a history entry for the change"
   status: resolved
@@ -194,3 +209,13 @@ blocked: 0
     - "Trash2 delete button in catalog header in [id].tsx"
     - "AlertDialog with guard message + handleCatalogDeleteConfirm handler"
     - "Navigate to /medicines on success"
+
+## Deferred Follow-Ups
+
+- test: 3
+  idea: "Add 'Add Stock' button on catalog detail view ([id].tsx) so user can add a new stock entry directly from the catalog page without going back to the list"
+  deferred_at: 2026-08-26
+
+- test: 5
+  idea: "Reduce margin/padding on change history rows to make stock cards more compact — history section takes too much vertical space"
+  deferred_at: 2026-08-26
