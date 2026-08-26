@@ -3,17 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Catalog + Stock Model
 current_phase: 05
-current_phase_name: stock-catalog-management
+current_phase_name: Stock & Catalog Management
 status: executing
-stopped_at: Completed 05-11-PLAN.md
-last_updated: "2026-08-25T22:03:31.496Z"
-last_activity: 2026-08-25
+stopped_at: Completed 05-13-PLAN.md
+last_updated: "2026-08-26T22:30:29.518Z"
+last_activity: 2026-08-27
 last_activity_desc: Phase 05 execution started
+state_head: 0c7568cde39d90411e6bff6855707b60a31f8134
 progress:
   total_phases: 3
   completed_phases: 1
-  total_plans: 13
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 14
   percent: 33
 ---
 
@@ -24,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-29)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 05 — stock-catalog-management
+**Current focus:** Phase 05 — Stock & Catalog Management
 
 ## Current Position
 
-Phase: 05 (stock-catalog-management) — EXECUTING
-Plan: 6 of 11
+Phase: 05 (Stock & Catalog Management) — EXECUTING
+Plan: 2 of 13
 Status: Ready to execute
-Last activity: 2026-08-25 — Phase 05 execution started
+Last activity: 2026-08-27 — Phase 05 execution started
 
 ## v1.0 Summary
 
@@ -67,8 +68,8 @@ Last activity: 2026-08-25 — Phase 05 execution started
 
 ## Session
 
-**Last session:** 2026-08-25T22:03:31.437Z
-**Stopped at:** Completed 05-11-PLAN.md
+**Last session:** 2026-08-26T22:30:28.552Z
+**Stopped at:** Completed 05-13-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -81,6 +82,7 @@ Last activity: 2026-08-25 — Phase 05 execution started
 | Phase 05 P09 | 52 | 2 tasks | 5 files |
 | Phase 05 P10 | 15 | 2 tasks | 3 files |
 | Phase 05 P11 | 12 | 2 tasks | 2 files |
+| Phase 05 P13 | 13 | 1 tasks | 2 files |
 
 ## Decisions
 
@@ -94,3 +96,4 @@ Last activity: 2026-08-25 — Phase 05 execution started
 - [Phase ?]: Open box guard: ((quantity ?? 0) > 1 || (packCount ?? 0) > 1) && !openedDate (G-05-3)
 - [Phase ?]: deleteCatalogEntry re-checks active stock count server-side before deleting (T-05-11-01)
 - [Phase ?]: AlertDialog branches on stockEntries.length — no extra DB query needed
+- [Phase 05]: filteredStockEntries useMemo: unfiltered stockEntries retained for badge/guard; filteredStockEntries used for render loop (G-05-10)

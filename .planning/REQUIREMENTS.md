@@ -22,6 +22,7 @@
 - [x] **STOCK-02**: User can edit a stock entry's quantity, expiry date, location, PAO, and notes
 - [x] **STOCK-03**: User can move N units from one stock entry to a different location, splitting into two stock entries
 - [x] **STOCK-04**: Soft-deleted stock entries appear in Trash and can be restored
+- [x] **STOCK-05**: Detail view stock entry list respects active status and location filters from UIStore (G-05-10)
 
 ### Add / Edit Flows
 
@@ -59,6 +60,7 @@
 | STOCK-02 | 5 | Complete |
 | STOCK-03 | 5 | Complete |
 | STOCK-04 | 5 | Complete |
+| STOCK-05 | 5 | Complete |
 | FLOW-01 | 5 | Complete |
 | FLOW-02 | 5 | Pending |
 | FLOW-03 | 5 | Pending |
