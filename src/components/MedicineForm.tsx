@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -95,8 +96,9 @@ export function MedicineForm({
       setNewLocationInput('')
       setShowQuickAddLocation(false)
     } catch (err) {
-      // Duplicate or DB error — log only, do not expose raw error
+      // Duplicate or DB error — log and notify user
       console.error('Failed to add location:', err)
+      toast.error('Failed to add location. Please try again.')
     }
   }
 
