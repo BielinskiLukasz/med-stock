@@ -5,6 +5,7 @@ import { SlidersHorizontal } from 'lucide-react'
 import { db } from '@/lib/db'
 import type { Medicine, MedicineCatalog } from '@/lib/db'
 import { calculateStatus } from '@/lib/expiry'
+import type { MedicineStatus } from '@/lib/expiry'
 import { Button } from '@/components/ui/button'
 import { SearchBar } from '@/components/SearchBar'
 import { FilterBottomSheet } from '@/components/FilterBottomSheet'
@@ -204,6 +205,7 @@ export function MedicineList() {
                 nearestExpiryStock={item.nearestExpiryStock}
                 totalQuantity={item.totalQuantity}
                 stockCount={item.stockEntries.length}
+                aggregateStatus={item.aggregateStatus as MedicineStatus}
               />
             </Link>
           ))}

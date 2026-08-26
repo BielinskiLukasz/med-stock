@@ -1,5 +1,5 @@
 import type { Medicine, MedicineCatalog } from '@/lib/db'
-import { calculateStatus } from '@/lib/expiry'
+import type { MedicineStatus } from '@/lib/expiry'
 import { StatusBadge } from '@/components/StatusBadge'
 
 interface MedicineCardAggregateProps {
@@ -7,6 +7,7 @@ interface MedicineCardAggregateProps {
   nearestExpiryStock: Medicine | null
   totalQuantity: number
   stockCount: number
+  aggregateStatus: MedicineStatus
 }
 
 export function MedicineCardAggregate({
@@ -14,8 +15,9 @@ export function MedicineCardAggregate({
   nearestExpiryStock,
   totalQuantity,
   stockCount,
+  aggregateStatus,
 }: MedicineCardAggregateProps) {
-  const status = nearestExpiryStock ? calculateStatus(nearestExpiryStock) : 'Active'
+  const status = aggregateStatus
   const quantityUnit = nearestExpiryStock?.quantityUnit ?? 'units'
 
   return (
