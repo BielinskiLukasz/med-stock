@@ -65,6 +65,8 @@ export function MedicineNew() {
       if (newCatalog) {
         setSelectedCatalog(newCatalog)
         setStep('stock-form')
+      } else {
+        toast.error('Failed to load new catalog. Please try again.')
       }
     } catch (err) {
       console.error('Failed to create catalog:', err)
