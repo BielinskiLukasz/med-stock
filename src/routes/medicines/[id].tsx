@@ -126,6 +126,10 @@ export function MedicineDetail() {
       const now = new Date().toISOString()
       await db.transaction('rw', db.medicines, db.history, async () => {
         if (stock.packCount && stock.packCount > 1) {
+          if (!stock.quantity) {
+            toast.error('Cannot open box: quantity not set.')
+            return
+          }
           // Pack-level split: open one box from a multi-box entry
           const newId = await db.medicines.add({
             catalogId: stock.catalogId,
@@ -293,7 +297,7 @@ export function MedicineDetail() {
 
                   {/* Stock action row */}
                   <div className="flex gap-2 mt-2 flex-wrap">
-                    {((stock.quantity ?? 0) > 1 || (stock.packCount ?? 0) > 1) && !stock.openedDate && (
+                    {((stock.quantity ?? 0) > 1 || (stock.packCount ?? 0) > 1) && (stock.quantity ?? 0) > 0 && !stock.openedDate && (
                       <Button
                         variant="outline"
                         size="sm"
