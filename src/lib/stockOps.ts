@@ -69,12 +69,6 @@ export async function moveStock(
   await db.transaction('rw', db.medicines, db.history, async () => {
     const newOriginalQty = (stock.quantity ?? 0) - quantityToMove
 
-    // Decrement original quantity
-    await db.medicines.update(stockId, {
-      quantity: newOriginalQty,
-      updatedAt: now,
-    })
-
     // Create new entry at target location
     newId = await db.medicines.add({
       catalogId: stock.catalogId,
