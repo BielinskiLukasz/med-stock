@@ -105,13 +105,15 @@ export async function moveStock(
 
 export async function deleteCatalogEntry(catalogId: number): Promise<void> {
   await db.transaction('rw', db.medicine_catalog, db.medicines, async () => {
-    const activeCount = await db.medicines
+    // Count ALL stock entries (active + soft-deleted) — prevents orphan trash entries
+    const totalCount = await db.medicines
       .where('catalogId')
       .equals(catalogId)
-      .filter(m => m.deletedAt === null)
       .count()
-    if (activeCount > 0) {
-      throw new Error('Cannot delete catalog with active stock entries')
+    if (totalCount > 0) {
+      throw new Error(
+        'Cannot delete catalog: stock entries exist (including trashed). Permanently delete all stock entries first.'
+      )
     }
     await db.medicine_catalog.delete(catalogId)
   })

@@ -55,6 +55,12 @@ export function MedicineDetail() {
     [id]
   )
 
+  // Count ALL stock (active + soft-deleted) for catalog delete guard — prevents orphan trash entries
+  const allStockCount = useLiveQuery(
+    () => db.medicines.where('catalogId').equals(catalogId).count(),
+    [id]
+  )
+
   // D-02: Find stock entry with nearest-expiry date
   const nearestExpiryStock = useMemo(() => {
     if (!stockEntries || stockEntries.length === 0) return null
@@ -435,7 +441,7 @@ export function MedicineDetail() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            {(stockEntries?.length ?? 0) === 0 && (
+            {(allStockCount ?? 1) === 0 && (
               <AlertDialogAction
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 onClick={() => void handleCatalogDeleteConfirm()}
