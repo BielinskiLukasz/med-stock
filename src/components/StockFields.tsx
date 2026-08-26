@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import type { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -62,6 +63,7 @@ export function StockFields({ form }: StockFieldsProps) {
       setShowQuickAddLocation(false)
     } catch (err) {
       console.error('Failed to add location:', err)
+      toast.error('Failed to add location. Please try again.')
     }
   }
 
