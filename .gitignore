@@ -30,6 +30,10 @@ dist-ssr
 
 # Per-developer Claude Code permission overrides — never commit personal allows.
 .claude/settings.local.json
+.claude/settings.json
+
+# GSD milestone lock (runtime artifact)
+.planning/milestone.lock
 
 # GSD
 gsd-*
