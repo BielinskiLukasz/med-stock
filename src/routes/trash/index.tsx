@@ -80,7 +80,10 @@ export function TrashScreen() {
               {catalog?.name ?? 'Unknown Medicine'}
             </p>
             <p className="text-sm text-gray-500 mt-0.5">
-              {medicine.quantity} {medicine.quantityUnit || 'units'} at {medicine.location ?? 'Other'}
+              {medicine.packCount && medicine.packCount > 1
+                ? `${medicine.packCount} boxes × ${medicine.quantity} ${medicine.quantityUnit || 'units'}`
+                : `${medicine.quantity} ${medicine.quantityUnit || 'units'}`}{' '}
+              at {medicine.location ?? 'Other'}
             </p>
             <p className="text-sm text-gray-500 mt-0.5">
               Deleted{' '}

@@ -23,34 +23,47 @@ const NULL_SENTINEL = '__NULL__'
 
 interface MoveStockSheetProps {
   stock: Medicine
-  onMove: (quantityToMove: number, targetLocation: string | null) => Promise<void>
+  onMove: (quantityToMove: number, targetLocation: string | null, packCountToMove?: number) => Promise<void>
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockSheetProps) {
+  // Box mode: when packCount > 1 all boxes are identical unopened units — operate at box level
+  const useBoxes = (stock.packCount ?? 0) > 1
+  const maxBoxes = stock.packCount ?? 0
+  const maxQty = stock.quantity ?? 0
+  const unitsPerBox = useBoxes && maxBoxes > 0 ? Math.round(maxQty / maxBoxes) : 0
+
+  const [boxes, setBoxes] = useState(1)
   const [quantity, setQuantity] = useState(1)
   const [targetLocation, setTargetLocation] = useState<string | null>(stock.location)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Re-sync state whenever the sheet opens or the stock prop changes (G-05-7)
   useEffect(() => {
     if (open) {
       setTargetLocation(stock.location)
+      setBoxes(1)
       setQuantity(1)
     }
   }, [open, stock])
 
   const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
-  const maxQty = stock.quantity ?? 0
-  const isQuantityValid = quantity >= 1 && quantity <= maxQty
+
+  const isBoxesValid = boxes >= 1 && boxes <= maxBoxes
+  const isUnitsValid = quantity >= 1 && quantity <= maxQty
+  const isValid = useBoxes ? isBoxesValid : isUnitsValid
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!isQuantityValid) return
+    if (!isValid) return
     try {
       setIsSubmitting(true)
-      await onMove(quantity, targetLocation)
+      if (useBoxes) {
+        await onMove(boxes * unitsPerBox, targetLocation, boxes)
+      } else {
+        await onMove(quantity, targetLocation)
+      }
       onOpenChange(false)
     } catch (err) {
       console.error('Failed to move stock:', err)
@@ -68,22 +81,49 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
         </SheetHeader>
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="move-qty" className="text-sm font-medium">
-              Quantity to move (max {maxQty})
-            </label>
-            <Input
-              id="move-qty"
-              type="number"
-              min={1}
-              max={maxQty}
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-            {quantity < 1 && (
-              <p className="text-sm text-red-500">Quantity must be at least 1</p>
-            )}
-            {quantity > maxQty && (
-              <p className="text-sm text-red-500">Cannot exceed {maxQty}</p>
+            {useBoxes ? (
+              <>
+                <label htmlFor="move-boxes" className="text-sm font-medium">
+                  Boxes to move (max {maxBoxes})
+                </label>
+                <Input
+                  id="move-boxes"
+                  type="number"
+                  min={1}
+                  max={maxBoxes}
+                  value={boxes}
+                  onChange={(e) => setBoxes(Number(e.target.value))}
+                />
+                <p className="text-xs text-gray-500">
+                  = {boxes * unitsPerBox} {stock.quantityUnit || 'units'} ({unitsPerBox} per box)
+                </p>
+                {boxes < 1 && (
+                  <p className="text-sm text-red-500">Must be at least 1 box</p>
+                )}
+                {boxes > maxBoxes && (
+                  <p className="text-sm text-red-500">Cannot exceed {maxBoxes} boxes</p>
+                )}
+              </>
+            ) : (
+              <>
+                <label htmlFor="move-qty" className="text-sm font-medium">
+                  Quantity to move (max {maxQty})
+                </label>
+                <Input
+                  id="move-qty"
+                  type="number"
+                  min={1}
+                  max={maxQty}
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                />
+                {quantity < 1 && (
+                  <p className="text-sm text-red-500">Quantity must be at least 1</p>
+                )}
+                {quantity > maxQty && (
+                  <p className="text-sm text-red-500">Cannot exceed {maxQty}</p>
+                )}
+              </>
             )}
           </div>
 
@@ -123,11 +163,13 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
             <Button
               type="submit"
               className="flex-1"
-              disabled={isSubmitting || !isQuantityValid}
+              disabled={isSubmitting || !isValid}
             >
               {isSubmitting
                 ? 'Moving…'
-                : `Move ${quantity} unit${quantity !== 1 ? 's' : ''}`}
+                : useBoxes
+                  ? `Move ${boxes} ${boxes !== 1 ? 'boxes' : 'box'}`
+                  : `Move ${quantity} unit${quantity !== 1 ? 's' : ''}`}
             </Button>
           </div>
         </form>
