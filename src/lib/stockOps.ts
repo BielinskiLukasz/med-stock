@@ -56,7 +56,8 @@ export async function moveStock(
   quantityToMove: number,
   targetLocation: string | null,
   stock: Medicine,
-  medicineName: string
+  medicineName: string,
+  packCountToMove?: number
 ): Promise<number> {
   if (quantityToMove > (stock.quantity ?? 0)) {
     throw new Error(
@@ -79,18 +80,22 @@ export async function moveStock(
       pao: stock.pao,
       location: targetLocation,
       manualStatus: null,
-      packCount: null,
+      packCount: packCountToMove ?? null,
       notes: stock.notes,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,
     })
 
-    // Record history for original decrement
+    // Record history for original decrement (include packCount update when moving boxes)
+    const originalUpdate: Partial<Medicine> & { updatedAt: string } = { quantity: newOriginalQty, updatedAt: now }
+    if (packCountToMove !== undefined && stock.packCount !== null) {
+      originalUpdate.packCount = stock.packCount - packCountToMove
+    }
     await updateMedicineWithHistory(
       stockId,
       stock,
-      { quantity: newOriginalQty, updatedAt: now },
+      originalUpdate,
       medicineName
     )
 

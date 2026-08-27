@@ -121,9 +121,9 @@ export function MedicineDetail() {
     }
   }
 
-  async function handleMoveSubmit(quantityToMove: number, targetLocation: string | null) {
+  async function handleMoveSubmit(quantityToMove: number, targetLocation: string | null, packCountToMove?: number) {
     if (!selectedStockForMove || !catalog) return
-    await moveStock(selectedStockForMove.id, quantityToMove, targetLocation, selectedStockForMove, catalog.name)
+    await moveStock(selectedStockForMove.id, quantityToMove, targetLocation, selectedStockForMove, catalog.name, packCountToMove)
     toast.success('Stock moved')
   }
 
