@@ -25,6 +25,7 @@ const baseStockData: Omit<Medicine, 'id' | 'catalogId' | 'createdAt' | 'updatedA
   pao: null,
   quantity: 20,
   quantityUnit: 'tablets',
+  packCount: null,
   notes: null,
   manualStatus: null,
 }

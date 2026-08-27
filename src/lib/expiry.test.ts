@@ -13,6 +13,7 @@ function makeMed(overrides: Partial<Medicine> = {}): Medicine {
     pao: null,
     quantity: null,
     quantityUnit: null,
+    packCount: null,
     notes: null,
     manualStatus: null,
     createdAt: '2026-01-01T00:00:00Z',

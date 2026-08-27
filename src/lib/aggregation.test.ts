@@ -22,6 +22,7 @@ function makeStock(overrides: Partial<Medicine> = {}): Medicine {
     pao: null,
     quantity: 10,
     quantityUnit: 'tablets',
+    packCount: null,
     notes: null,
     manualStatus: null,
     createdAt: '2026-01-01T00:00:00Z',

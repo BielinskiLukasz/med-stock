@@ -19,6 +19,7 @@ const baseMedicine: Omit<Medicine, 'id'> = {
   pao: null,
   quantity: 20,
   quantityUnit: 'tablets',
+  packCount: null,
   notes: null,
   manualStatus: null,
   createdAt: new Date().toISOString(),

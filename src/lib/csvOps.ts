@@ -76,9 +76,9 @@ export function mergeCSVRowsToMedicines(
       quantity = isFinite(parsed) ? parsed : null
     }
 
-    // Skip rows where no meaningful data was mapped (all fields empty after mapping)
-    const hasAnyData = locationVal || expiryDateVal || openedDateVal || quantityRaw || quantityUnitVal || notesVal
-    if (!hasAnyData) {
+    // Skip rows that are completely empty in the original CSV (blank lines after header)
+    const hasAnyRawData = Object.values(row).some(v => v !== undefined && String(v).trim() !== '')
+    if (!hasAnyRawData) {
       skippedCount++
       continue
     }
