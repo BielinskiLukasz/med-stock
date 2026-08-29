@@ -33,7 +33,8 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
   const useBoxes = (stock.packCount ?? 0) > 1
   const maxBoxes = stock.packCount ?? 0
   const maxQty = stock.quantity ?? 0
-  const unitsPerBox = useBoxes && maxBoxes > 0 ? Math.round(maxQty / maxBoxes) : 0
+  // quantity is per-box (same model as Open Box) — no division needed
+  const unitsPerBox = maxQty
 
   const [boxes, setBoxes] = useState(1)
   const [quantity, setQuantity] = useState(1)
@@ -60,7 +61,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
     try {
       setIsSubmitting(true)
       if (useBoxes) {
-        await onMove(boxes * unitsPerBox, targetLocation, boxes)
+        await onMove(unitsPerBox, targetLocation, boxes)
       } else {
         await onMove(quantity, targetLocation)
       }
@@ -95,7 +96,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
                   onChange={(e) => setBoxes(Number(e.target.value))}
                 />
                 <p className="text-xs text-gray-500">
-                  = {boxes * unitsPerBox} {stock.quantityUnit || 'units'} ({unitsPerBox} per box)
+                  = {unitsPerBox} {stock.quantityUnit || 'units'} per box
                 </p>
                 {boxes < 1 && (
                   <p className="text-sm text-red-500">Must be at least 1 box</p>

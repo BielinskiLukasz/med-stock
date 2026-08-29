@@ -59,47 +59,71 @@ export async function moveStock(
   medicineName: string,
   packCountToMove?: number
 ): Promise<number> {
-  if (quantityToMove > (stock.quantity ?? 0)) {
-    throw new Error(
-      `Cannot move ${quantityToMove} units; only ${stock.quantity ?? 0} available`
-    )
+  // Box mode: quantity is per-box — only packCount changes, quantity stays the same on both entries.
+  // Unit mode: quantity is total — subtract from original, assign to new entry.
+  const isBoxMode = packCountToMove !== undefined && (stock.packCount ?? 0) > 1
+
+  if (isBoxMode) {
+    if (packCountToMove > (stock.packCount ?? 0)) {
+      throw new Error(`Cannot move ${packCountToMove} boxes; only ${stock.packCount ?? 0} available`)
+    }
+  } else {
+    if (quantityToMove > (stock.quantity ?? 0)) {
+      throw new Error(`Cannot move ${quantityToMove} units; only ${stock.quantity ?? 0} available`)
+    }
   }
 
   const now = new Date().toISOString()
   let newId = 0
   await db.transaction('rw', db.medicines, db.history, async () => {
-    const newOriginalQty = (stock.quantity ?? 0) - quantityToMove
-
-    // Create new entry at target location
-    newId = await db.medicines.add({
-      catalogId: stock.catalogId,
-      quantity: quantityToMove,
-      quantityUnit: stock.quantityUnit,
-      expiryDate: stock.expiryDate,
-      openedDate: stock.openedDate,
-      pao: stock.pao,
-      location: targetLocation,
-      manualStatus: null,
-      packCount: packCountToMove ?? null,
-      notes: stock.notes,
-      createdAt: now,
-      updatedAt: now,
-      deletedAt: null,
-    })
-
-    // Record history for original decrement (include packCount update when moving boxes)
-    const originalUpdate: Partial<Medicine> & { updatedAt: string } = { quantity: newOriginalQty, updatedAt: now }
-    if (packCountToMove !== undefined && stock.packCount !== null) {
-      originalUpdate.packCount = stock.packCount - packCountToMove
+    if (isBoxMode) {
+      // New entry inherits per-box quantity unchanged; packCount = boxes being moved
+      newId = await db.medicines.add({
+        catalogId: stock.catalogId,
+        quantity: stock.quantity,
+        quantityUnit: stock.quantityUnit,
+        expiryDate: stock.expiryDate,
+        openedDate: stock.openedDate,
+        pao: stock.pao,
+        location: targetLocation,
+        manualStatus: null,
+        packCount: packCountToMove,
+        notes: stock.notes,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+      })
+      await updateMedicineWithHistory(
+        stockId,
+        stock,
+        { packCount: (stock.packCount ?? 0) - packCountToMove, updatedAt: now },
+        medicineName
+      )
+    } else {
+      // Unit mode: split quantity between two entries
+      newId = await db.medicines.add({
+        catalogId: stock.catalogId,
+        quantity: quantityToMove,
+        quantityUnit: stock.quantityUnit,
+        expiryDate: stock.expiryDate,
+        openedDate: stock.openedDate,
+        pao: stock.pao,
+        location: targetLocation,
+        manualStatus: null,
+        packCount: null,
+        notes: stock.notes,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+      })
+      await updateMedicineWithHistory(
+        stockId,
+        stock,
+        { quantity: (stock.quantity ?? 0) - quantityToMove, updatedAt: now },
+        medicineName
+      )
     }
-    await updateMedicineWithHistory(
-      stockId,
-      stock,
-      originalUpdate,
-      medicineName
-    )
 
-    // Record history for new entry
     const newStock = await db.medicines.get(newId)
     if (newStock) {
       await addMedicineHistory(newStock, medicineName, 'created')
