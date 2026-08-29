@@ -73,7 +73,7 @@ Plans:
 1. User can search for an existing catalog entry by name via autocomplete when starting the add flow; matching is case-insensitive
 2. User can create a new catalog entry (name, category, form) inline during the add flow when no autocomplete match exists
 3. User can edit a catalog entry's name, category, and form from the medicine detail screen (affects all stock entries linked to that catalog)
-4. Medicines list shows one aggregate row per catalog entry, with status derived from the nearest-expiry active stock entry; count badge shows total quantity
+4. Medicines list shows one aggregate row per catalog entry, with status derived from the worst-case active stock entry (priority-reduce: Expired > ExceededOpenPeriod > Opened > Active); count badge shows total quantity
 5. Detail screen lists all stock entries for one catalog entry, each showing quantity, expiryDate, location, and calculated status
 6. User can add a stock entry (quantity, expiry date, location, optional PAO/notes) linked to a catalog entry via the two-step add flow (catalog autocomplete → stock fields)
 7. User can edit a stock entry's quantity, expiryDate, location, PAO, and notes without affecting the catalog
@@ -81,7 +81,7 @@ Plans:
 9. Soft-deleted stock entries appear in Trash and can be restored with full history preserved
 10. Adding, editing, moving, and deleting stock entries record history with catalogId context so changes are auditable
 
-**Plans**: 12/13 plans executed
+**Plans**: 13/13 plans executed
 
 - [x] 05-12-PLAN.md
 - [x] 05-13-PLAN.md
@@ -96,7 +96,7 @@ Wave execution order (each wave parallelizable within):
   - [x] 05-04-PLAN.md — TDD: Stock mutations (add, edit, soft-delete, move/split with atomic history recording) `[depends: 05-01]`
 - **Wave 3** (after Wave 2):
   - [x] 05-05-PLAN.md — Add flow 3-step state machine (CatalogAutocomplete → create catalog → stock form) `[depends: 05-01, 05-03, 05-04]`
-  - [ ] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete), Trash "View" link fix (D-12) `[depends: 05-01, 05-03, 05-04, 05-05]`
+  - [x] 05-06-PLAN.md — Detail view completion: edit sheets (CatalogEditSheet, StockEditSheet, MoveStockSheet), stock actions (Open box, Move/Split, soft-delete), Trash "View" link fix (D-12) `[depends: 05-01, 05-03, 05-04, 05-05]`
 
 Gap closure plans (after UAT — 8 gaps found):
 

@@ -13,7 +13,7 @@
 ### Catalog
 
 - [x] **CAT-01**: User can search for an existing catalog entry by name via autocomplete when starting the add flow
-- [ ] **CAT-02**: User can create a new catalog entry (name, category, form) inline during the add flow when no autocomplete match exists
+- [x] **CAT-02**: User can create a new catalog entry (name, category, form) inline during the add flow when no autocomplete match exists
 - [x] **CAT-03**: User can edit a catalog entry's name, category, and form from the medicine detail screen
 
 ### Stock
@@ -26,9 +26,9 @@
 
 ### Add / Edit Flows
 
-- [x] **FLOW-01**: Medicine list shows one aggregate row per catalog entry, with status derived from the nearest-expiry active stock entry
-- [ ] **FLOW-02**: Detail screen lists all stock entries for a catalog entry, each showing quantity, expiry, location, and status
-- [ ] **FLOW-03**: Add flow: catalog autocomplete first → if match selected, jump straight to stock fields; if no match, show catalog fields then stock fields
+- [x] **FLOW-01**: Medicine list shows one aggregate row per catalog entry, with status derived from the worst-case active stock entry (priority-reduce: Expired > ExceededOpenPeriod > Opened > Active)
+- [x] **FLOW-02**: Detail screen lists all stock entries for a catalog entry, each showing quantity, expiry, location, and status
+- [x] **FLOW-03**: Add flow: catalog autocomplete first → if match selected, jump straight to stock fields; if no match, show catalog fields then stock fields
 
 ### Backup
 
@@ -54,7 +54,7 @@
 | MIGR-01 | 4 | Complete |
 | MIGR-02 | 4 | Complete |
 | CAT-01 | 5 | Complete |
-| CAT-02 | 5 | Pending |
+| CAT-02 | 5 | Complete |
 | CAT-03 | 5 | Complete |
 | STOCK-01 | 5 | Complete |
 | STOCK-02 | 5 | Complete |
@@ -62,8 +62,8 @@
 | STOCK-04 | 5 | Complete |
 | STOCK-05 | 5 | Complete |
 | FLOW-01 | 5 | Complete |
-| FLOW-02 | 5 | Pending |
-| FLOW-03 | 5 | Pending |
+| FLOW-02 | 5 | Complete |
+| FLOW-03 | 5 | Complete |
 | DATA-01 | 6 | Pending |
 | DATA-02 | 6 | Pending |
 | DATA-03 | 6 | Pending |
