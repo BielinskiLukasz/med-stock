@@ -51,7 +51,7 @@ Five screens behind a bottom tab bar:
 - `locations` — predefined + user-created storage locations
 - `history` — immutable change log (never deleted)
 
-Schema is at version 4. Add new indexed fields only via `db.version(5)` — never modify earlier versions.
+Schema is at version 5. Add new indexed fields only via `db.version(6)` — never modify earlier versions.
 
 **`src/lib/expiry.ts`** — pure `calculateStatus(medicine, now?)` function. Returns `AutoStatus | ManualStatus`. Must be called **at render time** (inside `useMemo` or component body), never inside a `useLiveQuery` querier.
 
@@ -59,7 +59,7 @@ Schema is at version 4. Add new indexed fields only via `db.version(5)` — neve
 
 **`src/lib/stockOps.ts`** — high-level stock operations (`addStockEntry`, `editStockEntry`, `moveStock`). All mutations wrapped in `db.transaction()`.
 
-**`src/lib/aggregation.ts`** — `computeCatalogAggregate()`: rolls up status and quantity across all stock entries for a catalog (nearest expiry wins for status; quantities summed).
+**`src/lib/aggregation.ts`** — `computeCatalogAggregate()`: rolls up status and quantity across all stock entries for a catalog (priority-reduce: Expired > ExceededOpenPeriod > Opened > Active; manual statuses excluded; quantities multiplied by `packCount ?? 1` then summed).
 
 **`src/lib/dataOps.ts`** — JSON export/import with Zod schema validation (`BackupSchema`).
 
