@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-29 (B-013 added — app version display)
-Last assigned ID: **B-013** — next new item must be **B-014**
+Last updated: 2026-08-31 (B-014 added — expiring soon status)
+Last assigned ID: **B-014** — next new item must be **B-015**
 
 ---
 
@@ -363,3 +363,40 @@ Last assigned ID: **B-013** — next new item must be **B-014**
 - Vite exposes `package.json` version via `import.meta.env` if added to `vite.config.ts` as `define: { __APP_VERSION__: JSON.stringify(pkg.version) }` — no runtime fetch needed.
 - Alternatively, import the version directly: `import { version } from '../../package.json'` (TypeScript resolveJsonModule must be on, which it already is in this project).
 - Render as a small `<p className="text-xs text-muted-foreground">v{version}</p>` — no new component needed.
+
+---
+
+### B-014 · "Expiring Soon" Warning Status
+
+**Source:** product idea — reported 2026-08-31; surfaced during status hierarchy review
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+
+**What:** Add a new `AutoStatus` value `ExpiringSoon` that fires when a medicine is within a configurable warning window (default 7 days) of either its `expiryDate` or its PAO end date (`openedDate + pao`). The status sits between `Opened` and `Expired` / `ExceededOpenPeriod` in priority — it replaces `Opened` when the warning window is active.
+
+Status priority order (highest → lowest):
+1. Manual statuses (`UsedUp`, `Disposed`, `Archived`) — always win
+2. `Expired` / `ExceededOpenPeriod` — already past the threshold
+3. **`ExpiringSoon`** — within the warning window of expiry or PAO end ← new
+4. `Opened` — opened but not yet close to any threshold
+5. `Active` — default
+
+The warning window is user-configurable via a Settings value (stored in Dexie or `localStorage`), defaulting to 7 days.
+
+**Why:** Currently a medicine quietly stays `Active` or `Opened` until the exact day it crosses into `Expired` / `ExceededOpenPeriod` — there is no heads-up. At the pharmacy (the core use case), seeing `ExpiringSoon` immediately signals "I have it but barely — I may want to buy more." The warning covers both expiry date proximity and PAO proximity under one status.
+
+**Open questions when this gets planned:**
+
+- Should the threshold be the same for `expiryDate` proximity and PAO-end proximity, or configurable separately?
+- Where is the setting surfaced — a dedicated Settings screen, or an inline control on the Dashboard?
+- Should the warning window be stored in Dexie (syncs across devices via export/import) or `localStorage` (device-local)?
+- Does `ExpiringSoon` get its own filter chip on the medicine list, or does it collapse under a broader "attention needed" chip?
+- Color/badge: likely amber/yellow (distinct from red for `Expired` and green for `Active`).
+
+**Implementation notes:**
+
+- `expiry.ts`: add `'ExpiringSoon'` to `AutoStatus`. `calculateStatus()` gains an optional third param `{ expiringSoonDays?: number }` (default `7`). After confirming not already expired/exceeded, check if `expiryDate` or `paoEnd` falls within `now + expiringSoonDays` days — if so, return `'ExpiringSoon'` before the `Opened` check.
+- `STATUS_LABELS`: add `ExpiringSoon: 'Expiring Soon'`.
+- All callers of `calculateStatus()` (aggregation, list views, dashboard) pass the user setting through — or read it from a shared hook.
+- Filter chips and status badge colors need updating to include the new status.
+- Tests in `expiry.test.ts` need cases: exactly at boundary, one day inside, one day outside, PAO-triggered vs expiry-triggered.
