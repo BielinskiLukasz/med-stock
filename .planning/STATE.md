@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 07
 current_phase_name: i18n / Polish Language
 status: executing
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-08-31T23:05:21.740Z"
+stopped_at: Completed 07-03-PLAN.md
+last_updated: "2026-08-31T23:25:17.453Z"
 last_activity: 2026-09-01
 last_activity_desc: Phase 07 execution started
-state_head: 2333adc9f44636b9b1eaa93f4b96d314a059b28f
+state_head: bacd73ba57ccc2c08507152ba9f184fc069d332c
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-31)
 ## Current Position
 
 Phase: 07 (i18n / Polish Language) — EXECUTING
-Plan: 3 of 4
+Plan: 4 of 4
 Status: Ready to execute
 Last activity: 2026-09-01 — Phase 07 execution started
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-01 — Phase 07 execution started
 
 ## Session
 
-**Last session:** 2026-08-31T23:05:21.686Z
-**Stopped at:** Completed 07-02-PLAN.md
+**Last session:** 2026-08-31T23:25:17.410Z
+**Stopped at:** Completed 07-03-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -95,6 +95,7 @@ Last activity: 2026-09-01 — Phase 07 execution started
 | Phase 06 P01 | 8 | 1 tasks | 2 files |
 | Phase 06 P02 | 16 | 2 tasks | 3 files |
 | Phase 07 P01 | 13 | 2 tasks | 9 files |
+| Phase 07-i18n-polish-language P03 | 9 | 2 tasks | 8 files |
 
 ## Decisions
 
@@ -114,6 +115,8 @@ Last activity: 2026-09-01 — Phase 07 execution started
 - [Phase 06]: LegacyBackupSchema kept module-internal; ImportResult exported as caller contract
 - [Phase 06]: pendingRaw: unknown|null in ImportJSONSection — importFromJSON owns all validation
 - [Phase 07]: D-01/D-02/D-09/D-10/D-11 applied: custom React Context i18n with TypeScript-typed EN/PL dicts, LanguageProvider outermost in App.tsx, flag-emoji toggle in BottomTabBar, localStorage persistence, formatDate string-split
+- [Phase 07]: D-05/D-08 applied in form components: SelectItem value props preserved as canonical English; only display labels translated via t()
+- [Phase 07]: HistoryEntry formatEntry refactored as pure function accepting (t, lang) — hooks-in-helpers antipattern avoided
 
 ## Operator Next Steps
 
