@@ -27,7 +27,7 @@ MedStock v1.1 replaces the flat medicines table with a two-layer model: `medicin
 
 - [x] **Phase 4: Database Migration & Schema v3** - Dexie schema redesign with catalog + stock tables, automatic data migration, updated mutation layer (completed 2026-07-29)
 - [x] **Phase 5: Stock & Catalog Management** - CRUD for stock entries and catalog entries, aggregated list view, detail view, two-step add flow (completed 2026-08-31)
-- [ ] **Phase 6: Backup & Restore** - JSON export/import for new schema, backward compatibility with pre-v1.1 backups
+- [x] **Phase 6: Backup & Restore** - JSON export/import for new schema, backward compatibility with pre-v1.1 backups (completed 2026-08-31)
 
 ---
 
@@ -128,7 +128,7 @@ Gap closure plans (after UAT — 8 gaps found):
 3. JSON import of old-format backup (pre-v1.1, no catalog table) migrates gracefully by inferring catalog entries from stock name/category fields using the same deduplication logic as the v4 migration
 4. After import, all stock entries link to inferred/restored catalog entries with no orphaned records
 
-**Plans**: 2/2 plans executed
+**Plans**: 2/2 plans complete
 
 Plans:
 **Wave 1**
@@ -149,7 +149,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
 | 5. Stock & Catalog Management | 13/13 | Complete   | 2026-08-31 |
-| 6. Backup & Restore | 2/2 | In Progress|  |
+| 6. Backup & Restore | 2/2 | Complete   | 2026-08-31 |
 
 ---
 
