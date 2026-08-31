@@ -34,7 +34,7 @@
 
 - [ ] **DATA-01**: JSON export includes the medicine_catalog table alongside stock entries with catalogId
 - [ ] **DATA-02**: JSON import of new-format backup restores both catalog entries and stock entries correctly
-- [ ] **DATA-03**: JSON import of old-format backup (pre-v1.1, no catalog table) migrates gracefully by inferring catalog entries from name and category fields
+- [x] **DATA-03**: JSON import of old-format backup (pre-v1.1, no catalog table) migrates gracefully by inferring catalog entries from name and category fields
 
 ## Out of Scope
 
@@ -66,7 +66,7 @@
 | FLOW-03 | 5 | Complete |
 | DATA-01 | 6 | Pending |
 | DATA-02 | 6 | Pending |
-| DATA-03 | 6 | Pending |
+| DATA-03 | 6 | Complete |
 
 **Coverage:**
 

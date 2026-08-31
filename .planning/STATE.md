@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Catalog + Stock Model
 current_phase: 06
 current_phase_name: Backup & Restore
-status: in-progress
-stopped_at: Phase 6 context gathered
-last_updated: "2026-08-31T12:48:17.012Z"
+status: executing
+stopped_at: Completed 06-01-PLAN.md
+last_updated: "2026-08-31T13:14:31.669Z"
 last_activity: 2026-08-31
-last_activity_desc: Phase 06 context gathered
-state_head: b75378c302a362470d217ae06bf68e950313d3d0
+last_activity_desc: Phase 06 execution started
+state_head: ff306c3008158301535f0c35ddd84f59847d82b6
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 17
-  completed_plans: 15
+  completed_plans: 16
   percent: 67
 ---
 
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-07-29)
 
 ## Current Position
 
-Phase: 06 (Backup & Restore) — READY TO EXECUTE
-Status: Context gathered — ready for planning
-Last activity: 2026-08-31 — Phase 06 context gathered
+Phase: 06 (Backup & Restore) — EXECUTING
+Status: Executing Phase 06
+Last activity: 2026-08-31 — Phase 06 execution started
 
 ## v1.0 Summary
 
@@ -67,9 +67,9 @@ Last activity: 2026-08-31 — Phase 06 context gathered
 
 ## Session
 
-**Last session:** 2026-08-31T11:51:46.017Z
-**Stopped at:** Phase 6 context gathered
-**Resume file:** .planning/phases/06-backup-restore/06-CONTEXT.md
+**Last session:** 2026-08-31T13:14:30.054Z
+**Stopped at:** Completed 06-01-PLAN.md
+**Resume file:** None
 
 ## Performance Metrics
 
@@ -82,6 +82,7 @@ Last activity: 2026-08-31 — Phase 06 context gathered
 | Phase 05 P10 | 15 | 2 tasks | 3 files |
 | Phase 05 P11 | 12 | 2 tasks | 2 files |
 | Phase 05 P13 | 13 | 1 tasks | 2 files |
+| Phase 06 P01 | 8 | 1 tasks | 2 files |
 
 ## Decisions
 
@@ -96,3 +97,4 @@ Last activity: 2026-08-31 — Phase 06 context gathered
 - [Phase ?]: deleteCatalogEntry re-checks active stock count server-side before deleting (T-05-11-01)
 - [Phase ?]: AlertDialog branches on stockEntries.length — no extra DB query needed
 - [Phase 05]: filteredStockEntries useMemo: unfiltered stockEntries retained for badge/guard; filteredStockEntries used for render loop (G-05-10)
+- [Phase 06]: D-07 honored: form null on inferred catalog entries — no heuristic inference

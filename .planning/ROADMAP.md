@@ -128,12 +128,12 @@ Gap closure plans (after UAT — 8 gaps found):
 3. JSON import of old-format backup (pre-v1.1, no catalog table) migrates gracefully by inferring catalog entries from stock name/category fields using the same deduplication logic as the v4 migration
 4. After import, all stock entries link to inferred/restored catalog entries with no orphaned records
 
-**Plans**: 2 plans
+**Plans**: 1/2 plans executed
 
 Plans:
 **Wave 1**
 
-- [ ] 06-01-PLAN.md — TDD: inferCatalogEntriesFromLegacyMedicines catalog dedup utility
+- [x] 06-01-PLAN.md — TDD: inferCatalogEntriesFromLegacyMedicines catalog dedup utility
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -149,7 +149,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
 | 5. Stock & Catalog Management | 13/13 | Complete   | 2026-08-31 |
-| 6. Backup & Restore | 0/2 | Pending | - |
+| 6. Backup & Restore | 1/2 | In Progress|  |
 
 ---
 
