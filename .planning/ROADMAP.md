@@ -131,7 +131,12 @@ Gap closure plans (after UAT — 8 gaps found):
 **Plans**: 2 plans
 
 Plans:
+**Wave 1**
+
 - [ ] 06-01-PLAN.md — TDD: inferCatalogEntriesFromLegacyMedicines catalog dedup utility
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 06-02-PLAN.md — Tracer: full import/export pipeline (schema versioning, LegacyBackupSchema, two-pass import, toast update)
 
 **UI hint**: no
