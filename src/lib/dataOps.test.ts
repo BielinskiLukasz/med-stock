@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 // Import BackupSchema — this will fail until dataOps.ts is created (RED phase)
-import { BackupSchema } from './dataOps'
+import { BackupSchema, inferCatalogEntriesFromLegacyMedicines } from './dataOps'
 
 describe('BackupSchema', () => {
   it('rejects empty object', () => {
@@ -109,5 +109,82 @@ describe('BackupSchema', () => {
       ],
     })
     expect(result.success).toBe(false)
+  })
+})
+
+describe('inferCatalogEntriesFromLegacyMedicines', () => {
+  // Case 1: empty input
+  it('returns empty entries array and empty nameToId map for empty input', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([])
+    expect(result.entries).toEqual([])
+    expect(result.nameToId.size).toBe(0)
+  })
+
+  // Case 2: single medicine, single lowercase word
+  it('title-cases a single lowercase word name, preserves category, sets form null', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'ibuprofen', category: 'Pain Relief' },
+    ])
+    expect(result.entries).toHaveLength(1)
+    expect(result.entries[0].name).toBe('Ibuprofen')
+    expect(result.entries[0].category).toBe('Pain Relief')
+    expect(result.entries[0].form).toBeNull()
+    expect(result.nameToId.get('ibuprofen')).toBe(result.entries[0].id)
+  })
+
+  // Case 3: two medicines with same normalized name (case+trim differ) dedup to one
+  it('deduplicates two medicines that differ only by case and trailing whitespace', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'Ibuprofen 400mg', category: 'Pain Relief' },
+      { id: 2, name: 'ibuprofen 400mg ', category: 'Pain Relief' },
+    ])
+    expect(result.entries).toHaveLength(1)
+    expect(result.nameToId.get('ibuprofen 400mg')).toBeDefined()
+    expect(result.nameToId.size).toBe(1)
+  })
+
+  // Case 4: most-common category wins (2-vs-1 vote)
+  it('selects most-common category across duplicate medicines', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'aspirin', category: 'Pain' },
+      { id: 2, name: 'aspirin', category: 'Pain' },
+      { id: 3, name: 'aspirin', category: 'Allergy' },
+    ])
+    expect(result.entries[0].category).toBe('Pain')
+  })
+
+  // Case 5: category tie-break — lowest original medicine id wins
+  it('breaks category tie by lowest original medicine id', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'cetirizine', category: 'Allergy' },
+      { id: 2, name: 'cetirizine', category: 'Cold' },
+    ])
+    expect(result.entries[0].category).toBe('Allergy')
+  })
+
+  // Case 6: multi-word name title-cased on every word
+  it('title-cases every word in a multi-word name', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'paracetamol extra strength', category: null },
+    ])
+    expect(result.entries[0].name).toBe('Paracetamol Extra Strength')
+  })
+
+  // Case 7: all entries have form: null regardless of input
+  it('sets form to null on every returned catalog entry', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: 'amoxicillin', category: 'Antibiotic' },
+      { id: 2, name: 'cetirizine', category: 'Allergy' },
+    ])
+    expect(result.entries.every(e => e.form === null)).toBe(true)
+  })
+
+  // Case 8: nameToId key is lowercase trimmed version of name
+  it('uses lowercase-trimmed name as the nameToId key', () => {
+    const result = inferCatalogEntriesFromLegacyMedicines([
+      { id: 1, name: '  Ibuprofen  ', category: null },
+    ])
+    expect(result.nameToId.has('ibuprofen')).toBe(true)
+    expect(result.nameToId.has('  Ibuprofen  ')).toBe(false)
   })
 })
