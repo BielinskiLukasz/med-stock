@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import type { Medicine } from '@/lib/db'
 import { calculateStatus } from '@/lib/expiry'
 import { StatusBadge } from '@/components/StatusBadge'
+import { useLang, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
+import { formatDate } from '@/lib/utils'
 
 interface MedicineCardProps {
   catalogId: number
@@ -12,7 +14,16 @@ interface MedicineCardProps {
 // D-11: MedicineCard displays a single stock entry within a catalog context
 // Status is computed at render time — never stored in DB (D-12)
 export function MedicineCard({ catalogId, catalogName, medicine }: MedicineCardProps) {
+  const { lang, t } = useLang()
   const status = calculateStatus(medicine)
+
+  // D-06/D-07: predefined location names are translated; user-created names display as stored
+  const locationDisplay =
+    medicine.location !== null
+      ? (LOCATION_KEYS[medicine.location] ? t(LOCATION_KEYS[medicine.location]) : medicine.location)
+      : t('locationNames.other')
+
+  const unitDisplay = t(UNIT_KEYS[medicine.quantityUnit ?? ''] ?? 'units.units')
 
   return (
     <Link
@@ -23,11 +34,11 @@ export function MedicineCard({ catalogId, catalogName, medicine }: MedicineCardP
         <div className="flex-1 min-w-0">
           <h3 className="font-medium text-gray-900 truncate">{catalogName}</h3>
           <p className="text-sm text-gray-500 mt-0.5">
-            {medicine.quantity} {medicine.quantityUnit || 'units'} at {medicine.location ?? 'Other'}
+            {medicine.quantity} {unitDisplay} at {locationDisplay}
           </p>
           {medicine.expiryDate && (
             <p className="text-sm text-gray-500 mt-0.5">
-              Expires: {medicine.expiryDate}
+              {t('dates.expires')}: {formatDate(medicine.expiryDate, lang)}
             </p>
           )}
         </div>

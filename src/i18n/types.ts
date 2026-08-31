@@ -231,6 +231,19 @@ export const LOCATION_KEYS: Record<string, string> = {
   'Kitchen Drawer': 'locationNames.kitchenDrawer',
 }
 
+/** Maps canonical quantity unit values (from QUANTITY_UNITS) to TranslationDict dot-notation keys */
+export const UNIT_KEYS: Record<string, string> = {
+  'tablets': 'units.tablets',
+  'capsules': 'units.capsules',
+  'ml': 'units.ml',
+  'g': 'units.g',
+  'pcs': 'units.pcs',
+  'patches': 'units.patches',
+  'drops': 'units.drops',
+  'doses': 'units.doses',
+  'units': 'units.units',
+}
+
 /** Maps MedicineForm canonical values to TranslationDict dot-notation keys */
 export const FORM_TYPE_KEYS: Record<string, string> = {
   'Tablet': 'formTypes.tablet',

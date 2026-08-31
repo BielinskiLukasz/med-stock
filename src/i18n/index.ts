@@ -3,7 +3,7 @@ import type { Lang, TranslationDict } from './types'
 
 // Re-export types so callers only need to import from '@/i18n'
 export type { Lang, TranslationDict }
-export { CATEGORY_KEYS, LOCATION_KEYS, FORM_TYPE_KEYS } from './types'
+export { CATEGORY_KEYS, LOCATION_KEYS, FORM_TYPE_KEYS, UNIT_KEYS } from './types'
 
 // Re-export LanguageProvider from the JSX file
 export { LanguageProvider } from './LanguageProvider'
