@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { db } from './db'
-import type { Medicine, Location, HistoryEntry } from './db'
+import type { Medicine, Location, HistoryEntry, MedicineCatalog } from './db'
 
 // ─── Backup Schema ────────────────────────────────────────────────────────────
 // Mirrors Medicine, Location, HistoryEntry interfaces exactly.
@@ -70,6 +70,84 @@ export const BackupSchema = z.object({
 })
 
 export type BackupData = z.infer<typeof BackupSchema>
+
+// ─── inferCatalogEntriesFromLegacyMedicines ───────────────────────────────────
+// Pure synchronous function. Converts an array of legacy medicine records
+// (with name/category fields) into typed MedicineCatalog entries using the
+// same deduplication algorithm as the Phase 4 db.version(3) migration.
+// Used by importFromJSON (Plan 06-02) for old-format (pre-v1.1) backup import.
+// No Dexie calls — pure synchronous function.
+
+export function inferCatalogEntriesFromLegacyMedicines(
+  medicines: { id: number; name: string; category: string | null }[]
+): { entries: MedicineCatalog[]; nameToId: Map<string, number> } {
+  // Step 1: Build a Map keyed by normalized name (trim + lowercase).
+  // Each value tracks: raw medicines in that group, and a frequency Map of category → count.
+  const catalogMap: Map<string, {
+    medicines: { id: number; name: string; category: string | null }[]
+    categories: Map<string | null, number>
+  }> = new Map()
+
+  for (const med of medicines) {
+    const normalized = med.name.trim().toLowerCase()
+    if (!catalogMap.has(normalized)) {
+      catalogMap.set(normalized, { medicines: [], categories: new Map() })
+    }
+    const group = catalogMap.get(normalized)!
+    group.medicines.push(med)
+    const cat = med.category ?? null
+    group.categories.set(cat, (group.categories.get(cat) ?? 0) + 1)
+  }
+
+  // Step 2: For each group, produce a catalog entry.
+  const entries: MedicineCatalog[] = []
+  let nextCatalogId = 1
+
+  for (const [normalized, group] of catalogMap) {
+    // Title-case: capitalize first char of each whitespace-separated word
+    const titleCased = normalized
+      .split(/\s+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+
+    // Most-common category; lowest original medicine id breaks ties
+    let mostCommonCategory: string | null = null
+    let maxCount = 0
+    let lowestIdForTiebreak = Infinity
+
+    for (const [cat, count] of group.categories) {
+      const candidateId = (group.medicines.find(m => m.category === cat)?.id) ?? Infinity
+      if (count > maxCount || (count === maxCount && candidateId < lowestIdForTiebreak)) {
+        mostCommonCategory = cat
+        maxCount = count
+        lowestIdForTiebreak = candidateId
+      }
+    }
+
+    const now = new Date().toISOString()
+    entries.push({
+      id: nextCatalogId,
+      name: titleCased,
+      category: mostCommonCategory,
+      form: null,   // D-07: no heuristic form inference
+      notes: null,
+      createdAt: now,
+      updatedAt: now,
+    })
+
+    nextCatalogId++
+  }
+
+  // Step 3: Build nameToId Map: normalized name → catalogId
+  const nameToId = new Map<string, number>()
+  let idx = 0
+  for (const [normalized] of catalogMap) {
+    nameToId.set(normalized, entries[idx].id)
+    idx++
+  }
+
+  return { entries, nameToId }
+}
 
 // ─── exportToJSON ─────────────────────────────────────────────────────────────
 // Reads all three tables from Dexie and triggers a Blob download.
