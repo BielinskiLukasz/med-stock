@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { toast } from 'sonner'
 import type { Medicine } from '@/lib/db'
 import { db } from '@/lib/db'
+import { useLang, LOCATION_KEYS } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -29,6 +30,7 @@ interface MoveStockSheetProps {
 }
 
 export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockSheetProps) {
+  const { t } = useLang()
   // Box mode: when packCount > 1 all boxes are identical unopened units — operate at box level
   const useBoxes = (stock.packCount ?? 0) > 1
   const maxBoxes = stock.packCount ?? 0
@@ -68,7 +70,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
       onOpenChange(false)
     } catch (err) {
       console.error('Failed to move stock:', err)
-      toast.error('Failed to move stock. Please try again.')
+      toast.error(t('toasts.moveFailed'))
     } finally {
       setIsSubmitting(false)
     }
@@ -78,7 +80,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[90vh] overflow-y-auto">
         <SheetHeader className="mb-4">
-          <SheetTitle>Move / Split Stock</SheetTitle>
+          <SheetTitle>{t('form.moveStock')}</SheetTitle>
         </SheetHeader>
         <form onSubmit={(e) => void handleSubmit(e)} className="space-y-4">
           <div className="space-y-2">
@@ -130,22 +132,22 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
 
           <div className="space-y-2">
             <label htmlFor="target-location" className="text-sm font-medium">
-              Target location
+              {t('form.targetLocation')}
             </label>
             <Select
               value={targetLocation ?? NULL_SENTINEL}
               onValueChange={(val) => setTargetLocation(val === NULL_SENTINEL ? null : val)}
             >
               <SelectTrigger id="target-location">
-                <SelectValue placeholder="No location (Other)" />
+                <SelectValue placeholder={t('form.noLocation')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={NULL_SENTINEL}>No location (Other)</SelectItem>
+                <SelectItem value={NULL_SENTINEL}>{t('form.noLocation')}</SelectItem>
                 {locations
                   ?.filter(loc => loc.name !== 'Other')
                   .map((loc) => (
                     <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
+                      {t(LOCATION_KEYS[loc.name] ?? loc.name)}
                     </SelectItem>
                   ))}
               </SelectContent>
@@ -159,18 +161,14 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
               className="flex-1"
               onClick={() => onOpenChange(false)}
             >
-              Cancel
+              {t('form.cancel')}
             </Button>
             <Button
               type="submit"
               className="flex-1"
               disabled={isSubmitting || !isValid}
             >
-              {isSubmitting
-                ? 'Moving…'
-                : useBoxes
-                  ? `Move ${boxes} ${boxes !== 1 ? 'boxes' : 'box'}`
-                  : `Move ${quantity} unit${quantity !== 1 ? 's' : ''}`}
+              {isSubmitting ? 'Moving…' : t('form.save')}
             </Button>
           </div>
         </form>

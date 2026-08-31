@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
+import { useLang } from '@/i18n'
 import { HistoryEntry } from '@/components/HistoryEntry'
 
 export function ChangeHistory({ medicineId }: { medicineId: number }) {
+  const { t } = useLang()
   const [expanded, setExpanded] = useState(false)
 
   const history = useLiveQuery(
@@ -24,14 +26,14 @@ export function ChangeHistory({ medicineId }: { medicineId: number }) {
         onClick={() => setExpanded(e => !e)}
         className="flex items-center gap-2 text-sm font-medium text-gray-700 w-full text-left py-2"
       >
-        <span>Change History</span>
+        <span>{t('history.title')}</span>
         <span className="text-gray-500">({history.length})</span>
         <span className="ml-auto">{expanded ? '▲' : '▼'}</span>
       </button>
 
       {expanded && (
         history.length === 0 ? (
-          <p className="text-sm text-gray-500 py-2">No history yet.</p>
+          <p className="text-sm text-gray-500 py-2">{t('history.noHistory')}</p>
         ) : (
           <ul className="mt-2 divide-y divide-gray-100">
             {history.map(entry => (
