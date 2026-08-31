@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import { QUANTITY_UNITS } from '@/types/medicine'
+import { useLang, UNIT_KEYS, LOCATION_KEYS } from '@/i18n'
 import {
   FormField,
   FormItem,
@@ -44,6 +45,7 @@ interface StockFieldsProps {
 }
 
 export function StockFields({ form }: StockFieldsProps) {
+  const { t } = useLang()
   const [showQuickAddLocation, setShowQuickAddLocation] = useState(false)
   const [newLocationInput, setNewLocationInput] = useState('')
   const [showCustomQuantityUnit, setShowCustomQuantityUnit] = useState(false)
@@ -63,7 +65,7 @@ export function StockFields({ form }: StockFieldsProps) {
       setShowQuickAddLocation(false)
     } catch (err) {
       console.error('Failed to add location:', err)
-      toast.error('Failed to add location. Please try again.')
+      toast.error(t('toasts.locationFailed'))
     }
   }
 
@@ -75,7 +77,7 @@ export function StockFields({ form }: StockFieldsProps) {
         name="expiryDate"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Expiry Date *</FormLabel>
+            <FormLabel>{t('form.expiryDate')} *</FormLabel>
             <FormControl>
               <Input type="date" {...field} value={field.value ?? ''} />
             </FormControl>
@@ -90,7 +92,7 @@ export function StockFields({ form }: StockFieldsProps) {
         name="location"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Location</FormLabel>
+            <FormLabel>{t('form.location')}</FormLabel>
             <Select
               name={field.name}
               value={field.value ?? NULL_SENTINEL}
@@ -105,29 +107,29 @@ export function StockFields({ form }: StockFieldsProps) {
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="No location (Other)" />
+                  <SelectValue placeholder={t('form.noLocation')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
                 <SelectItem value={NULL_SENTINEL}>
-                  No location (Other)
+                  {t('form.noLocation')}
                 </SelectItem>
                 {locations
                   ?.filter(loc => loc.name !== 'Other')
                   .map((loc) => (
                     <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
+                      {t(LOCATION_KEYS[loc.name] ?? loc.name)}
                     </SelectItem>
                   ))}
                 <SelectItem value="__ADD_NEW__">
-                  Add new location...
+                  {t('form.addNewLocation')}
                 </SelectItem>
               </SelectContent>
             </Select>
             {showQuickAddLocation && (
               <div className="flex gap-2 mt-2">
                 <Input
-                  placeholder="New location name"
+                  placeholder={t('form.newLocationPlaceholder')}
                   autoComplete="off"
                   value={newLocationInput}
                   onChange={(e) => setNewLocationInput(e.target.value)}
@@ -144,7 +146,7 @@ export function StockFields({ form }: StockFieldsProps) {
                   size="sm"
                   onClick={() => void handleAddLocation()}
                 >
-                  Add
+                  {t('form.addLocation')}
                 </Button>
                 <Button
                   type="button"
@@ -155,7 +157,7 @@ export function StockFields({ form }: StockFieldsProps) {
                     setNewLocationInput('')
                   }}
                 >
-                  Cancel
+                  {t('form.cancel')}
                 </Button>
               </div>
             )}
@@ -170,7 +172,7 @@ export function StockFields({ form }: StockFieldsProps) {
         name="openedDate"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Date Opened</FormLabel>
+            <FormLabel>{t('form.openedDate')}</FormLabel>
             <FormControl>
               <Input
                 type="date"
@@ -186,7 +188,7 @@ export function StockFields({ form }: StockFieldsProps) {
 
       {/* 4. Period After Opening (PAO): paoValue + paoUnit */}
       <div className="space-y-2">
-        <p className="text-sm font-medium">Period After Opening (PAO)</p>
+        <p className="text-sm font-medium">{t('form.pao')}</p>
         <div className="flex gap-2">
           <FormField
             control={form.control}
@@ -227,14 +229,14 @@ export function StockFields({ form }: StockFieldsProps) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Unit" />
+                      <SelectValue placeholder={t('form.paoUnit')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={NULL_SENTINEL}>Unit</SelectItem>
-                    <SelectItem value="days">Days</SelectItem>
-                    <SelectItem value="weeks">Weeks</SelectItem>
-                    <SelectItem value="months">Months</SelectItem>
+                    <SelectItem value={NULL_SENTINEL}>{t('form.paoUnit')}</SelectItem>
+                    <SelectItem value="days">{t('units.days')}</SelectItem>
+                    <SelectItem value="weeks">{t('units.weeks')}</SelectItem>
+                    <SelectItem value="months">{t('units.months')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -246,7 +248,7 @@ export function StockFields({ form }: StockFieldsProps) {
 
       {/* 5. Quantity + quantityUnit */}
       <div className="space-y-2">
-        <p className="text-sm font-medium">Quantity</p>
+        <p className="text-sm font-medium">{t('form.quantity')}</p>
         <div className="flex gap-2">
           <FormField
             control={form.control}
@@ -288,14 +290,14 @@ export function StockFields({ form }: StockFieldsProps) {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Unit" />
+                      <SelectValue placeholder={t('form.quantityUnit')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={NULL_SENTINEL}>Unit</SelectItem>
+                    <SelectItem value={NULL_SENTINEL}>{t('form.quantityUnit')}</SelectItem>
                     {QUANTITY_UNITS.map((unit) => (
                       <SelectItem key={unit} value={unit}>
-                        {unit}
+                        {t(UNIT_KEYS[unit] ?? 'units.units')}
                       </SelectItem>
                     ))}
                     <SelectItem value="__CUSTOM__">Other...</SelectItem>
@@ -322,7 +324,7 @@ export function StockFields({ form }: StockFieldsProps) {
         name="packCount"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Number of boxes</FormLabel>
+            <FormLabel>{t('form.packCount')}</FormLabel>
             <FormControl>
               <Input
                 type="number"
@@ -346,10 +348,10 @@ export function StockFields({ form }: StockFieldsProps) {
         name="notes"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Notes</FormLabel>
+            <FormLabel>{t('form.notes')}</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Any additional information..."
+                placeholder={t('form.notesPlaceholder')}
                 {...field}
                 value={field.value ?? ''}
                 onChange={(e) => field.onChange(e.target.value || null)}

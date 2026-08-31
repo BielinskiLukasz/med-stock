@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import { CATEGORIES, QUANTITY_UNITS } from '@/types/medicine'
+import { useLang, CATEGORY_KEYS, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
 import {
   Form,
   FormField,
@@ -57,8 +58,10 @@ const NULL_SENTINEL = '__NULL__'
 export function MedicineForm({
   defaultValues,
   onSubmit,
-  submitLabel = 'Save',
+  submitLabel,
 }: MedicineFormProps) {
+  const { t } = useLang()
+  const resolvedLabel = submitLabel ?? t('form.save')
   const [showQuickAddLocation, setShowQuickAddLocation] = useState(false)
   const [newLocationInput, setNewLocationInput] = useState('')
   const [showCustomQuantityUnit, setShowCustomQuantityUnit] = useState(false)
@@ -98,7 +101,7 @@ export function MedicineForm({
     } catch (err) {
       // Duplicate or DB error — log and notify user
       console.error('Failed to add location:', err)
-      toast.error('Failed to add location. Please try again.')
+      toast.error(t('toasts.locationFailed'))
     }
   }
 
@@ -111,7 +114,7 @@ export function MedicineForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name *</FormLabel>
+              <FormLabel>{t('form.name')} *</FormLabel>
               <FormControl>
                 <Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
               </FormControl>
@@ -126,7 +129,7 @@ export function MedicineForm({
           name="expiryDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Expiry Date *</FormLabel>
+              <FormLabel>{t('form.expiryDate')} *</FormLabel>
               <FormControl>
                 <Input type="date" {...field} value={field.value ?? ''} />
               </FormControl>
@@ -141,7 +144,7 @@ export function MedicineForm({
           name="category"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
+              <FormLabel>{t('form.category')}</FormLabel>
               <Select
                 name={field.name}
                 value={field.value ?? NULL_SENTINEL}
@@ -151,14 +154,14 @@ export function MedicineForm({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="No category" />
+                    <SelectValue placeholder={t('form.noCategory')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value={NULL_SENTINEL}>No category</SelectItem>
+                  <SelectItem value={NULL_SENTINEL}>{t('form.noCategory')}</SelectItem>
                   {CATEGORIES.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {cat}
+                      {t(CATEGORY_KEYS[cat] ?? 'categories.other')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -174,7 +177,7 @@ export function MedicineForm({
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Location</FormLabel>
+              <FormLabel>{t('form.location')}</FormLabel>
               <Select
                 name={field.name}
                 value={field.value ?? NULL_SENTINEL}
@@ -189,20 +192,20 @@ export function MedicineForm({
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="No location (Other)" />
+                    <SelectValue placeholder={t('form.noLocation')} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectItem value={NULL_SENTINEL}>
-                    No location (Other)
+                    {t('form.noLocation')}
                   </SelectItem>
                   {locations?.map((loc) => (
                     <SelectItem key={loc.id} value={loc.name}>
-                      {loc.name}
+                      {t(LOCATION_KEYS[loc.name] ?? loc.name)}
                     </SelectItem>
                   ))}
                   <SelectItem value="__ADD_NEW__">
-                    Add new location...
+                    {t('form.addNewLocation')}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -210,7 +213,7 @@ export function MedicineForm({
               {showQuickAddLocation && (
                 <div className="flex gap-2 mt-2">
                   <Input
-                    placeholder="New location name"
+                    placeholder={t('form.newLocationPlaceholder')}
                     autoComplete="off"
                     value={newLocationInput}
                     onChange={(e) => setNewLocationInput(e.target.value)}
@@ -227,7 +230,7 @@ export function MedicineForm({
                     size="sm"
                     onClick={() => void handleAddLocation()}
                   >
-                    Add
+                    {t('form.addLocation')}
                   </Button>
                   <Button
                     type="button"
@@ -238,7 +241,7 @@ export function MedicineForm({
                       setNewLocationInput('')
                     }}
                   >
-                    Cancel
+                    {t('form.cancel')}
                   </Button>
                 </div>
               )}
@@ -253,7 +256,7 @@ export function MedicineForm({
           name="openedDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date Opened</FormLabel>
+              <FormLabel>{t('form.openedDate')}</FormLabel>
               <FormControl>
                 <Input
                   type="date"
@@ -271,7 +274,7 @@ export function MedicineForm({
 
         {/* 6. Period After Opening: paoValue + paoUnit (both optional, D-08) */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Period After Opening (PAO)</p>
+          <p className="text-sm font-medium">{t('form.pao')}</p>
           <div className="flex gap-2">
             <FormField
               control={form.control}
@@ -312,14 +315,14 @@ export function MedicineForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue placeholder={t('form.paoUnit')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={NULL_SENTINEL}>Unit</SelectItem>
-                      <SelectItem value="days">Days</SelectItem>
-                      <SelectItem value="weeks">Weeks</SelectItem>
-                      <SelectItem value="months">Months</SelectItem>
+                      <SelectItem value={NULL_SENTINEL}>{t('form.paoUnit')}</SelectItem>
+                      <SelectItem value="days">{t('units.days')}</SelectItem>
+                      <SelectItem value="weeks">{t('units.weeks')}</SelectItem>
+                      <SelectItem value="months">{t('units.months')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -331,7 +334,7 @@ export function MedicineForm({
 
         {/* 7. Quantity + quantityUnit (optional, D-09) */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Quantity</p>
+          <p className="text-sm font-medium">{t('form.quantity')}</p>
           <div className="flex gap-2">
             <FormField
               control={form.control}
@@ -373,14 +376,14 @@ export function MedicineForm({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue placeholder={t('form.quantityUnit')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={NULL_SENTINEL}>Unit</SelectItem>
+                      <SelectItem value={NULL_SENTINEL}>{t('form.quantityUnit')}</SelectItem>
                       {QUANTITY_UNITS.map((unit) => (
                         <SelectItem key={unit} value={unit}>
-                          {unit}
+                          {t(UNIT_KEYS[unit] ?? 'units.units')}
                         </SelectItem>
                       ))}
                       <SelectItem value="__CUSTOM__">Other...</SelectItem>
@@ -409,10 +412,10 @@ export function MedicineForm({
           name="notes"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Notes</FormLabel>
+              <FormLabel>{t('form.notes')}</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Any additional information..."
+                  placeholder={t('form.notesPlaceholder')}
                   {...field}
                   value={field.value ?? ''}
                   onChange={(e) =>
@@ -431,7 +434,7 @@ export function MedicineForm({
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? 'Saving...' : submitLabel}
+          {form.formState.isSubmitting ? 'Saving...' : resolvedLabel}
         </Button>
       </form>
     </Form>

@@ -2,6 +2,7 @@ import type { UseFormReturn } from 'react-hook-form'
 import { z } from 'zod'
 import { MedicineForm as MedicineFormEnum } from '@/lib/db'
 import { CATEGORIES } from '@/types/medicine'
+import { useLang, CATEGORY_KEYS, FORM_TYPE_KEYS } from '@/i18n'
 import {
   FormField,
   FormItem,
@@ -38,6 +39,8 @@ interface CatalogFieldsProps {
 }
 
 export function CatalogFields({ form }: CatalogFieldsProps) {
+  const { t } = useLang()
+
   return (
     <>
       {/* 1. Name (required) */}
@@ -46,7 +49,7 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Name *</FormLabel>
+            <FormLabel>{t('form.name')} *</FormLabel>
             <FormControl>
               <Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
             </FormControl>
@@ -61,7 +64,7 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
         name="category"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Category</FormLabel>
+            <FormLabel>{t('form.category')}</FormLabel>
             <Select
               name={field.name}
               value={field.value ?? NULL_SENTINEL}
@@ -71,14 +74,14 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="No category" />
+                  <SelectValue placeholder={t('form.noCategory')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value={NULL_SENTINEL}>No category</SelectItem>
+                <SelectItem value={NULL_SENTINEL}>{t('form.noCategory')}</SelectItem>
                 {CATEGORIES.map((cat) => (
                   <SelectItem key={cat} value={cat}>
-                    {cat}
+                    {t(CATEGORY_KEYS[cat] ?? 'categories.other')}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -94,7 +97,7 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
         name="form"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Form</FormLabel>
+            <FormLabel>{t('form.formType')}</FormLabel>
             <Select
               name={field.name}
               value={field.value ?? NULL_SENTINEL}
@@ -104,14 +107,14 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
             >
               <FormControl>
                 <SelectTrigger>
-                  <SelectValue placeholder="No form" />
+                  <SelectValue placeholder={t('form.noType')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value={NULL_SENTINEL}>No form</SelectItem>
+                <SelectItem value={NULL_SENTINEL}>{t('form.noType')}</SelectItem>
                 {Object.values(MedicineFormEnum).map((f) => (
                   <SelectItem key={f} value={f}>
-                    {f}
+                    {t(FORM_TYPE_KEYS[f] ?? 'formTypes.other')}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -127,10 +130,10 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
         name="notes"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Notes</FormLabel>
+            <FormLabel>{t('form.notes')}</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="Any additional information..."
+                placeholder={t('form.notesPlaceholder')}
                 {...field}
                 value={field.value ?? ''}
                 onChange={(e) => field.onChange(e.target.value || null)}
