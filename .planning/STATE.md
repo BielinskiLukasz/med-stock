@@ -1,21 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Catalog + Stock Model
-status: Awaiting next milestone
-stopped_at: Phase 06 verified — all 3 requirements satisfied
-last_updated: "2026-08-31T17:25:38.116Z"
+milestone: v1.2
+milestone_name: Polish, UX & i18n
+status: planning
+last_updated: "2026-08-31T19:06:46.894Z"
 last_activity: 2026-08-31
-last_activity_desc: Milestone v1.1 completed and archived
-state_head: 30aa50dde2cb10e48101d0c42158f807c14203b1
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 17
-  completed_plans: 17
-  percent: 100
-current_phase: 06
-current_phase_name: Backup & Restore
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State
@@ -29,10 +24,10 @@ See: .planning/PROJECT.md (updated 2026-08-31)
 
 ## Current Position
 
-Phase: Milestone v1.1 complete
+Phase: Not started (defining requirements)
 Plan: —
-Status: Awaiting next milestone
-Last activity: 2026-08-31 — Milestone v1.1 completed and archived
+Status: Defining requirements
+Last activity: 2026-08-31 — Milestone v1.2 started
 
 ## v1.0 Summary
 

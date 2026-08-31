@@ -18,6 +18,20 @@ The full household medicine inventory app with catalog + stock model is working 
 
 Known gaps carried to backlog: interactive Sync Now flow (B-002), JSON import merge strategy (B-003), CSV auto-mapping (B-004).
 
+## Current Milestone: v1.2 Polish, UX & i18n
+
+**Goal:** Polish the app for real household use — add Polish language support, fix UX rough edges, and extend the status model with an early-warning state.
+
+**Target features:**
+- B-011 Polish / English language switcher (i18n — all strings, locale-aware dates)
+- B-012 Full location management — rename, hide, delete, reorder all locations including predefined
+- B-004 CSV column auto-mapping by header name
+- B-005 CSV mapper column header labels (source vs target)
+- B-013 App version number display
+- B-014 Expiring Soon warning status (sits between Opened and Expired in priority)
+- B-001 Medicine name autocomplete from catalog history
+- B-015 Pack count display: empty/1 = implicit 1 box; show "N boxes × qty" only when N ≥ 2
+
 ## Milestone: v1.1 Catalog + Stock Model (Shipped 2026-08-31)
 
 **Goal:** Replace the flat medicines table with a two-layer catalog + stock model so users never re-enter medicine details when adding new boxes and can track quantities split across multiple locations.
@@ -58,9 +72,19 @@ v1.1 requirements — all satisfied:
 
 ### Active
 
+<!-- v1.2 targeted -->
+- [ ] B-001: Medicine name autocomplete from catalog history (name field suggests existing entries)
+- [ ] B-004: CSV column auto-mapping by header name
+- [ ] B-005: CSV mapper column header labels ("Your file column" / "App field")
+- [ ] B-011: Polish / English language switcher — all UI strings, locale-aware date format
+- [ ] B-012: Full location management — rename, hide, delete, reorder all locations including predefined
+- [ ] B-013: App version number display (Data tab footer or About section)
+- [ ] B-014: Expiring Soon warning status — fires within configurable window (default 7 days) of expiry or PAO end
+- [ ] B-015: Pack count display — empty/1 treated as 1 box (not shown); "N boxes × qty" only when N ≥ 2
+
+<!-- deferred — not in v1.2 -->
 - [ ] B-002: Interactive "Sync Now" triggered flow (DATA-04) — guides both-device sync step-by-step
 - [ ] B-003: JSON import merge strategy with last-write-wins (currently full replace)
-- [ ] B-004: CSV column auto-mapping by header name
 
 ### Out of Scope
 
@@ -128,4 +152,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-31 after v1.1 milestone (Catalog + Stock Model)*
+*Last updated: 2026-08-31 after v1.2 milestone start (Polish, UX & i18n)*
