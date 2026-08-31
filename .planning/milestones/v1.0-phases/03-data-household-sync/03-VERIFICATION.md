@@ -1,17 +1,16 @@
 ---
 phase: 03-data-household-sync
 verified: 2026-07-13T12:15:00Z
-status: human_needed
+status: passed
 score: 21/23 must-haves verified
 behavior_unverified: 0
-overrides_applied: 0
-human_verification:
+overrides_applied: 2
+human_verification_resolved: 2026-08-31
+human_decisions:
   - test: "Confirm DATA-04 disposition: does static SyncInstructions text satisfy the 'Sync Now flow' requirement or is it pending?"
-    expected: "REQUIREMENTS.md DATA-04 is marked '[ ] Pending'; the SyncInstructions component is instructions-only text (D-44). Human must decide: is the static guidance an acceptable delivery of DATA-04, or is DATA-04 a genuine backlog item?"
-    why_human: "REQUIREMENTS.md explicitly marks DATA-04 as Pending while ROADMAP.md marks Phase 3 complete. The plan 03-01 claims DATA-04 is addressed, but DATA-04 requires user to 'trigger a Sync Now flow' — what was built is static text with no trigger. Whether this satisfies the requirement is a product scope decision, not a code check."
+    decision: "DATA-04 is a genuine backlog item — static text does not satisfy 'Sync Now flow'. Deferred as B-002 (interactive Sync Now flow) to the v1.1+ backlog. SC-4 is PARTIAL/deferred, not satisfied. Confirmed by lukasz.bielinski at v1.1 milestone close."
   - test: "Confirm SC-2 import behavior: is full replace an acceptable deviation from the roadmap's 'merge with last-write-wins' wording?"
-    expected: "Roadmap SC-2 says 'existing records are merged with last-write-wins conflict resolution'. Implemented behavior (D-47) is full replace (clear + bulkAdd all three tables). The design decision to change from merge to full replace was locked in 03-CONTEXT.md as D-47 before implementation began."
-    why_human: "The roadmap SC wording says 'merge' but the context document explicitly changed this to full replace. If the roadmap SC wording needs updating to reflect D-47, that's a documentation fix. If the intent was always merge, that's a gap. Human must confirm the design decision was intentional."
+    decision: "D-47 full-replace was intentional — locked before implementation. Roadmap SC-2 wording is stale. The design decision (full replace) is accepted. Merge strategy deferred as B-003 to backlog. Confirmed by lukasz.bielinski at v1.1 milestone close."
 ---
 
 # Phase 3: Data & Household Sync — Verification Report

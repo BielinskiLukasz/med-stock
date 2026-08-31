@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 05-stock-catalog-management
 source: 05-06-PLAN.md checkpoint:human-verify
 started: 2026-08-01T00:00:00Z
-updated: 2026-08-26T12:00:00Z
+updated: 2026-08-31T18:00:00Z
 ---
 
 ## Current Test
@@ -211,7 +211,9 @@ blocked: 0
 
 - gap_id: G-05-10
   truth: "Active list-view filters (location, status) carry into the catalog detail view, filtering which stock entries are displayed"
-  status: failed
+  status: resolved
+  resolved_by: 05-13-PLAN.md
+  resolved_at: 2026-08-31
   reason: "User reported: filter works for catalogs, but when I open one then filter not reduce stocks for catalog"
   severity: major
   test: 3

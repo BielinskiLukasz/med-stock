@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Catalog + Stock Model
-current_phase: 06
-current_phase_name: Backup & Restore
-status: complete
+status: Awaiting next milestone
 stopped_at: Phase 06 verified — all 3 requirements satisfied
-last_updated: "2026-08-31T16:51:00Z"
+last_updated: "2026-08-31T17:25:38.116Z"
 last_activity: 2026-08-31
-last_activity_desc: Phase 06 verification complete — goal ACHIEVED
-state_head: e8a17454
+last_activity_desc: Milestone v1.1 completed and archived
+state_head: 30aa50dde2cb10e48101d0c42158f807c14203b1
 progress:
   total_phases: 3
   completed_phases: 3
   total_plans: 17
   completed_plans: 17
   percent: 100
+current_phase: 06
+current_phase_name: Backup & Restore
 ---
 
 # Project State
@@ -29,9 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-31)
 
 ## Current Position
 
-Phase: 06 (Backup & Restore) — COMPLETE
-Status: All phases verified. v1.1 milestone ready for ship/archive.
-Last activity: 2026-08-31 — Phase 06 verification passed
+Phase: Milestone v1.1 complete
+Plan: —
+Status: Awaiting next milestone
+Last activity: 2026-08-31 — Milestone v1.1 completed and archived
 
 ## v1.0 Summary
 
@@ -102,3 +103,7 @@ Last activity: 2026-08-31 — Phase 06 verification passed
 - [Phase 06]: schemaVersion detection: undefined means old-format; two-pass Zod parse in importFromJSON
 - [Phase 06]: LegacyBackupSchema kept module-internal; ImportResult exported as caller contract
 - [Phase 06]: pendingRaw: unknown|null in ImportJSONSection — importFromJSON owns all validation
+
+## Operator Next Steps
+
+- Start the next milestone with /gsd-new-milestone

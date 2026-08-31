@@ -33,8 +33,44 @@ Known gaps carried to backlog: interactive Sync Now flow (B-002), JSON import me
 
 ## Requirements
 
-v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](.planning/milestones/v1.0-REQUIREMENTS.md).  
-v1.1 requirements defined at [REQUIREMENTS.md](.planning/REQUIREMENTS.md).
+### Validated
+
+v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
+
+v1.1 requirements — all satisfied:
+
+- ✓ MIGR-01: Auto-migrate v1.0 data to catalog + stock on first open — v1.1
+- ✓ MIGR-02: Migration deduplicates by case-insensitive + trimmed name — v1.1
+- ✓ CAT-01: Catalog autocomplete search (case-insensitive) — v1.1
+- ✓ CAT-02: Create catalog inline when no autocomplete match — v1.1
+- ✓ CAT-03: Edit catalog name/category/form from detail screen — v1.1
+- ✓ STOCK-01: Add stock entry linked to catalog — v1.1
+- ✓ STOCK-02: Edit stock entry fields — v1.1
+- ✓ STOCK-03: Move/split stock entry across locations — v1.1
+- ✓ STOCK-04: Soft-deleted entries in Trash with restore — v1.1
+- ✓ STOCK-05: Detail view stock list respects UIStore status/location filters — v1.1
+- ✓ FLOW-01: Aggregate list row per catalog with priority-reduce status + qty badge — v1.1
+- ✓ FLOW-02: Detail screen stock list with qty/expiry/location/status — v1.1
+- ✓ FLOW-03: Add flow catalog autocomplete → stock fields — v1.1
+- ✓ DATA-01: JSON export includes medicine_catalog table with catalogId — v1.1
+- ✓ DATA-02: New-format import restores catalog + stock atomically — v1.1
+- ✓ DATA-03: Old-format import infers catalog from name/category — v1.1
+
+### Active
+
+- [ ] B-002: Interactive "Sync Now" triggered flow (DATA-04) — guides both-device sync step-by-step
+- [ ] B-003: JSON import merge strategy with last-write-wins (currently full replace)
+- [ ] B-004: CSV column auto-mapping by header name
+
+### Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Manual catalog deduplication UI | Migration auto-deduplicates; merge tool adds UI complexity beyond current scope |
+| Barcode / QR scanning | Requires camera permission flow; deferred to v2 |
+| Automatic cloud catalog sync | Privacy-first constraint — no backend |
+| Photos / images | Doesn't affect core value of validity check; deferred to v2 |
+| Batch add (multiple packages at once) | Deferred from v1.0; low-frequency action |
 
 ## Context
 
@@ -92,4 +128,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-31 — after Phase 06 (Backup & Restore) — v1.1 milestone complete*
+*Last updated: 2026-08-31 after v1.1 milestone (Catalog + Stock Model)*
