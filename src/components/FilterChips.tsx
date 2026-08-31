@@ -1,9 +1,21 @@
 import { useUIStore, useShallow } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
-import { STATUS_LABELS } from '@/lib/expiry'
+import { useLang } from '@/i18n'
 import type { MedicineStatus } from '@/lib/expiry'
 
+const statusKey: Record<MedicineStatus, string> = {
+  Active: 'status.active',
+  Opened: 'status.opened',
+  Expired: 'status.expired',
+  ExceededOpenPeriod: 'status.exceededOpenPeriod',
+  UsedUp: 'status.usedUp',
+  Disposed: 'status.disposed',
+  Archived: 'status.archived',
+}
+
 export function FilterChips() {
+  const { t } = useLang()
+
   // Use useShallow to avoid re-renders when array reference changes (Pitfall 4 — Zustand v5)
   const selectedCategories = useUIStore(useShallow((s) => s.selectedCategories))
   const selectedLocations = useUIStore(useShallow((s) => s.selectedLocations))
@@ -12,15 +24,15 @@ export function FilterChips() {
 
   const all = [
     ...selectedCategories.map((v) => ({
-      label: `Category: ${v}`,
+      label: `${t('filter.category')}: ${v}`,
       remove: () => toggleCategory(v),
     })),
     ...selectedLocations.map((v) => ({
-      label: `Location: ${v}`,
+      label: `${t('filter.location')}: ${v}`,
       remove: () => toggleLocation(v),
     })),
     ...selectedStatuses.map((v) => ({
-      label: `Status: ${STATUS_LABELS[v as MedicineStatus] ?? v}`,
+      label: `${t('filter.status')}: ${t(statusKey[v as MedicineStatus] ?? v)}`,
       remove: () => toggleStatus(v),
     })),
   ]

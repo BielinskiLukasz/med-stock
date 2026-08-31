@@ -9,17 +9,6 @@ export type ManualStatus = 'UsedUp' | 'Disposed' | 'Archived'
 /** Union of all possible medicine statuses */
 export type MedicineStatus = AutoStatus | ManualStatus
 
-/** Human-readable display labels for each status */
-export const STATUS_LABELS: Record<MedicineStatus, string> = {
-  Active: 'Active',
-  Opened: 'Opened',
-  Expired: 'Expired',
-  ExceededOpenPeriod: 'Exceeded Open Period',
-  UsedUp: 'Used Up',
-  Disposed: 'Disposed',
-  Archived: 'Archived',
-}
-
 /**
  * Add a PAO (period-after-opening) duration to a Date, returning a new Date.
  * Does not mutate the input date.

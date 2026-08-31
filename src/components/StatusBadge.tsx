@@ -1,5 +1,5 @@
 import type { MedicineStatus } from '@/lib/expiry'
-import { STATUS_LABELS } from '@/lib/expiry'
+import { useLang } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 const STATUS_STYLES: Record<MedicineStatus, string> = {
@@ -12,7 +12,19 @@ const STATUS_STYLES: Record<MedicineStatus, string> = {
   Archived: 'bg-yellow-100 text-yellow-800',
 }
 
+const statusKey: Record<MedicineStatus, string> = {
+  Active: 'status.active',
+  Opened: 'status.opened',
+  Expired: 'status.expired',
+  ExceededOpenPeriod: 'status.exceededOpenPeriod',
+  UsedUp: 'status.usedUp',
+  Disposed: 'status.disposed',
+  Archived: 'status.archived',
+}
+
 export function StatusBadge({ status }: { status: MedicineStatus }) {
+  const { t } = useLang()
+
   return (
     <span
       className={cn(
@@ -20,7 +32,7 @@ export function StatusBadge({ status }: { status: MedicineStatus }) {
         STATUS_STYLES[status],
       )}
     >
-      {STATUS_LABELS[status]}
+      {t(statusKey[status])}
     </span>
   )
 }

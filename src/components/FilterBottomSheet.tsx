@@ -10,7 +10,8 @@ import type { SortField, SortDirection } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
 import { db } from '@/lib/db'
 import type { MedicineStatus } from '@/lib/expiry'
-import { STATUS_LABELS } from '@/lib/expiry'
+import { useLang, CATEGORY_KEYS } from '@/i18n'
+import { CATEGORIES } from '@/types/medicine'
 
 const ALL_STATUSES: MedicineStatus[] = [
   'Active',
@@ -22,20 +23,19 @@ const ALL_STATUSES: MedicineStatus[] = [
   'Archived',
 ]
 
-const ALL_CATEGORIES: string[] = [
-  'Pain & Fever',
-  'Antibiotics',
-  'Allergy',
-  'Digestive',
-  'Vitamins & Supplements',
-  'Skin & Topical',
-  'Eye & Ear',
-  'Cold & Flu',
-  'Heart & Circulation',
-  'Other',
-]
+const statusKey: Record<MedicineStatus, string> = {
+  Active: 'status.active',
+  Opened: 'status.opened',
+  Expired: 'status.expired',
+  ExceededOpenPeriod: 'status.exceededOpenPeriod',
+  UsedUp: 'status.usedUp',
+  Disposed: 'status.disposed',
+  Archived: 'status.archived',
+}
 
 export function FilterBottomSheet() {
+  const { t } = useLang()
+
   const {
     filterSheetOpen,
     setFilterSheetOpen,
@@ -67,12 +67,12 @@ export function FilterBottomSheet() {
     <Sheet open={filterSheetOpen} onOpenChange={setFilterSheetOpen}>
       <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto rounded-t-xl px-4 pb-6">
         <SheetHeader>
-          <SheetTitle>Filter &amp; Sort</SheetTitle>
+          <SheetTitle>{t('filter.title')}</SheetTitle>
         </SheetHeader>
 
         {/* Status filter */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Status</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filter.byStatusLabel')}</h3>
           <div className="flex flex-wrap gap-2">
             {ALL_STATUSES.map((status) => {
               const isSelected = selectedStatuses.includes(status)
@@ -87,7 +87,7 @@ export function FilterBottomSheet() {
                   }`}
                 >
                   {isSelected && <span className="mr-1">&#10003;</span>}
-                  {STATUS_LABELS[status]}
+                  {t(statusKey[status])}
                 </button>
               )
             })}
@@ -96,9 +96,9 @@ export function FilterBottomSheet() {
 
         {/* Category filter */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Category</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filter.byCategoryLabel')}</h3>
           <div className="flex flex-wrap gap-2">
-            {ALL_CATEGORIES.map((category) => {
+            {CATEGORIES.map((category) => {
               const isSelected = selectedCategories.includes(category)
               return (
                 <button
@@ -111,7 +111,7 @@ export function FilterBottomSheet() {
                   }`}
                 >
                   {isSelected && <span className="mr-1">&#10003;</span>}
-                  {category}
+                  {t(CATEGORY_KEYS[category] ?? 'categories.other')}
                 </button>
               )
             })}
@@ -120,7 +120,7 @@ export function FilterBottomSheet() {
 
         {/* Location filter */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Location</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filter.byLocationLabel')}</h3>
           <div className="flex flex-wrap gap-2">
             {locations?.map((location) => {
               const isSelected = selectedLocations.includes(location.name)
@@ -147,7 +147,7 @@ export function FilterBottomSheet() {
 
         {/* Sort section */}
         <div className="mt-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Sort by</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">{t('filter.sortBy')}</h3>
           <div className="flex gap-2 flex-wrap">
             {(['name', 'expiryDate', 'category'] as SortField[]).map((field) => (
               <button
@@ -159,7 +159,11 @@ export function FilterBottomSheet() {
                     : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                 }`}
               >
-                {field === 'name' ? 'Name' : field === 'expiryDate' ? 'Expiry Date' : 'Category'}
+                {field === 'name'
+                  ? t('filter.byName')
+                  : field === 'expiryDate'
+                    ? t('filter.byExpiry')
+                    : t('filter.byCategoryLabel')}
               </button>
             ))}
           </div>
@@ -172,7 +176,7 @@ export function FilterBottomSheet() {
                   : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
               }`}
             >
-              {sortField === 'expiryDate' ? 'Soonest' : 'A-Z'}
+              {t('filter.asc')}
             </button>
             <button
               onClick={() => handleSortDirection('desc')}
@@ -182,7 +186,7 @@ export function FilterBottomSheet() {
                   : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
               }`}
             >
-              {sortField === 'expiryDate' ? 'Latest' : 'Z-A'}
+              {t('filter.desc')}
             </button>
           </div>
         </div>
@@ -190,7 +194,7 @@ export function FilterBottomSheet() {
         {/* Clear all */}
         <div className="mt-6">
           <Button variant="outline" className="w-full" onClick={clearAllFilters}>
-            Clear all filters
+            {t('filter.clearAll')}
           </Button>
         </div>
       </SheetContent>
