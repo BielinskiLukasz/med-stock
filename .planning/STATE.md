@@ -2,18 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish, UX & i18n
-current_phase_name: roadmap defined, awaiting Phase 7 plan
-status: roadmap-ready
-stopped_at: Phase 7 context gathered
-last_updated: "2026-08-31T19:42:41.407Z"
-last_activity: 2026-08-31
-last_activity_desc: v1.2 roadmap created (5 phases, 20 requirements)
-state_head: ce3736eed3d08b09607a73a8ebe4259bc75b8034
+current_phase: 07
+current_phase_name: i18n / Polish Language
+status: executing
+stopped_at: Completed 07-01-PLAN.md (i18n foundation)
+last_updated: "2026-08-31T22:34:29.664Z"
+last_activity: 2026-09-01
+last_activity_desc: Phase 07 execution started
+state_head: 0d4902cc1cdd1df6cd5ac1b0993acf8a5a96dc47
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 4
+  completed_plans: 1
   percent: 0
 ---
 
@@ -24,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-31)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** v1.2 — Polish, UX & i18n (roadmap ready, Phase 7 next)
+**Current focus:** Phase 07 — i18n / Polish Language
 
 ## Current Position
 
-Phase: Not started (roadmap defined, awaiting Phase 7 plan)
-Plan: —
-Status: Roadmap ready
-Last activity: 2026-08-31 — v1.2 roadmap created (5 phases, 20 requirements)
+Phase: 07 (i18n / Polish Language) — EXECUTING
+Plan: 2 of 4
+Status: Ready to execute
+Last activity: 2026-09-01 — Phase 07 execution started
 
 ## v1.0 Summary
 
@@ -76,9 +77,9 @@ Last activity: 2026-08-31 — v1.2 roadmap created (5 phases, 20 requirements)
 
 ## Session
 
-**Last session:** 2026-08-31T19:42:41.363Z
-**Stopped at:** Phase 7 context gathered
-**Resume file:** .planning/phases/07-i18n-polish-language/07-CONTEXT.md
+**Last session:** 2026-08-31T22:34:29.621Z
+**Stopped at:** Completed 07-01-PLAN.md (i18n foundation)
+**Resume file:** None
 
 ## Performance Metrics
 
@@ -93,6 +94,7 @@ Last activity: 2026-08-31 — v1.2 roadmap created (5 phases, 20 requirements)
 | Phase 05 P13 | 13 | 1 tasks | 2 files |
 | Phase 06 P01 | 8 | 1 tasks | 2 files |
 | Phase 06 P02 | 16 | 2 tasks | 3 files |
+| Phase 07 P01 | 13 | 2 tasks | 9 files |
 
 ## Decisions
 
@@ -111,6 +113,7 @@ Last activity: 2026-08-31 — v1.2 roadmap created (5 phases, 20 requirements)
 - [Phase 06]: schemaVersion detection: undefined means old-format; two-pass Zod parse in importFromJSON
 - [Phase 06]: LegacyBackupSchema kept module-internal; ImportResult exported as caller contract
 - [Phase 06]: pendingRaw: unknown|null in ImportJSONSection — importFromJSON owns all validation
+- [Phase 07]: D-01/D-02/D-09/D-10/D-11 applied: custom React Context i18n with TypeScript-typed EN/PL dicts, LanguageProvider outermost in App.tsx, flag-emoji toggle in BottomTabBar, localStorage persistence, formatDate string-split
 
 ## Operator Next Steps
 

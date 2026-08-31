@@ -7,9 +7,9 @@
 
 ### i18n
 
-- [ ] **I18N-01**: User can switch app language between English and Polish via a persistent toggle
+- [x] **I18N-01**: User can switch app language between English and Polish via a persistent toggle
 - [ ] **I18N-02**: All UI strings (labels, placeholders, toasts, error messages, status names, screen titles) display in the active language
-- [ ] **I18N-03**: Selected language persists in localStorage and applies on next load without a full reload
+- [x] **I18N-03**: Selected language persists in localStorage and applies on next load without a full reload
 - [ ] **I18N-04**: Built-in category names and predefined location names display in the active language (stored values unchanged)
 - [ ] **I18N-05**: Dates display in locale-appropriate format (PL: DD.MM.YYYY, EN: YYYY-MM-DD)
 
@@ -65,9 +65,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| I18N-01 | Phase 7 | Pending |
+| I18N-01 | Phase 7 | Complete |
 | I18N-02 | Phase 7 | Pending |
-| I18N-03 | Phase 7 | Pending |
+| I18N-03 | Phase 7 | Complete |
 | I18N-04 | Phase 7 | Pending |
 | I18N-05 | Phase 7 | Pending |
 | LOC-01 | Phase 8 | Pending |
@@ -87,6 +87,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | UX-05 | Phase 11 | Pending |
 
 **Coverage:**
+
 - v1.2 requirements: 20 total
 - Mapped to phases: 20
 - Unmapped: 0 ✓
