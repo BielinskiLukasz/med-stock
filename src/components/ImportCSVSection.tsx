@@ -54,6 +54,18 @@ export function ImportCSVSection() {
   async function handleCommit() {
     if (!parseResult) return
 
+    // CR-05: validate that the placeholder catalogId=1 exists before import.
+    // CSV import currently assigns all medicines to catalogId=1. If that catalog
+    // does not exist (e.g., first catalog was deleted and auto-increment is at 2+),
+    // the import would create broken foreign keys. Fail early with a clear message.
+    const targetCatalog = await db.medicine_catalog.get(1)
+    if (!targetCatalog) {
+      toast.error(
+        'CSV import requires at least one medicine catalog. Please add a medicine first, then retry the import.'
+      )
+      return
+    }
+
     setStep('committing')
 
     try {

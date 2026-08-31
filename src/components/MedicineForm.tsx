@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -23,6 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+
+// TODO: Phase 5 — CatalogFields and StockFields have been extracted as reusable components.
+// This monolithic form is kept for backward compat during Phase 5 transition.
+// Replace with CatalogFields + StockFields composition once add/edit flows are updated (Plans 05-05, 05-06).
 
 // Zod schema — all optional fields are nullable; location uses null as 'Other' sentinel (D-17)
 export const medicineSchema = z.object({
@@ -91,8 +96,9 @@ export function MedicineForm({
       setNewLocationInput('')
       setShowQuickAddLocation(false)
     } catch (err) {
-      // Duplicate or DB error — log only, do not expose raw error
+      // Duplicate or DB error — log and notify user
       console.error('Failed to add location:', err)
+      toast.error('Failed to add location. Please try again.')
     }
   }
 
@@ -107,7 +113,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Name *</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Ibuprofen 400mg" {...field} />
+                <Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -137,6 +143,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Category</FormLabel>
               <Select
+                name={field.name}
                 value={field.value ?? NULL_SENTINEL}
                 onValueChange={(val) =>
                   field.onChange(val === NULL_SENTINEL ? null : val)
@@ -169,6 +176,7 @@ export function MedicineForm({
             <FormItem>
               <FormLabel>Location</FormLabel>
               <Select
+                name={field.name}
                 value={field.value ?? NULL_SENTINEL}
                 onValueChange={(val) => {
                   if (val === '__ADD_NEW__') {
@@ -203,6 +211,7 @@ export function MedicineForm({
                 <div className="flex gap-2 mt-2">
                   <Input
                     placeholder="New location name"
+                    autoComplete="off"
                     value={newLocationInput}
                     onChange={(e) => setNewLocationInput(e.target.value)}
                     onKeyDown={(e) => {
@@ -291,6 +300,7 @@ export function MedicineForm({
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <Select
+                    name={field.name}
                     value={field.value ?? NULL_SENTINEL}
                     onValueChange={(val) =>
                       field.onChange(
@@ -350,6 +360,7 @@ export function MedicineForm({
               render={({ field }) => (
                 <FormItem className="flex-1">
                   <Select
+                    name={field.name}
                     value={field.value ?? NULL_SENTINEL}
                     onValueChange={(val) => {
                       if (val === '__CUSTOM__') {

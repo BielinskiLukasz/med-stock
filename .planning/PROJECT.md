@@ -10,24 +10,67 @@ At a glance, from anywhere, know whether you already have a valid medicine — s
 
 ## Current State
 
-**v1.0 shipped** — 2026-07-13
+**v1.1 shipped** — 2026-08-31
 
-The full household medicine inventory app is working and installable. A user can install it on any device, add medicines with automatic expiry tracking, search by name from a pharmacy, filter/sort by status or location, see a dashboard of expiry alerts, restore from Trash, export/import JSON backups, and bulk-import from CSV. 33 of 35 requirements satisfied.
+The full household medicine inventory app with catalog + stock model is working and installable. On top of v1.0, users can: add stock entries linked to reusable catalog entries, view aggregated stock status per medicine, split/move stock between locations, edit catalog and stock fields independently, and export/import backups that include the catalog table — with backward compatibility for pre-v1.1 backups. 15/15 v1.1 requirements satisfied.
 
-Known gaps carried to v1.1: interactive Sync Now flow (B-002), JSON import merge strategy (B-003), CSV auto-mapping (B-004).
+**v1.0 shipped** — 2026-07-13. 33/35 requirements satisfied.
 
-## Next Milestone Goals (v1.1)
+Known gaps carried to backlog: interactive Sync Now flow (B-002), JSON import merge strategy (B-003), CSV auto-mapping (B-004).
 
-To be defined via `/gsd-new-milestone`. Candidates from backlog:
-- B-002: DATA-04 — Interactive guided Sync Now flow
-- B-003: DATA-02 — JSON import with last-write-wins merge
-- B-004: CSV column header auto-mapping
-- B-005: CSV column mapper header labels
+## Milestone: v1.1 Catalog + Stock Model (Shipped 2026-08-31)
+
+**Goal:** Replace the flat medicines table with a two-layer catalog + stock model so users never re-enter medicine details when adding new boxes and can track quantities split across multiple locations.
+
+**Shipped features:**
+- `medicine_catalog` table: name, category, form, notes (the reusable template)
+- `medicines` becomes stock entries: quantity, expiryDate, location, catalogId
+- Two-step add flow: autocomplete from catalog → fill stock fields
+- Detail view: lists all stock entries per medicine
+- Split / Move flow: move N units from one location to another
+- Dexie v3→v4 migration with deduplication by name
+- Backup / restore updated to include catalog table; legacy backups import via inferred catalog
 
 ## Requirements
 
-v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](.planning/milestones/v1.0-REQUIREMENTS.md).  
-Next milestone requirements defined via `/gsd-new-milestone`.
+### Validated
+
+v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
+
+v1.1 requirements — all satisfied:
+
+- ✓ MIGR-01: Auto-migrate v1.0 data to catalog + stock on first open — v1.1
+- ✓ MIGR-02: Migration deduplicates by case-insensitive + trimmed name — v1.1
+- ✓ CAT-01: Catalog autocomplete search (case-insensitive) — v1.1
+- ✓ CAT-02: Create catalog inline when no autocomplete match — v1.1
+- ✓ CAT-03: Edit catalog name/category/form from detail screen — v1.1
+- ✓ STOCK-01: Add stock entry linked to catalog — v1.1
+- ✓ STOCK-02: Edit stock entry fields — v1.1
+- ✓ STOCK-03: Move/split stock entry across locations — v1.1
+- ✓ STOCK-04: Soft-deleted entries in Trash with restore — v1.1
+- ✓ STOCK-05: Detail view stock list respects UIStore status/location filters — v1.1
+- ✓ FLOW-01: Aggregate list row per catalog with priority-reduce status + qty badge — v1.1
+- ✓ FLOW-02: Detail screen stock list with qty/expiry/location/status — v1.1
+- ✓ FLOW-03: Add flow catalog autocomplete → stock fields — v1.1
+- ✓ DATA-01: JSON export includes medicine_catalog table with catalogId — v1.1
+- ✓ DATA-02: New-format import restores catalog + stock atomically — v1.1
+- ✓ DATA-03: Old-format import infers catalog from name/category — v1.1
+
+### Active
+
+- [ ] B-002: Interactive "Sync Now" triggered flow (DATA-04) — guides both-device sync step-by-step
+- [ ] B-003: JSON import merge strategy with last-write-wins (currently full replace)
+- [ ] B-004: CSV column auto-mapping by header name
+
+### Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Manual catalog deduplication UI | Migration auto-deduplicates; merge tool adds UI complexity beyond current scope |
+| Barcode / QR scanning | Requires camera permission flow; deferred to v2 |
+| Automatic cloud catalog sync | Privacy-first constraint — no backend |
+| Photos / images | Doesn't affect core value of validity check; deferred to v2 |
+| Batch add (multiple packages at once) | Deferred from v1.0; low-frequency action |
 
 ## Context
 
@@ -59,6 +102,13 @@ Next milestone requirements defined via `/gsd-new-milestone`.
 | Soft delete (Trash Bin) | Preserves history; prevents accidental permanent data loss | Validated — TrashBin + historyOps fully operational |
 | JSON import as full replace (D-47) | Simpler implementation for MVP | Gap identified in UAT — merge was the intent; deferred to v1.1 B-003 |
 | Two-step query+memo pattern | Dexie reactivity + Zustand filter state changes are separate concerns | Validated — prevents unnecessary DB re-reads on filter click |
+| Case-insensitive + trimmed deduplication (D-01) | Prevents duplicate catalog entries from data-entry variations | Applied in v2→v3 migration — Phase 4 |
+| MedicineForm as `as const` type, not enum (D-10) | `enum` keyword incompatible with `erasableSyntaxOnly` compiler flag | Applied — equivalent type safety, zero behavioral change — Phase 4 |
+| No heuristic form inference during migration (D-11) | Avoids wrong guesses — form is optional and user-supplied in Phase 5 | Applied — all migrated catalog entries have `form: null` — Phase 4 |
+| historyOps accepts explicit `medicineName` parameter (D-06) | Decouples mutation layer from catalog/stock lookup; Phase 5 callers supply name from their context | Applied — all 5 mutation functions updated — Phase 4 |
+| schemaVersion detection: undefined = old-format (D-48) | Two-pass Zod parse avoids strict per-format schemas; BackupSchema accepts both formats via optional field | Applied — importFromJSON branches on `schemaVersion === undefined` — Phase 6 |
+| LegacyBackupSchema module-internal; ImportResult exported | Callers need the result contract, not the legacy schema types; prevents leaking internal format details | Applied — ImportResult is the public API; LegacyBackupSchema unexported — Phase 6 |
+| pendingRaw: unknown\|null in ImportJSONSection | importFromJSON owns all validation; UI doesn't need to parse the backup format | Applied — removed BackupData state type; importFromJSON validates on confirm — Phase 6 |
 
 ## Evolution
 
@@ -78,4 +128,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-19 — v1.0 milestone completion*
+*Last updated: 2026-08-31 after v1.1 milestone (Catalog + Stock Model)*

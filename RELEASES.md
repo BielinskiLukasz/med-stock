@@ -1,5 +1,50 @@
 # Release Notes
 
+## 🟩 **v1.1.0**
+*Release date: 2026‑08‑31*
+
+Replaces the flat medicines table with a two-layer catalog + stock model. Users stop re-entering medicine details when adding a new box of the same medicine and can track quantities split across multiple storage locations. All 15 v1.1 requirements satisfied across 3 phases and 17 plans.
+
+## What's included
+
+### Phase 4 — Database Migration & Schema v3
+
+- **Dexie schema v4:** new `medicine_catalog` table (name, category, form, notes) and restructured `medicines` table (stock entries with `catalogId` FK)
+- **Automatic one-time migration:** on first open after upgrade, every existing v1.0 medicine row becomes a stock entry; unique medicine names become catalog entries; deduplication is case-insensitive and trims whitespace
+- **No data loss:** all history entries and location assignments are preserved through migration
+
+### Phase 5 — Stock & Catalog Management
+
+- **Aggregate list view:** one card per catalog entry showing worst-case status across all active stock entries and summed quantity badge
+- **3-step add flow:** catalog autocomplete → create new catalog entry inline if no match → stock detail fields (quantity, expiry, location, PAO, notes)
+- **Stock entry actions:** edit quantity / expiry / location / PAO / notes, move N units to a new location (splits entry), soft-delete with Trash restore
+- **Open box:** splits a multi-pack stock entry; decrements pack count, creates opened entry with PAO tracking
+- **Catalog editing:** rename, change category or form from the detail screen — propagates to all linked stock entries automatically
+- **Catalog delete:** AlertDialog safety guard — requires all stock entries to be deleted first
+- **Detail view filters:** stock list respects the global status and location filter chips from UIStore
+
+### Phase 6 — Backup & Restore v2
+
+- **JSON export:** backup now includes the `medicine_catalog` table alongside stock entries with `catalogId` references and a `schemaVersion` stamp
+- **New-format import:** restores catalog entries and stock entries atomically in a single transaction
+- **Legacy import:** pre-v1.1 backups (no catalog table) are imported transparently — catalog entries are inferred from stock name/category fields using the same deduplication logic as the v4 migration
+
+## Verified
+
+- Unit + integration tests: 72 pass (Phase 4), 19 pass (Phase 6); Phase 5 structural tests pass
+- Milestone audit: 15/15 requirements satisfied, 16/16 integration points wired, 5/5 E2E flows complete (2026-08-31)
+- Build: `npm run build` — zero TypeScript errors, PWA manifest and service worker generated
+
+## Known gaps (deferred to v1.2)
+
+| Backlog | Gap |
+|---------|-----|
+| B-002 | Sync Now is static instructions only — no interactive triggered flow |
+| B-003 | JSON import does a full replace — last-write-wins merge not yet implemented |
+| B-004 | CSV column mapper defaults all dropdowns to (skip); no auto-mapping by header name |
+
+---
+
 ## 🟩 **v1.0.0**
 *Release date: 2026‑07‑13*
 

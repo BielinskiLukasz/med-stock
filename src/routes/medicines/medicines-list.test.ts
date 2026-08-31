@@ -1,17 +1,13 @@
 import { describe, it, expect } from 'vitest'
-
-// RED: These tests will fail until medicines/index.tsx is updated to use
-// two-step query pattern and new components, and until stub routes exist.
+import { readFileSync } from 'fs'
+import { resolve } from 'path'
 
 // ------- Medicines index.tsx structural tests -------
 
 describe('MedicineList — component structure', () => {
-  it('medicines/index.tsx does not contain where(manualStatus) pattern', async () => {
-    // Read the source file content to check for the old pattern
-    // This is a structural assertion — the old Phase 1 query must be replaced
-    const mod = await import('./index?t=' + Date.now())
-    // The module should export MedicineList
-    expect(typeof mod.MedicineList).toBe('function')
+  it('medicines/index.tsx does not contain where(manualStatus) pattern', () => {
+    const src = readFileSync(resolve(__dirname, 'index.tsx'), 'utf-8')
+    expect(src).not.toMatch(/where\s*\(\s*['"]manualStatus['"]/)
   })
 })
 

@@ -6,14 +6,14 @@ import type { Medicine } from './db'
 function makeMed(overrides: Partial<Medicine> = {}): Medicine {
   return {
     id: 1,
-    name: 'Test Medicine',
-    category: null,
+    catalogId: 1,
     location: null,
     expiryDate: '2030-12-31',
     openedDate: null,
     pao: null,
     quantity: null,
     quantityUnit: null,
+    packCount: null,
     notes: null,
     manualStatus: null,
     createdAt: '2026-01-01T00:00:00Z',

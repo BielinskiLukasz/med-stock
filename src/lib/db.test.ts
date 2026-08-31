@@ -30,14 +30,14 @@ describe('deleteLocation', () => {
   it('deletes a custom location and sets affected medicines.location to null', async () => {
     const locId = await db.locations.add({ name: 'Living Room', isDefault: false })
     const med1Id = await db.medicines.add({
-      name: 'Med A',
-      category: null,
+      catalogId: 1,
       location: 'Living Room',
       expiryDate: '2030-01-01',
       openedDate: null,
       pao: null,
       quantity: null,
       quantityUnit: null,
+      packCount: null,
       notes: null,
       manualStatus: null,
       createdAt: new Date().toISOString(),
@@ -45,14 +45,14 @@ describe('deleteLocation', () => {
       deletedAt: null,
     })
     const med2Id = await db.medicines.add({
-      name: 'Med B',
-      category: null,
+      catalogId: 1,
       location: 'Living Room',
       expiryDate: '2030-01-01',
       openedDate: null,
       pao: null,
       quantity: null,
       quantityUnit: null,
+      packCount: null,
       notes: null,
       manualStatus: null,
       createdAt: new Date().toISOString(),
@@ -60,14 +60,14 @@ describe('deleteLocation', () => {
       deletedAt: null,
     })
     await db.medicines.add({
-      name: 'Med C',
-      category: null,
+      catalogId: 1,
       location: 'Kitchen',
       expiryDate: '2030-01-01',
       openedDate: null,
       pao: null,
       quantity: null,
       quantityUnit: null,
+      packCount: null,
       notes: null,
       manualStatus: null,
       createdAt: new Date().toISOString(),
@@ -95,14 +95,14 @@ describe('renameLocation', () => {
   it('renames a custom location and updates all medicines referencing the old name', async () => {
     const locId = await db.locations.add({ name: 'Bed Room', isDefault: false })
     const med1Id = await db.medicines.add({
-      name: 'Med A',
-      category: null,
+      catalogId: 1,
       location: 'Bed Room',
       expiryDate: '2030-01-01',
       openedDate: null,
       pao: null,
       quantity: null,
       quantityUnit: null,
+      packCount: null,
       notes: null,
       manualStatus: null,
       createdAt: new Date().toISOString(),
@@ -110,14 +110,14 @@ describe('renameLocation', () => {
       deletedAt: null,
     })
     const med2Id = await db.medicines.add({
-      name: 'Med B',
-      category: null,
+      catalogId: 1,
       location: 'Bed Room',
       expiryDate: '2030-01-01',
       openedDate: null,
       pao: null,
       quantity: null,
       quantityUnit: null,
+      packCount: null,
       notes: null,
       manualStatus: null,
       createdAt: new Date().toISOString(),

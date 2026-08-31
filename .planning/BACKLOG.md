@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-07-19 (B-002, B-003 marked deferred to v1.1 — v1.0 shipped with gaps, Option B decision)
-Last assigned ID: **B-009** — next new item must be **B-010**
+Last updated: 2026-08-31 (B-014 added — expiring soon status)
+Last assigned ID: **B-014** — next new item must be **B-015**
 
 ---
 
@@ -242,3 +242,161 @@ Last assigned ID: **B-009** — next new item must be **B-010**
 - Use `localStorage` key `installPromptDismissed` to suppress after user dismisses or after 7 days
 - iOS detection guard: only render on iOS Safari in non-standalone mode
 - No service-worker or manifest changes needed — this is purely a UI nudge
+
+---
+
+### B-010 · Medicine Name Memory with Shared-Name Category Sync
+
+**Source:** product idea — reported 2026-07-29; extends B-001 (autocomplete) with category synchronisation semantics
+**Status:** captured · not scheduled
+**Earliest sensible slot:** same milestone as or after B-001 lands (autocomplete is a prerequisite)
+
+**What:** Three linked behaviours:
+
+1. **Name memory** — the name field on Add/Edit form suggests names from all existing medicines (same as B-001, deduplicated).
+2. **Auto-fill category on name pick** — selecting a name from the dropdown auto-selects the category used by medicines with that name (see conflict rule below). The user can override before saving.
+3. **Propagate category change across same-name medicines** — when the user edits a medicine's category, all medicines sharing the exact same name (case-insensitive) in the DB are updated to the new category in one atomic Dexie transaction. A toast confirms how many records were updated (e.g., "Category updated for 3 Ibum entries").
+
+**Migration rule (merging conflicting categories):** On first run after this feature ships, if medicines that share a name currently have *different* categories (legacy inconsistency), the feature detects this and merges them: the set of all distinct categories held by that name is stored on a new `medicineNameCatalog` table (one row per canonical name, `categories: string[]`). The auto-fill value shown on pick is the *first* category in that merged set. The user's next manual category save on any same-name medicine collapses the set back to one value and propagates to all siblings.
+
+**Why:** Users buy the same medicine repeatedly under the same brand name (e.g., "Ibum"). Without synchronised categories, each package may end up in a different category depending on when it was added or who added it, breaking filter reliability. Name memory with auto-fill prevents the problem going forward; the propagation rule fixes drift retroactively; the merge strategy avoids data loss during migration.
+
+**Open questions when this gets planned:**
+
+- Should propagation be opt-in (a confirmation dialog: "Update category for all 3 Ibum entries?") or automatic?
+- What is the canonical name key — exact string, or case-insensitive normalised form?
+- How should the `medicineNameCatalog` table interact with B-008 (Custom Categories)? If a category is deleted, remove it from the merged set.
+- Should propagation touch trashed/soft-deleted medicines or only active ones?
+- If a medicine has `manualStatus` set, should propagation skip it or still update just the category field?
+
+**Implementation notes:**
+
+- New Dexie table `medicineNameCatalog`: `{ name: string (pk, lowercase), categories: string[] }`. Seed on first run by scanning all `medicines` rows, grouping by `name.toLowerCase()`, collecting unique `category` values per group.
+- `AddMedicineForm` / `EditMedicineForm`: after user selects a name suggestion, query `medicineNameCatalog` by name and pre-fill category with `categories[0]`.
+- `historyOps.ts` `updateMedicine`: after saving the edited medicine, if the category field changed, run a secondary `db.transaction('rw', db.medicines, db.history, db.medicineNameCatalog, ...)` to update all sibling rows and collapse `medicineNameCatalog.categories` to the new single value.
+- Toast via `sonner`: `toast.success(`Category updated across ${count} "${name}" entries`)` when count > 1.
+- No changes to `BackupSchema` needed for the propagation behaviour; `medicineNameCatalog` is a derived/cache table and can be rebuilt from `medicines` on import.
+- Relates to: B-001 (autocomplete, prerequisite), B-008 (custom categories, interaction risk)
+
+---
+
+### B-011 · Polish Language Support (i18n)
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** v2.0 milestone
+
+**What:** Add a language switcher that lets the user toggle the app UI between English and Polish. All visible strings — labels, placeholders, toasts, error messages, status names, and screen titles — are translated. The selected language is persisted in `localStorage` and applied on next load without a full reload.
+
+**Why:** The primary users are a Polish-speaking household. Displaying the UI in Polish reduces cognitive friction and makes the app feel native rather than a foreign-language tool. English remains available for developer use and for sharing the app beyond the household.
+
+**Open questions when this gets planned:**
+
+- Framework choice: lightweight key-map approach (`i18next` / `react-i18next`) vs. a hand-rolled `t()` helper with JSON locale files?
+- Should the language be stored in Dexie (survives export/import) or `localStorage` (device-local, simpler)?
+- Should the built-in category names and location names be translated or kept as-is (user-entered strings are always stored verbatim)?
+- Date and number formatting: Polish date format is `DD.MM.YYYY` — should `YYYY-MM-DD` display format change per locale?
+- Where is the switcher surfaced — a Settings screen, the Data tab, or a small flag in the tab bar?
+
+**Implementation notes:**
+
+- Two locale JSON files: `src/locales/en.json` and `src/locales/pl.json`; keys are dot-namespaced by screen (`medicines.search_placeholder`, `dashboard.expires_soon`, etc.)
+- `i18next` + `react-i18next` is the safe default: large ecosystem, TypeScript types via `i18next-resources-to-backend`, tree-shakeable
+- A `useTranslation()` hook replaces all inline string literals; existing component signatures stay unchanged
+- Built-in category list and default location list should have translation keys so they render in the active language (without changing the stored value)
+- Zustand `uiStore` gains a `language: 'en' | 'pl'` field backed by `localStorage`
+
+---
+
+### B-012 · Full Location Management (Including Predefined)
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+
+**What:** Extend the existing Locations screen (`/locations`) to give users full control over all locations — both user-created and predefined. Capabilities:
+
+1. **Rename** any location, including predefined ones (e.g., rename "Bathroom cabinet" → "Łazienka").
+2. **Delete** any location; if medicines reference the deleted location, the user is warned and offered a reassign-or-clear choice before deletion proceeds.
+3. **Hide / show** predefined locations that are irrelevant to a household (e.g., hide "Car first-aid kit" if not applicable) without deleting them permanently.
+4. **Reorder** — drag-to-reorder the full list so the most-used locations appear first in add/edit forms.
+
+**Why:** The current Locations screen supports adding and deleting user-created locations but predefined ones are locked. Users whose household vocabulary doesn't match the built-in names must work around this by adding duplicate entries. Full editability lets the app adapt to each household without workarounds.
+
+**Open questions when this gets planned:**
+
+- Should predefined locations be stored in Dexie from first run (fully editable records) or kept as constants and shadowed by user overrides?
+- If a predefined location is renamed, does the original English name remain as a fallback key for B-011 (i18n) translations?
+- Delete-with-reassign UX: modal with a target-location dropdown, or a separate "Reassign medicines" flow?
+- Should hidden locations still appear grayed-out in the locations list for discoverability, or disappear entirely?
+- Reorder persistence: `sortOrder` integer on each location row, updated on drag-end via a single Dexie transaction.
+
+**Implementation notes:**
+
+- `locationOps.ts`: add `renameLocation(id, newName)`, `hideLocation(id)`, `showLocation(id)`, `reorderLocations(orderedIds)` helpers — all go through Dexie transactions
+- On first run (or a Dexie version bump), seed predefined locations as regular Dexie rows with an `isBuiltIn: boolean` flag and `hidden: boolean` flag; `sortOrder` initialized from seed order
+- `LocationsScreen.tsx`: swap static list for a drag-enabled list (e.g., `@dnd-kit/sortable`); add inline rename (tap-to-edit) and a context menu / swipe actions for hide/delete
+- Medicine add/edit location dropdown filters `hidden: true` locations out; the Locations management screen shows all including hidden
+- BackupSchema must include the `locations` table so custom names and order survive export/import
+- Relates to: B-011 (i18n — predefined location display names may need translation keys)
+
+---
+
+### B-013 · App Version Number Display
+
+**Source:** product idea — reported 2026-07-29
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available patch or alongside any Data tab work
+
+**What:** Show the current app version (from `package.json`) somewhere visible in the UI — most naturally in the Data tab footer or a dedicated "About" section. The version string should match the `version` field in `package.json` exactly (e.g., `v1.2.0`).
+
+**Why:** Without a visible version, users cannot report "which version broke X" and the developer cannot correlate bug reports to releases. A one-line version badge costs almost nothing to add and eliminates ambiguity when debugging issues reported by household members.
+
+**Open questions when this gets planned:**
+
+- Where exactly: Data tab footer, a small badge in the tab bar, or a dedicated "About" card/section?
+- Should the build date or git commit hash be shown alongside the version for dev builds?
+- Tap-to-copy behaviour — useful for bug reports?
+
+**Implementation notes:**
+
+- Vite exposes `package.json` version via `import.meta.env` if added to `vite.config.ts` as `define: { __APP_VERSION__: JSON.stringify(pkg.version) }` — no runtime fetch needed.
+- Alternatively, import the version directly: `import { version } from '../../package.json'` (TypeScript resolveJsonModule must be on, which it already is in this project).
+- Render as a small `<p className="text-xs text-muted-foreground">v{version}</p>` — no new component needed.
+
+---
+
+### B-014 · "Expiring Soon" Warning Status
+
+**Source:** product idea — reported 2026-08-31; surfaced during status hierarchy review
+**Status:** captured · not scheduled
+**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+
+**What:** Add a new `AutoStatus` value `ExpiringSoon` that fires when a medicine is within a configurable warning window (default 7 days) of either its `expiryDate` or its PAO end date (`openedDate + pao`). The status sits between `Opened` and `Expired` / `ExceededOpenPeriod` in priority — it replaces `Opened` when the warning window is active.
+
+Status priority order (highest → lowest):
+1. Manual statuses (`UsedUp`, `Disposed`, `Archived`) — always win
+2. `Expired` / `ExceededOpenPeriod` — already past the threshold
+3. **`ExpiringSoon`** — within the warning window of expiry or PAO end ← new
+4. `Opened` — opened but not yet close to any threshold
+5. `Active` — default
+
+The warning window is user-configurable via a Settings value (stored in Dexie or `localStorage`), defaulting to 7 days.
+
+**Why:** Currently a medicine quietly stays `Active` or `Opened` until the exact day it crosses into `Expired` / `ExceededOpenPeriod` — there is no heads-up. At the pharmacy (the core use case), seeing `ExpiringSoon` immediately signals "I have it but barely — I may want to buy more." The warning covers both expiry date proximity and PAO proximity under one status.
+
+**Open questions when this gets planned:**
+
+- Should the threshold be the same for `expiryDate` proximity and PAO-end proximity, or configurable separately?
+- Where is the setting surfaced — a dedicated Settings screen, or an inline control on the Dashboard?
+- Should the warning window be stored in Dexie (syncs across devices via export/import) or `localStorage` (device-local)?
+- Does `ExpiringSoon` get its own filter chip on the medicine list, or does it collapse under a broader "attention needed" chip?
+- Color/badge: likely amber/yellow (distinct from red for `Expired` and green for `Active`).
+
+**Implementation notes:**
+
+- `expiry.ts`: add `'ExpiringSoon'` to `AutoStatus`. `calculateStatus()` gains an optional third param `{ expiringSoonDays?: number }` (default `7`). After confirming not already expired/exceeded, check if `expiryDate` or `paoEnd` falls within `now + expiringSoonDays` days — if so, return `'ExpiringSoon'` before the `Opened` check.
+- `STATUS_LABELS`: add `ExpiringSoon: 'Expiring Soon'`.
+- All callers of `calculateStatus()` (aggregation, list views, dashboard) pass the user setting through — or read it from a shared hook.
+- Filter chips and status badge colors need updating to include the new status.
+- Tests in `expiry.test.ts` need cases: exactly at boundary, one day inside, one day outside, PAO-triggered vs expiry-triggered.

@@ -45,16 +45,21 @@ Five screens behind a bottom tab bar:
 
 ### Data layer
 
-**`src/lib/db.ts`** — Dexie schema + single `db` export. Three tables:
-- `medicines` — one row per physical package
+**`src/lib/db.ts`** — Dexie schema + single `db` export. Four tables:
+- `medicine_catalog` — one row per unique medicine (name, category, form, notes)
+- `medicines` — one stock entry per physical package; references `catalogId`
 - `locations` — predefined + user-created storage locations
 - `history` — immutable change log (never deleted)
 
-Schema is at version 2. Add new indexed fields only via `db.version(3)` — never modify earlier versions.
+Schema is at version 5. Add new indexed fields only via `db.version(6)` — never modify earlier versions.
 
 **`src/lib/expiry.ts`** — pure `calculateStatus(medicine, now?)` function. Returns `AutoStatus | ManualStatus`. Must be called **at render time** (inside `useMemo` or component body), never inside a `useLiveQuery` querier.
 
 **`src/lib/historyOps.ts`** — all medicine mutations (update, soft-delete, restore, permanent-delete) go through this module so every change is recorded atomically in `db.history`. Always use these instead of calling `db.medicines` directly.
+
+**`src/lib/stockOps.ts`** — high-level stock operations (`addStockEntry`, `editStockEntry`, `moveStock`). All mutations wrapped in `db.transaction()`.
+
+**`src/lib/aggregation.ts`** — `computeCatalogAggregate()`: rolls up status and quantity across all stock entries for a catalog (priority-reduce: Expired > ExceededOpenPeriod > Opened > Active; manual statuses excluded; quantities multiplied by `packCount ?? 1` then summed).
 
 **`src/lib/dataOps.ts`** — JSON export/import with Zod schema validation (`BackupSchema`).
 
@@ -73,6 +78,8 @@ Data flow: `useLiveQuery` (reactive DB query) → raw array → `useMemo` (in-me
 `@/` resolves to `src/`. Use it for all imports.
 
 ## Critical invariants
+
+**Catalog/stock separation.** `medicine_catalog` holds the medicine identity (name, category, form); `medicines` holds stock entries that reference `catalogId`. Never store a medicine name directly on a stock entry — always go through the catalog. Renaming a catalog entry updates the display name for all associated stock entries automatically.
 
 **`null` is not a valid IndexedDB key.** Never query `where('deletedAt').equals(null)`. Use `.toCollection().filter(m => m.deletedAt === null)` for active records.
 
