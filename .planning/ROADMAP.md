@@ -128,7 +128,7 @@ Gap closure plans (after UAT — 8 gaps found):
 3. JSON import of old-format backup (pre-v1.1, no catalog table) migrates gracefully by inferring catalog entries from stock name/category fields using the same deduplication logic as the v4 migration
 4. After import, all stock entries link to inferred/restored catalog entries with no orphaned records
 
-**Plans**: 1/2 plans executed
+**Plans**: 2/2 plans executed
 
 Plans:
 **Wave 1**
@@ -137,7 +137,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 06-02-PLAN.md — Tracer: full import/export pipeline (schema versioning, LegacyBackupSchema, two-pass import, toast update)
+- [x] 06-02-PLAN.md — Tracer: full import/export pipeline (schema versioning, LegacyBackupSchema, two-pass import, toast update)
 
 **UI hint**: no
 
@@ -149,7 +149,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 4. Database Migration & Schema v3 | 2/2 | Complete    | 2026-07-29 |
 | 5. Stock & Catalog Management | 13/13 | Complete   | 2026-08-31 |
-| 6. Backup & Restore | 1/2 | In Progress|  |
+| 6. Backup & Restore | 2/2 | In Progress|  |
 
 ---
 

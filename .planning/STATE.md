@@ -5,16 +5,16 @@ milestone_name: Catalog + Stock Model
 current_phase: 06
 current_phase_name: Backup & Restore
 status: executing
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-08-31T13:14:31.669Z"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-08-31T14:32:57.061Z"
 last_activity: 2026-08-31
 last_activity_desc: Phase 06 execution started
-state_head: ff306c3008158301535f0c35ddd84f59847d82b6
+state_head: 917fb0ce74af4792642818674866bd1043261c9b
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
   percent: 67
 ---
 
@@ -67,8 +67,8 @@ Last activity: 2026-08-31 — Phase 06 execution started
 
 ## Session
 
-**Last session:** 2026-08-31T13:14:30.054Z
-**Stopped at:** Completed 06-01-PLAN.md
+**Last session:** 2026-08-31T14:16:21.871Z
+**Stopped at:** Completed 06-02-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -83,6 +83,7 @@ Last activity: 2026-08-31 — Phase 06 execution started
 | Phase 05 P11 | 12 | 2 tasks | 2 files |
 | Phase 05 P13 | 13 | 1 tasks | 2 files |
 | Phase 06 P01 | 8 | 1 tasks | 2 files |
+| Phase 06 P02 | 16 | 2 tasks | 3 files |
 
 ## Decisions
 
@@ -98,3 +99,6 @@ Last activity: 2026-08-31 — Phase 06 execution started
 - [Phase ?]: AlertDialog branches on stockEntries.length — no extra DB query needed
 - [Phase 05]: filteredStockEntries useMemo: unfiltered stockEntries retained for badge/guard; filteredStockEntries used for render loop (G-05-10)
 - [Phase 06]: D-07 honored: form null on inferred catalog entries — no heuristic inference
+- [Phase 06]: schemaVersion detection: undefined means old-format; two-pass Zod parse in importFromJSON
+- [Phase 06]: LegacyBackupSchema kept module-internal; ImportResult exported as caller contract
+- [Phase 06]: pendingRaw: unknown|null in ImportJSONSection — importFromJSON owns all validation
