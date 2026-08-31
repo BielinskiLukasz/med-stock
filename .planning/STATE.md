@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish, UX & i18n
-status: planning
+status: roadmap-ready
 last_updated: "2026-08-31T19:06:46.894Z"
 last_activity: 2026-08-31
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -20,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-31)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Planning next milestone (v1.2)
+**Current focus:** v1.2 — Polish, UX & i18n (roadmap ready, Phase 7 next)
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: Not started (roadmap defined, awaiting Phase 7 plan)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-08-31 — Milestone v1.2 started
+Status: Roadmap ready
+Last activity: 2026-08-31 — v1.2 roadmap created (5 phases, 20 requirements)
 
 ## v1.0 Summary
 
@@ -44,27 +44,36 @@ Last activity: 2026-08-31 — Milestone v1.2 started
 | 5 | Stock & Catalog Management | CAT-01–03, STOCK-01–04, FLOW-01–03 | Complete ✓ |
 | 6 | Backup & Restore | DATA-01–03 | Complete ✓ |
 
+## v1.2 Roadmap
+
+| Phase | Goal | Requirements | Status |
+|-------|------|--------------|--------|
+| 7 | i18n / Polish Language | I18N-01–05 | Not started |
+| 8 | Full Location Management | LOC-01–04 | Not started |
+| 9 | CSV UX + Version Display | CSV-01, CSV-02, UX-01 | Not started |
+| 10 | Expiring Soon Status | STAT-01–04 | Not started |
+| 11 | UX Polish — Autocomplete + Pack Count | UX-02–05 | Not started |
+
 ## Deferred Items
 
 | Backlog | Category | Item | Status |
 |---------|----------|------|--------|
-| B-002 | gap | Interactive "Sync Now" triggered flow (DATA-04) | Out of scope v1.1 |
-| B-003 | gap | JSON import last-write-wins merge (DATA-02) | Out of scope v1.1 |
-| B-004 | major | CSV column auto-mapping by header name | Out of scope v1.1 |
-| B-005 | cosmetic | CSV column mapper header labels | Out of scope v1.1 |
+| B-002 | gap | Interactive "Sync Now" triggered flow (DATA-04) | Out of scope v1.2 |
+| B-003 | gap | JSON import last-write-wins merge (DATA-02) | Out of scope v1.2 |
 
 ## Key Decisions
 
-- **Phase numbering continues from v1.0**: Phases 4, 5, 6 (not reset to 1, 2, 3)
-- **Coarse granularity**: 3 phases (aggressive combination, critical path only)
-- **Migration-first approach**: Phase 4 establishes schema + historyOps changes before any UI work
-- **Catalog + Stock combined in Phase 5**: Natural delivery boundary — both CRUD systems needed for any user-facing feature
-- **Backup deferred**: Phase 6, depends on Phase 5 completion
+- **Phase numbering continues from v1.1**: Phases 7–11 (not reset)
+- **Coarse granularity**: 5 phases — i18n as foundation first; location management depends on it for translated predefined names
+- **i18n first**: Phase 7 provides translated strings consumed by Phases 8, 9, 10, 11
+- **Location management after i18n**: Phase 8 predefined location names need translation keys from Phase 7
+- **CSV + version grouped**: Phase 9 combines three small independent changes by delivery area (Data tab)
+- **Status logic before UX polish**: Phase 10 adds expiry.ts logic; Phase 11 is UI-only form improvements
 
 ## Session
 
-**Last session:** 2026-08-31T17:30:00Z
-**Stopped at:** Phase 06 complete — transition done, v1.1 milestone ready to close
+**Last session:** 2026-08-31T19:06:00Z
+**Stopped at:** v1.2 roadmap created — ready to plan Phase 7
 **Resume file:** None
 
 ## Performance Metrics
@@ -101,4 +110,4 @@ Last activity: 2026-08-31 — Milestone v1.2 started
 
 ## Operator Next Steps
 
-- Start the next milestone with /gsd-new-milestone
+- Plan Phase 7 with /gsd-plan-phase 7

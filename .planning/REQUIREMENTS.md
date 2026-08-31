@@ -65,32 +65,32 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| I18N-01 | — | Pending |
-| I18N-02 | — | Pending |
-| I18N-03 | — | Pending |
-| I18N-04 | — | Pending |
-| I18N-05 | — | Pending |
-| LOC-01 | — | Pending |
-| LOC-02 | — | Pending |
-| LOC-03 | — | Pending |
-| LOC-04 | — | Pending |
-| CSV-01 | — | Pending |
-| CSV-02 | — | Pending |
-| STAT-01 | — | Pending |
-| STAT-02 | — | Pending |
-| STAT-03 | — | Pending |
-| STAT-04 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| UX-04 | — | Pending |
-| UX-05 | — | Pending |
+| I18N-01 | Phase 7 | Pending |
+| I18N-02 | Phase 7 | Pending |
+| I18N-03 | Phase 7 | Pending |
+| I18N-04 | Phase 7 | Pending |
+| I18N-05 | Phase 7 | Pending |
+| LOC-01 | Phase 8 | Pending |
+| LOC-02 | Phase 8 | Pending |
+| LOC-03 | Phase 8 | Pending |
+| LOC-04 | Phase 8 | Pending |
+| CSV-01 | Phase 9 | Pending |
+| CSV-02 | Phase 9 | Pending |
+| UX-01 | Phase 9 | Pending |
+| STAT-01 | Phase 10 | Pending |
+| STAT-02 | Phase 10 | Pending |
+| STAT-03 | Phase 10 | Pending |
+| STAT-04 | Phase 10 | Pending |
+| UX-02 | Phase 11 | Pending |
+| UX-03 | Phase 11 | Pending |
+| UX-04 | Phase 11 | Pending |
+| UX-05 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 20 total
-- Mapped to phases: 0
-- Unmapped: 20 ⚠️
+- Mapped to phases: 20
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-08-31*
-*Last updated: 2026-08-31 after initial definition*
+*Last updated: 2026-08-31 after roadmap creation*
