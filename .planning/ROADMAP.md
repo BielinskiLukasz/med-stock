@@ -50,7 +50,14 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   3. On next app load, the previously selected language is automatically applied — choice persists in localStorage across sessions
   4. Built-in category names and predefined location names display in the active language; stored database values remain unchanged
   5. Dates appear as DD.MM.YYYY in Polish mode and YYYY-MM-DD in English mode throughout the app
-**Plans**: TBD
+**Plans**: 4 plans
+
+Plans:
+- [ ] 07-01-PLAN.md — i18n module, LanguageProvider, useLang, formatDate, App.tsx wrapping, BottomTabBar toggle (Wave 1)
+- [ ] 07-02-PLAN.md — Remove STATUS_LABELS, translate StatusBadge, FilterChips, FilterBottomSheet, MedicineCard, MedicineCardAggregate (Wave 2)
+- [ ] 07-03-PLAN.md — Translate form components, sheets, ChangeHistory, HistoryEntry (Wave 2)
+- [ ] 07-04-PLAN.md — Translate all route screens and remaining utility components (Wave 2)
+
 **UI hint**: yes
 
 ### Phase 8: Full Location Management
@@ -104,7 +111,7 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. i18n / Polish Language | 0/? | Not started | - |
+| 7. i18n / Polish Language | 0/4 | Not started | - |
 | 8. Full Location Management | 0/? | Not started | - |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
