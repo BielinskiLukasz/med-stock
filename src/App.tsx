@@ -1,4 +1,5 @@
 import { createHashRouter, RouterProvider, Navigate } from 'react-router-dom'
+import { LanguageProvider } from '@/i18n'
 import { RootLayout } from '@/routes/RootLayout'
 import { MedicineList } from '@/routes/medicines/index'
 import { MedicineNew } from '@/routes/medicines/new'
@@ -43,5 +44,9 @@ if (navigator.storage?.persist) {
 }
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <LanguageProvider>
+      <RouterProvider router={router} />
+    </LanguageProvider>
+  )
 }
