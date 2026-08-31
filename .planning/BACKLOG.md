@@ -2,7 +2,7 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-08-31 (B-014 added — expiring soon status)
+Last updated: 2026-08-31 (B-006 removed — delivered in v1.1; B-001, B-004, B-005, B-013, B-014 promoted to v1.2)
 Last assigned ID: **B-014** — next new item must be **B-015**
 
 ---
@@ -28,8 +28,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-001 · Medicine Name Autocomplete (Dropdown from History)
 
 **Source:** product idea — recurring data-entry friction observed during Phase 1 implementation
-**Status:** captured · not scheduled
-**Earliest sensible slot:** post-Phase 2 (medicine list + dashboard lands first) — or as a Phase 2 suB-0plan if entry speed is prioritised early
+**Status:** captured · **targeted for v1.2**
+**Earliest sensible slot:** v1.2 milestone (prerequisite for B-010)
 
 **What:** When the Add / Edit medicine form opens, the name field suggests names from medicines already in the inventory — including trashed items — via a dropdown/autocomplete. Selecting a suggestion pre-fills the name only; all other fields stay blank so the user enters fresh data for the new package.
 
@@ -104,8 +104,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-004 · CSV Column Auto-Mapping by Name
 
 **Source:** Phase 3 UAT — Test 8 (G-01), reported 2026-07-15
-**Status:** captured · not scheduled
-**Earliest sensible slot:** next available patch or Phase 4
+**Status:** captured · **targeted for v1.2**
+**Earliest sensible slot:** v1.2 milestone
 
 **What:** When a CSV file is parsed, pre-select each dropdown in the column-mapping UI to the matching medicine field when the CSV column header exactly matches a field name (case-insensitive). Columns with no match default to `(skip)` as today.
 
@@ -126,8 +126,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-005 · CSV Mapper Column Header Labels
 
 **Source:** Phase 3 UAT — Test 8 (G-02), reported 2026-07-15
-**Status:** captured · not scheduled
-**Earliest sensible slot:** next available patch or alongside B-004
+**Status:** captured · **targeted for v1.2**
+**Earliest sensible slot:** v1.2 milestone (alongside B-004)
 
 **What:** Add a header row above the column-mapping list in `CSVColumnMapper.tsx` that labels the two sides: "Your file column" on the left and "App field" on the right. This makes the mapping direction immediately obvious without needing to read surrounding text.
 
@@ -142,31 +142,6 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 
 ---
 
-### B-006 · Per-Medicine Change History / Audit Log
-
-**Source:** product planning — Phase 2 scope candidate
-**Status:** captured · not scheduled
-**Earliest sensible slot:** Phase 2 (Search, Dashboard & Audit)
-
-**What:** Each medicine record carries a timestamped log of every change made to it — creation, edits (with before/after values), status transitions (active → expired, active → used-up), and deletions. A user can tap into a medicine and see its full history.
-
-**Why:** Without a history, it is impossible to know when a medicine was opened, when it was marked used-up, or what value was changed and by whom. This is especially useful in a household where two people manage the same inventory and need to understand each other's actions without coordinating in real time.
-
-**Open questions when this gets planned:**
-
-- How many history entries to retain per medicine — all, or capped (e.g., last 50)?
-- Should history entries survive a full-replace sync import (B-003 merge question)?
-- UI surface: inline collapsible panel on the medicine detail view, or a separate history drawer?
-- Should system-generated events (e.g., status auto-expired at expiry date) be logged alongside user-initiated events?
-
-**Implementation notes:**
-
-- Dexie schema: add a `history` table keyed by `medicineId` + `timestamp`; each row stores `field`, `oldValue`, `newValue`, `action` (`created | edited | status_changed | deleted`), `timestamp`
-- All write operations in `db.ts` (add, update, delete) must write a corresponding history row in the same transaction
-- MedicineDetailView gains a "History" tab or expandable section rendering the log newest-first
-- Export/import schema must include history entries to survive sync
-
----
 
 ### B-007 · Batch Medicine Creation
 
@@ -283,8 +258,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-011 · Polish Language Support (i18n)
 
 **Source:** product idea — reported 2026-07-29
-**Status:** captured · not scheduled
-**Earliest sensible slot:** v2.0 milestone
+**Status:** captured · **targeted for next milestone (v1.2)**
+**Earliest sensible slot:** v1.2 milestone
 
 **What:** Add a language switcher that lets the user toggle the app UI between English and Polish. All visible strings — labels, placeholders, toasts, error messages, status names, and screen titles — are translated. The selected language is persisted in `localStorage` and applied on next load without a full reload.
 
@@ -301,7 +276,7 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 **Implementation notes:**
 
 - Two locale JSON files: `src/locales/en.json` and `src/locales/pl.json`; keys are dot-namespaced by screen (`medicines.search_placeholder`, `dashboard.expires_soon`, etc.)
-- `i18next` + `react-i18next` is the safe default: large ecosystem, TypeScript types via `i18next-resources-to-backend`, tree-shakeable
+- `i18next` + `react-i18next` is the safe default: large ecosystem, TypeScript types via `i18next-resources-to-backend`, tree-shakeable; see `../little-words` app for a working implementation reference in this repo's sibling projects
 - A `useTranslation()` hook replaces all inline string literals; existing component signatures stay unchanged
 - Built-in category list and default location list should have translation keys so they render in the active language (without changing the stored value)
 - Zustand `uiStore` gains a `language: 'en' | 'pl'` field backed by `localStorage`
@@ -311,8 +286,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-012 · Full Location Management (Including Predefined)
 
 **Source:** product idea — reported 2026-07-29
-**Status:** captured · not scheduled
-**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+**Status:** captured · **targeted for next milestone (v1.2)**
+**Earliest sensible slot:** v1.2 milestone
 
 **What:** Extend the existing Locations screen (`/locations`) to give users full control over all locations — both user-created and predefined. Capabilities:
 
@@ -345,8 +320,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-013 · App Version Number Display
 
 **Source:** product idea — reported 2026-07-29
-**Status:** captured · not scheduled
-**Earliest sensible slot:** next available patch or alongside any Data tab work
+**Status:** captured · **targeted for v1.2**
+**Earliest sensible slot:** v1.2 milestone
 
 **What:** Show the current app version (from `package.json`) somewhere visible in the UI — most naturally in the Data tab footer or a dedicated "About" section. The version string should match the `version` field in `package.json` exactly (e.g., `v1.2.0`).
 
@@ -369,8 +344,8 @@ Last assigned ID: **B-014** — next new item must be **B-015**
 ### B-014 · "Expiring Soon" Warning Status
 
 **Source:** product idea — reported 2026-08-31; surfaced during status hierarchy review
-**Status:** captured · not scheduled
-**Earliest sensible slot:** next available milestone after v1.0 foundation is stable
+**Status:** captured · **targeted for v1.2**
+**Earliest sensible slot:** v1.2 milestone
 
 **What:** Add a new `AutoStatus` value `ExpiringSoon` that fires when a medicine is within a configurable warning window (default 7 days) of either its `expiryDate` or its PAO end date (`openedDate + pao`). The status sits between `Opened` and `Expired` / `ExceededOpenPeriod` in priority — it replaces `Opened` when the warning window is active.
 
@@ -400,3 +375,11 @@ The warning window is user-configurable via a Settings value (stored in Dexie or
 - All callers of `calculateStatus()` (aggregation, list views, dashboard) pass the user setting through — or read it from a shared hook.
 - Filter chips and status badge colors need updating to include the new status.
 - Tests in `expiry.test.ts` need cases: exactly at boundary, one day inside, one day outside, PAO-triggered vs expiry-triggered.
+
+---
+
+## Rejected
+
+### B-006 · Per-Medicine Change History / Audit Log
+
+**Removed:** 2026-08-31 — fully delivered in v1.1 (`history` table + `historyOps.ts` + medicine detail history view).

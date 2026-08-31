@@ -4,6 +4,7 @@
 
 - ✅ **v1.0 — PWA Foundation, Inventory, Search, Data Sync** — Phases 1-3 (shipped 2026-07-13)
 - ✅ **v1.1 — Catalog + Stock Model** — Phases 4-6 (shipped 2026-08-31)
+- 🔜 **v1.2 — Polish, UX & i18n** — Phases 7-11 (planned)
 
 ## Phases
 
@@ -28,3 +29,12 @@ Details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 </details>
+
+## Active Milestone — v1.2: Polish, UX & i18n
+
+- [ ] Phase 7: CSV UX improvements (B-004 auto-mapping, B-005 column labels, B-013 version display)
+- [ ] Phase 8: Expiring Soon status (B-014)
+- [ ] Phase 9: Medicine name autocomplete (B-001)
+- [ ] Phase 10: Polish language support / i18n (B-011)
+- [ ] Phase 11: Full location management — predefined editable (B-012)
+
