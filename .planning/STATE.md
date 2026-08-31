@@ -22,7 +22,7 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-29)
+See: .planning/PROJECT.md (updated 2026-08-31)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
 **Current focus:** v1.1 milestone complete — all 3 phases done
@@ -67,8 +67,8 @@ Last activity: 2026-08-31 — Phase 06 verification passed
 
 ## Session
 
-**Last session:** 2026-08-31T16:51:00Z
-**Stopped at:** Phase 06 verification complete
+**Last session:** 2026-08-31T17:30:00Z
+**Stopped at:** Phase 06 complete — transition done, v1.1 milestone ready to close
 **Resume file:** None
 
 ## Performance Metrics
