@@ -25,7 +25,7 @@ current_phase_name: Backup & Restore
 See: .planning/PROJECT.md (updated 2026-08-31)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** v1.1 milestone complete — all 3 phases done
+**Current focus:** Planning next milestone (v1.2)
 
 ## Current Position
 
