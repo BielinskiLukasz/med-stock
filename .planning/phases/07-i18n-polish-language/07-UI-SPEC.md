@@ -1,7 +1,7 @@
 ---
 phase: 7
 slug: i18n-polish-language
-status: draft
+status: approved
 shadcn_initialized: true
 preset: base-nova
 created: 2026-08-31
@@ -228,14 +228,28 @@ Phase 7 implementation uses a custom `useTranslation()` hook backed by TypeScrip
 
 ## UI Considerations
 
-| Category | Element | Status | Resolution |
-|----------|---------|--------|-----------|
-| **language-switching** | Language toggle in BottomTabBar | ✅ covered | Flag emoji switches language immediately; no reload needed; localStorage persists choice |
-| **date-formatting** | All visible dates (cards, forms, history) | ✅ covered | `formatDate()` utility applies locale formatting at render time; stored DB values unchanged |
-| **string-coverage** | All UI-defined strings | 🧪 backstop | Translation dictionaries must have complete key coverage for both languages; typings enforce this, but execution proof needed at verify time |
-| **rtl-support** | Right-to-left layout | ⚠ unresolved | Polish is LTR; no RTL support needed for Phase 7; deferred if multi-language expansion planned |
-| **long-text** | Translated UI strings | 🧪 backstop | Polish strings generally longer than English (e.g., "Dodaj lek" vs "Add medicine"); UI layout must not break on longer text; form labels may wrap; buttons may expand — test with Polish text in production |
-| **pluralization** | Quantity display (e.g., "1 tablet" vs "2 tablets") | ⚠ unresolved | Planner to define pluralization rules per language; Polish has complex plural forms (1, 2-4, 5+); deferred to planner unless simplified to basic en/pl pair rule |
+<!-- Probe-verified by gsd-ui-phase workflow (ui-consideration-probe). Format read by /gsd-plan-phase lift rule. -->
+
+**Explicit truths** (resolved — verification: explicit):
+
+- "EN: `formatDate(dateString, 'en')` returns stored `YYYY-MM-DD` string unchanged; PL: `formatDate(dateString, 'pl')` returns `DD.MM.YYYY` via string split — no `Intl.DateTimeFormat`"
+- "formatDate(null, lang) returns `t('dates.noExpiry')` — `'No expiry'` (EN) / `'Bez daty ważności'` (PL); translation key `dates.noExpiry` must be present in both language dicts"
+- "3 empty-state variants defined with EN+PL heading + body: no-medicines (`'No medicines yet'`/`'Brak leków'`), no-results (`'No matches'`/`'Brak wyników'`), no-stock (`'No stock'`/`'Brak zapasu'`)"
+- "Polish strings are longer than English; button containers expand, form labels wrap — layout must not clip or truncate translated text"
+
+**Backstops** (resolved — verification: backstop):
+
+- { statement: "Language toggle renders 🇬🇧 (EN active) or 🇵🇱 (PL active) in BottomTabBar rightmost slot with ≥44px touch target", verification: backstop }
+- { statement: "Language toggle emoji fits within existing BottomTabBar tab-width constraints without displacing other tabs", verification: backstop }
+- { statement: "Polish translations of all 6 status labels (Active/Expired/Opened/ExceededOpenPeriod/ManualActive/ManualExpired) do not overflow or break StatusBadge layout", verification: backstop }
+- { statement: "Missing translation key (TypeScript-prevented in normal flow) falls back to key name string — visibly wrong, not silently empty", verification: backstop }
+- { statement: "Polish empty-state body copy reflows acceptably on narrow mobile screens without overflow", verification: backstop }
+- { statement: "Polish form labels, button text, and tab labels accommodate text wrapping or container expansion on narrow mobile screens", verification: backstop }
+
+**Unresolved** (planner must treat as assumptions):
+
+- ⚠ unresolved — RTL layout: Polish is LTR; no RTL support needed for Phase 7; defer if multi-language expansion is planned
+- ⚠ unresolved — Pluralization: Polish has complex plural forms (1, 2-4, 5+); planner must define the pluralization rule for quantity display (simplified singular, or full Polish plural grammar)
 
 ---
 
@@ -251,14 +265,14 @@ Phase 7 implementation uses a custom `useTranslation()` hook backed by TypeScrip
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved — 2026-08-31
 
 ---
 
