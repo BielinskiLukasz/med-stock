@@ -2,8 +2,8 @@
 
 Ideas and scope items captured outside the active roadmap. Anything here is *not* in v1 — it has either been deferred by explicit decision, surfaced during UAT, or earmarked for a later milestone. Items graduate to a `ROADMAP.md` phase when picked up (`/gsd-review-backlog` to promote, `/gsd-phase add` to materialize).
 
-Last updated: 2026-08-31 (B-006 removed — delivered in v1.1; B-001, B-004, B-005, B-013, B-014 promoted to v1.2)
-Last assigned ID: **B-014** — next new item must be **B-015**
+Last updated: 2026-08-31 (B-015 added and promoted to v1.2 Phase 11)
+Last assigned ID: **B-015** — next new item must be **B-016**
 
 ---
 
@@ -375,6 +375,26 @@ The warning window is user-configurable via a Settings value (stored in Dexie or
 - All callers of `calculateStatus()` (aggregation, list views, dashboard) pass the user setting through — or read it from a shared hook.
 - Filter chips and status badge colors need updating to include the new status.
 - Tests in `expiry.test.ts` need cases: exactly at boundary, one day inside, one day outside, PAO-triggered vs expiry-triggered.
+
+---
+
+### B-015 · Pack Count Display — Implicit Single Box
+
+**Source:** product idea — reported 2026-08-31 during v1.2 milestone planning
+**Status:** captured · **promoted to v1.2 Phase 11**
+**Earliest sensible slot:** v1.2 milestone (alongside B-001 in Phase 11)
+
+**What:** When pack count is 1 or unset (null/empty), treat it as the implicit default — no box-count prefix is shown in the UI. Quantity displays as plain value (e.g., "20 tablets"). Only when pack count ≥ 2 does the format switch to "N boxes × qty" (e.g., "2 boxes × 20 tablets"). The add/edit form communicates this default via placeholder or helper label.
+
+**Why:** Showing "1 box × 20 tablets" is redundant noise — a single box is the common case. Suppressing it makes the display cleaner for the majority of entries while keeping the multi-pack format meaningful when it matters.
+
+**Applies to:** Medicine list aggregate row (qty badge), stock cards in detail view, quantity label in add/edit form, pack count field placeholder.
+
+**Implementation notes:**
+- A utility like `formatQty(quantity, packCount)` returns `"${quantity}"` when `packCount <= 1` or `null`, and `"${packCount} boxes × ${quantity}"` otherwise.
+- Caller sites: `MedicineListRow`, stock entry cards in `MedicineDetail`, form quantity label in `AddStockForm`/`EditStockForm`.
+- Pack count field placeholder: `"1 (default)"` or a helper text "Leave empty for a single box."
+- No schema or Dexie changes needed — `packCount: null` continues to mean 1 box everywhere.
 
 ---
 
