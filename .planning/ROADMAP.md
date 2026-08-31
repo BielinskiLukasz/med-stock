@@ -32,9 +32,9 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ## Active Milestone — v1.2: Polish, UX & i18n
 
-- [ ] Phase 7: CSV UX improvements (B-004 auto-mapping, B-005 column labels, B-013 version display)
-- [ ] Phase 8: Expiring Soon status (B-014)
-- [ ] Phase 9: Medicine name autocomplete (B-001)
-- [ ] Phase 10: Polish language support / i18n (B-011)
-- [ ] Phase 11: Full location management — predefined editable (B-012)
+- [ ] Phase 7: Polish language support / i18n (B-011)
+- [ ] Phase 8: Full location management — predefined editable (B-012)
+- [ ] Phase 9: CSV UX improvements (B-004 auto-mapping, B-005 column labels, B-013 version display)
+- [ ] Phase 10: Expiring Soon status (B-014)
+- [ ] Phase 11: Medicine name autocomplete (B-001)
 
