@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react'
 import { importFromJSON, BackupSchema } from '@/lib/dataOps'
-import type { BackupData } from '@/lib/dataOps'
 import { db } from '@/lib/db'
 import {
   AlertDialog,
@@ -17,7 +16,7 @@ import { toast } from 'sonner'
 
 export function ImportJSONSection() {
   const [dialogOpen, setDialogOpen] = useState(false)
-  const [pendingData, setPendingData] = useState<BackupData | null>(null)
+  const [pendingRaw, setPendingRaw] = useState<unknown | null>(null)
   const [medicineCount, setMedicineCount] = useState(0)
   const [locationCount, setLocationCount] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -42,9 +41,9 @@ export function ImportJSONSection() {
         return
       }
 
-      // Zod schema validation before touching the DB (D-50)
-      const result = BackupSchema.safeParse(parsed)
-      if (!result.success) {
+      // Zod schema validation before showing the dialog (D-50); passes for both old and new format
+      const schemaCheck = BackupSchema.safeParse(parsed)
+      if (!schemaCheck.success) {
         toast.error('Failed to import: Schema validation failed')
         return
       }
@@ -55,7 +54,7 @@ export function ImportJSONSection() {
         db.locations.count(),
       ])
 
-      setPendingData(result.data)
+      setPendingRaw(parsed)
       setMedicineCount(mCount)
       setLocationCount(lCount)
       setDialogOpen(true)
@@ -65,16 +64,24 @@ export function ImportJSONSection() {
   }
 
   async function handleConfirmImport() {
-    if (!pendingData) return
+    if (!pendingRaw) return
 
     setLoading(true)
     try {
-      const result = await importFromJSON(pendingData)
-      // D-49: exact success toast copy
-      toast.success(
-        'Imported: ' + result.medicineCount + ' medicines, ' + result.locationCount + ' locations'
-      )
-      setPendingData(null)
+      const result = await importFromJSON(pendingRaw)
+      if (result.isLegacyFormat) {
+        // D-02: old-format toast shows medicine count and inferred catalog count
+        toast.success(
+          'Imported ' + result.medicineCount + ' medicines — ' +
+          result.catalogCount + ' catalog entries created from v1.0 backup.'
+        )
+      } else {
+        // D-49: new-format toast
+        toast.success(
+          'Imported: ' + result.medicineCount + ' medicines, ' + result.locationCount + ' locations'
+        )
+      }
+      setPendingRaw(null)
     } catch (err) {
       toast.error('Failed to import: ' + (err instanceof Error ? err.message : String(err)))
     } finally {
