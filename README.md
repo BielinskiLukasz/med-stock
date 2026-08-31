@@ -45,6 +45,10 @@ Two people in a household buy medicines independently. Stock accumulates across 
 - CSV bulk import with interactive column mapping and preview
 - Step-by-step "Sync Now" guide for sharing inventory between devices via a shared OneDrive folder
 
+### Phase 4 — Database Migration & Schema v4 *(v1.1)*
+- Automatic one-time migration on first open after upgrade — existing medicines are split into catalog entries (one per unique medicine name) and stock entries (one per physical package)
+- Duplicate medicine names deduplicated by case-insensitive match; no data loss
+
 ### Phase 5 — Catalog & Stock Management *(v1.1)*
 - Catalog/stock data model: one catalog entry per medicine identity, multiple stock entries per physical package
 - Aggregate medicine cards: worst-case status and total quantity rolled up per catalog entry
@@ -161,6 +165,7 @@ med-stock/
 | 1 — PWA Foundation & Inventory CRUD | Installable offline app with full add/edit/delete and expiry calculation | Complete |
 | 2 — Search, Dashboard & Audit | Pharmacy-use-case search, expiry dashboard, trash bin, change history | Complete |
 | 3 — Data & Household Sync | JSON backup, CSV import, OneDrive shared-folder sync flow | Complete |
+| 4 — Database Migration & Schema v4 | Two-layer catalog + stock schema, automatic v1.0 data migration with deduplication | Complete |
 | 5 — Catalog & Stock Management | Catalog/stock split, aggregate cards, stock-level actions, 3-step add flow | Complete |
 | 6 — Backup & Restore v2 | v1.1 JSON export/import with catalog table; backward-compatible legacy import | Complete |
 | v1.2 backlog | Last-write-wins JSON merge, interactive sync flow, CSV auto-mapping | Backlog |
