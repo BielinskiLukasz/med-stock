@@ -1,7 +1,7 @@
 # MedStock
 
-![Status](https://img.shields.io/badge/status-v1.1_in_progress-yellow)
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Status](https://img.shields.io/badge/status-v1.1_shipped-brightgreen)
+![Version](https://img.shields.io/badge/version-1.1.0-blue)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![PWA](https://img.shields.io/badge/PWA-offline--first-5A0FC8?logo=pwa&logoColor=white)
@@ -10,7 +10,7 @@
 A privacy-first Progressive Web App for managing a household medicine inventory.  
 No backend. No accounts. No cloud. Works fully offline on any device.
 
-> **Status:** v1.0 shipped (2026-07-13) — all three phases complete. v1.1 (Phase 5 — catalog & stock management) in UAT.
+> **Status:** v1.1 shipped (2026-08-31) — catalog + stock model complete. v1.0 shipped 2026-07-13.
 
 ---
 
@@ -45,12 +45,18 @@ Two people in a household buy medicines independently. Stock accumulates across 
 - CSV bulk import with interactive column mapping and preview
 - Step-by-step "Sync Now" guide for sharing inventory between devices via a shared OneDrive folder
 
-### Phase 5 — Catalog & Stock Management *(v1.1, in UAT)*
+### Phase 5 — Catalog & Stock Management *(v1.1)*
 - Catalog/stock data model: one catalog entry per medicine identity, multiple stock entries per physical package
-- Aggregate medicine cards: nearest-expiry status and total quantity rolled up per catalog entry
+- Aggregate medicine cards: worst-case status and total quantity rolled up per catalog entry
 - 3-step add flow: select or create a catalog entry, then enter stock details
-- Per-stock edit, move, and delete actions from the detail view
+- Per-stock edit, move/split, and delete actions from the detail view
 - Catalog rename propagates to all associated stock entries
+- Delete catalog entry with safety guard (requires all stock deleted first)
+
+### Phase 6 — Backup & Restore v2 *(v1.1)*
+- JSON export includes `medicine_catalog` table alongside stock entries
+- JSON import of v1.1 backups restores catalog and stock in a single atomic transaction
+- Backward-compatible import of pre-v1.1 backups — catalog entries inferred automatically from stock name/category fields
 
 ---
 
@@ -155,8 +161,9 @@ med-stock/
 | 1 — PWA Foundation & Inventory CRUD | Installable offline app with full add/edit/delete and expiry calculation | Complete |
 | 2 — Search, Dashboard & Audit | Pharmacy-use-case search, expiry dashboard, trash bin, change history | Complete |
 | 3 — Data & Household Sync | JSON backup, CSV import, OneDrive shared-folder sync flow | Complete |
-| 5 — Catalog & Stock Management | Catalog/stock split, aggregate cards, stock-level actions, 3-step add flow | In UAT |
-| v1.1 backlog | Last-write-wins JSON merge, interactive sync flow, CSV auto-mapping | Backlog |
+| 5 — Catalog & Stock Management | Catalog/stock split, aggregate cards, stock-level actions, 3-step add flow | Complete |
+| 6 — Backup & Restore v2 | v1.1 JSON export/import with catalog table; backward-compatible legacy import | Complete |
+| v1.2 backlog | Last-write-wins JSON merge, interactive sync flow, CSV auto-mapping | Backlog |
 
 ---
 
