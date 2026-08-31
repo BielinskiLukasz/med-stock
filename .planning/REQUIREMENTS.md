@@ -8,10 +8,10 @@
 ### i18n
 
 - [x] **I18N-01**: User can switch app language between English and Polish via a persistent toggle
-- [ ] **I18N-02**: All UI strings (labels, placeholders, toasts, error messages, status names, screen titles) display in the active language
+- [x] **I18N-02**: All UI strings (labels, placeholders, toasts, error messages, status names, screen titles) display in the active language
 - [x] **I18N-03**: Selected language persists in localStorage and applies on next load without a full reload
-- [ ] **I18N-04**: Built-in category names and predefined location names display in the active language (stored values unchanged)
-- [ ] **I18N-05**: Dates display in locale-appropriate format (PL: DD.MM.YYYY, EN: YYYY-MM-DD)
+- [x] **I18N-04**: Built-in category names and predefined location names display in the active language (stored values unchanged)
+- [x] **I18N-05**: Dates display in locale-appropriate format (PL: DD.MM.YYYY, EN: YYYY-MM-DD)
 
 ### Locations
 
@@ -66,10 +66,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | I18N-01 | Phase 7 | Complete |
-| I18N-02 | Phase 7 | Pending |
+| I18N-02 | Phase 7 | Complete |
 | I18N-03 | Phase 7 | Complete |
-| I18N-04 | Phase 7 | Pending |
-| I18N-05 | Phase 7 | Pending |
+| I18N-04 | Phase 7 | Complete |
+| I18N-05 | Phase 7 | Complete |
 | LOC-01 | Phase 8 | Pending |
 | LOC-02 | Phase 8 | Pending |
 | LOC-03 | Phase 8 | Pending |
