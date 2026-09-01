@@ -56,12 +56,16 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 **Plans**: 6 plans
 
 Plans:
+**Wave 1**
 
 - [x] 07-01-PLAN.md — i18n module, LanguageProvider, useLang, formatDate, App.tsx wrapping, BottomTabBar toggle (Wave 1)
+- [ ] 07-05-PLAN.md — Gap closure: extend i18n dictionary (LOCATION_KEYS, form.*, catalog.*, data.sync*, csv.*, toasts) (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [x] 07-02-PLAN.md — Remove STATUS_LABELS, translate StatusBadge, FilterChips, FilterBottomSheet, MedicineCard, MedicineCardAggregate (Wave 2)
 - [x] 07-03-PLAN.md — Translate form components, sheets, ChangeHistory, HistoryEntry (Wave 2)
 - [x] 07-04-PLAN.md — Translate all route screens and remaining utility components (Wave 2)
-- [ ] 07-05-PLAN.md — Gap closure: extend i18n dictionary (LOCATION_KEYS, form.*, catalog.*, data.sync*, csv.*, toasts) (Wave 1)
 - [ ] 07-06-PLAN.md — Gap closure: wire FilterChips, MedicineCard, MoveStockSheet, CatalogAutocomplete, SyncInstructions, CSVPreview, ExportSection, ImportCSVSection (Wave 2)
 
 **UI hint**: yes
