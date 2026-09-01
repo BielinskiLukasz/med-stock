@@ -4,17 +4,17 @@ milestone: v1.2
 milestone_name: Polish, UX & i18n
 current_phase: 07
 current_phase_name: i18n / Polish Language
-status: executing
+status: verifying
 stopped_at: Completed 07-03-PLAN.md
-last_updated: "2026-08-31T23:25:17.453Z"
+last_updated: "2026-09-01T07:25:55.568Z"
 last_activity: 2026-09-01
 last_activity_desc: Phase 07 execution started
-state_head: bacd73ba57ccc2c08507152ba9f184fc069d332c
+state_head: 0b36d9b9f8655124f5b1a31024af1cbc0fb16432
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-08-31)
 
 Phase: 07 (i18n / Polish Language) — EXECUTING
 Plan: 4 of 4
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-01 — Phase 07 execution started
 
 ## v1.0 Summary
@@ -96,6 +96,7 @@ Last activity: 2026-09-01 — Phase 07 execution started
 | Phase 06 P02 | 16 | 2 tasks | 3 files |
 | Phase 07 P01 | 13 | 2 tasks | 9 files |
 | Phase 07-i18n-polish-language P03 | 9 | 2 tasks | 8 files |
+| Phase 07-i18n-polish-language P04 | 45min | 2 tasks | 15 files |
 
 ## Decisions
 
@@ -117,6 +118,9 @@ Last activity: 2026-09-01 — Phase 07 execution started
 - [Phase 07]: D-01/D-02/D-09/D-10/D-11 applied: custom React Context i18n with TypeScript-typed EN/PL dicts, LanguageProvider outermost in App.tsx, flag-emoji toggle in BottomTabBar, localStorage persistence, formatDate string-split
 - [Phase 07]: D-05/D-08 applied in form components: SelectItem value props preserved as canonical English; only display labels translated via t()
 - [Phase 07]: HistoryEntry formatEntry refactored as pure function accepting (t, lang) — hooks-in-helpers antipattern avoided
+- [Phase 07]: TranslationDict extended atomically (types.ts + en.ts + pl.ts) before modifying route files to keep tsc error-free throughout incremental translation
+- [Phase 07]: ImportJSONSection dialog body left in English due to dynamic count interpolation — t() has no interpolation support
+- [Phase 07]: SearchBar preserves optional placeholder prop with ?? fallback to t() so existing callers are unaffected
 
 ## Operator Next Steps
 
