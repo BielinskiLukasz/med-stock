@@ -206,6 +206,15 @@ export type TranslationDict = {
     across: string
     locations: string
   }
+  detail: {
+    notFound: string
+    backToList: string
+    stockEntries: string
+    cannotDeleteTitle: string
+    cannotDeleteBody: string
+    deleteCatalogTitle: string
+    deleteCatalogBody: string
+  }
 }
 
 // ─── Lookup Records ──────────────────────────────────────────────────────────

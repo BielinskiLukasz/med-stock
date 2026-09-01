@@ -13,8 +13,10 @@ import { FilterChips } from '@/components/FilterChips'
 import { MedicineCardAggregate } from '@/components/MedicineCardAggregate'
 import { useUIStore, useActiveFilterCount, useShallow } from '@/stores/uiStore'
 import { computeCatalogAggregate } from '@/lib/aggregation'
+import { useLang } from '@/i18n'
 
 export function MedicineList() {
+  const { t } = useLang()
   const [searchQuery, setSearchQuery] = useState('')
 
   // Subscribe to filter/sort state — use useShallow for arrays (Pitfall 4)
@@ -129,7 +131,7 @@ export function MedicineList() {
   if (catalogs === undefined || activeStock === undefined) {
     return (
       <div className="flex items-center justify-center h-full p-8">
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500">{t('medicines.loading')}</p>
       </div>
     )
   }
@@ -141,7 +143,7 @@ export function MedicineList() {
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Search medicines by name…"
+          placeholder={t('medicines.searchPlaceholder')}
         />
       </div>
 
@@ -150,7 +152,7 @@ export function MedicineList() {
 
       {/* Page header with filter icon */}
       <div className="flex justify-between items-center px-4 py-3">
-        <h1 className="text-xl font-semibold">Medicines</h1>
+        <h1 className="text-xl font-semibold">{t('medicines.title')}</h1>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setFilterSheetOpen(true)}
@@ -166,7 +168,7 @@ export function MedicineList() {
             )}
           </button>
           <Button asChild size="sm">
-            <Link to="/medicines/new">Add</Link>
+            <Link to="/medicines/new">{t('medicines.addButton')}</Link>
           </Button>
         </div>
       </div>
@@ -174,22 +176,23 @@ export function MedicineList() {
       {/* Empty state: no medicines at all (initial state) */}
       {(filtered ?? []).length === 0 && searchQuery === '' && filterCount === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 p-8 text-center">
-          <p className="text-gray-500">
-            No medicines yet. Tap + to add your first medicine.
-          </p>
+          <p className="text-gray-500">{t('medicines.emptyHeading')}</p>
+          <p className="text-gray-400 text-sm">{t('medicines.emptyBody')}</p>
           <Button asChild>
-            <Link to="/medicines/new">Add Medicine</Link>
+            <Link to="/medicines/new">{t('medicines.addButton')}</Link>
           </Button>
         </div>
       ) : (filtered ?? []).length === 0 && searchQuery !== '' ? (
         /* Empty state: search returned no results */
         <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
-          <p className="text-gray-500">No medicines match your search.</p>
+          <p className="text-gray-500">{t('medicines.noResultsHeading')}</p>
+          <p className="text-gray-400 text-sm">{t('medicines.noResultsBody')}</p>
         </div>
       ) : (filtered ?? []).length === 0 ? (
         /* Empty state: filters returned no results */
         <div className="flex flex-col items-center justify-center gap-2 p-8 text-center">
-          <p className="text-gray-500">No medicines match your filters.</p>
+          <p className="text-gray-500">{t('medicines.noResultsHeading')}</p>
+          <p className="text-gray-400 text-sm">{t('medicines.noResultsBody')}</p>
         </div>
       ) : (
         /* D-01: Search results render catalog cards with aggregate data */

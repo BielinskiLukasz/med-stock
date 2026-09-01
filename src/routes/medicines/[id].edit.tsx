@@ -4,8 +4,10 @@ import { toast } from 'sonner'
 import { db } from '@/lib/db'
 import { updateMedicineWithHistory } from '@/lib/historyOps'
 import { MedicineForm, type MedicineFormData } from '@/components/MedicineForm'
+import { useLang } from '@/i18n'
 
 export function MedicineEdit() {
+  const { t } = useLang()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
 
@@ -34,19 +36,19 @@ export function MedicineEdit() {
         quantityUnit: data.quantityUnit ?? null,
         notes: data.notes ?? null,
       }, catalog.name)
-      toast.success('Medicine updated')
+      toast.success(t('toasts.updated'))
       void navigate(`/medicines/${id}`)
     } catch (err) {
       // T-03-04: never expose raw Dexie errors to UI
       console.error('Failed to update medicine:', err)
-      toast.error('Failed to save. Please try again.')
+      toast.error(t('toasts.saveFailed'))
     }
   }
 
   if (medicine === undefined || catalog === undefined) {
     return (
       <div className="flex items-center justify-center h-full p-8">
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500">{t('common.loading')}</p>
       </div>
     )
   }
@@ -54,7 +56,7 @@ export function MedicineEdit() {
   if (medicine === null) {
     return (
       <div className="p-4">
-        <p className="text-gray-500">Medicine not found.</p>
+        <p className="text-gray-500">{t('detail.notFound')}</p>
       </div>
     )
   }
@@ -75,11 +77,11 @@ export function MedicineEdit() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold p-4">Edit Medicine</h1>
+      <h1 className="text-xl font-semibold p-4">{t('form.editMedicine')}</h1>
       <MedicineForm
         defaultValues={defaultValues}
         onSubmit={handleSubmit}
-        submitLabel="Save Changes"
+        submitLabel={t('form.saveChanges')}
       />
     </div>
   )

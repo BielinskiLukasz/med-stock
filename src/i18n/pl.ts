@@ -204,4 +204,13 @@ export const pl: TranslationDict = {
     across: 'w',
     locations: 'lokalizacjach',
   },
+  detail: {
+    notFound: 'Nie znaleziono leku.',
+    backToList: '← Powrót do listy',
+    stockEntries: 'Pozycje magazynowe',
+    cannotDeleteTitle: 'Nie można usunąć leku',
+    cannotDeleteBody: 'Ten lek ma aktywne pozycje magazynowe. Przenieś wszystkie pozycje do kosza przed usunięciem leku.',
+    deleteCatalogTitle: 'Usunąć lek?',
+    deleteCatalogBody: 'Spowoduje to trwałe usunięcie wpisu. Tej operacji nie można cofnąć.',
+  },
 }

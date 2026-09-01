@@ -204,4 +204,13 @@ export const en: TranslationDict = {
     across: 'across',
     locations: 'locations',
   },
+  detail: {
+    notFound: 'Catalog not found.',
+    backToList: '← Back to list',
+    stockEntries: 'Stock entries',
+    cannotDeleteTitle: 'Cannot delete catalog',
+    cannotDeleteBody: 'This catalog has active stock entries. Move all stock entries to Trash before deleting the catalog.',
+    deleteCatalogTitle: 'Delete catalog?',
+    deleteCatalogBody: 'This permanently removes the catalog entry. This action cannot be undone.',
+  },
 }

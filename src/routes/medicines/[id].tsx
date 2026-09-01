@@ -27,8 +27,11 @@ import { StockEditSheet } from '@/components/StockEditSheet'
 import { MoveStockSheet } from '@/components/MoveStockSheet'
 import { ChangeHistory } from '@/components/ChangeHistory'
 import type { CatalogFormData } from '@/components/CatalogFields'
+import { useLang, CATEGORY_KEYS, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
+import { formatDate } from '@/lib/utils'
 
 export function MedicineDetail() {
+  const { t, lang } = useLang()
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const catalogId = Number(id)
@@ -99,13 +102,13 @@ export function MedicineDetail() {
       notes: data.notes ?? null,
       updatedAt: new Date().toISOString(),
     })
-    toast.success('Catalog updated')
+    toast.success(t('toasts.updated'))
   }
 
   async function handleStockEditSave(changes: Partial<Medicine>) {
     if (!selectedStockForEdit || !catalog) return
     await editStockEntry(selectedStockForEdit.id, selectedStockForEdit, changes, catalog.name)
-    toast.success('Stock updated')
+    toast.success(t('toasts.updated'))
   }
 
   async function handleDeleteConfirm() {
@@ -117,24 +120,24 @@ export function MedicineDetail() {
       void navigate('/medicines')
     } catch (err) {
       console.error('Failed to delete stock entry:', err)
-      toast.error('Failed to delete. Please try again.')
+      toast.error(t('toasts.deleteFailed'))
     }
   }
 
   async function handleMoveSubmit(quantityToMove: number, targetLocation: string | null, packCountToMove?: number) {
     if (!selectedStockForMove || !catalog) return
     await moveStock(selectedStockForMove.id, quantityToMove, targetLocation, selectedStockForMove, catalog.name, packCountToMove)
-    toast.success('Stock moved')
+    toast.success(t('toasts.moved'))
   }
 
   async function handleCatalogDeleteConfirm() {
     try {
       await deleteCatalogEntry(catalogId)
-      toast.success('Catalog deleted')
+      toast.success(t('toasts.catalogDeleted'))
       void navigate('/medicines')
     } catch (err) {
       console.error('Failed to delete catalog:', err)
-      toast.error('Failed to delete catalog. Please try again.')
+      toast.error(t('toasts.deleteFailed'))
     }
   }
 
@@ -203,11 +206,10 @@ export function MedicineDetail() {
           )
         }
       })
-      toast.success('Box opened')
+      toast.success(t('toasts.boxOpened'))
     } catch (err) {
       console.error('Failed to open box:', err)
-      const msg = err instanceof Error ? err.message : 'Failed to open box. Please try again.'
-      toast.error(msg)
+      toast.error(t('toasts.saveFailed'))
     }
   }
 
@@ -215,7 +217,7 @@ export function MedicineDetail() {
   if (catalog === undefined || stockEntries === undefined) {
     return (
       <div className="flex items-center justify-center h-full p-8">
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500">{t('common.loading')}</p>
       </div>
     )
   }
@@ -224,9 +226,9 @@ export function MedicineDetail() {
   if (catalog === null) {
     return (
       <div className="p-4">
-        <p className="text-gray-500">Catalog not found.</p>
+        <p className="text-gray-500">{t('detail.notFound')}</p>
         <Button asChild className="mt-4">
-          <Link to="/medicines">Back to list</Link>
+          <Link to="/medicines">{t('detail.backToList')}</Link>
         </Button>
       </div>
     )
@@ -244,7 +246,9 @@ export function MedicineDetail() {
             {catalog.name}
           </h1>
           {catalog.category && (
-            <p className="text-sm text-gray-500 mt-1">{catalog.category}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              {CATEGORY_KEYS[catalog.category] ? t(CATEGORY_KEYS[catalog.category]) : catalog.category}
+            </p>
           )}
         </div>
         <div className="flex items-center gap-1">
@@ -270,9 +274,9 @@ export function MedicineDetail() {
 
       {/* Stock Entries List */}
       <div className="space-y-3">
-        <h2 className="text-sm font-medium text-gray-500">Stock Entries</h2>
+        <h2 className="text-sm font-medium text-gray-500">{t('detail.stockEntries')}</h2>
         {filteredStockEntries.length === 0 ? (
-          <p className="text-sm text-gray-500 py-4">No stock</p>
+          <p className="text-sm text-gray-500 py-4">{t('medicines.noStockHeading')}</p>
         ) : (
           <div className="space-y-3">
             {filteredStockEntries.map(stock => {
@@ -284,21 +288,23 @@ export function MedicineDetail() {
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="text-sm font-medium text-gray-900">
                           {stock.packCount && stock.packCount > 0
-                            ? `${stock.packCount} ${stock.packCount === 1 ? 'box' : 'boxes'} × ${stock.quantity} ${stock.quantityUnit || 'units'}`
-                            : `${stock.quantity} ${stock.quantityUnit || 'units'}`}
+                            ? `${stock.packCount} ${t(stock.packCount === 1 ? 'units.box' : 'units.boxes')} × ${stock.quantity} ${t(UNIT_KEYS[stock.quantityUnit ?? ''] ?? 'units.units')}`
+                            : `${stock.quantity} ${t(UNIT_KEYS[stock.quantityUnit ?? ''] ?? 'units.units')}`}
                         </p>
                         <span className="text-xs text-gray-500">
-                          {stock.location ?? 'Other'}
+                          {stock.location !== null
+                            ? (LOCATION_KEYS[stock.location] ? t(LOCATION_KEYS[stock.location]) : stock.location)
+                            : t('locationNames.other')}
                         </span>
                       </div>
                       {stock.expiryDate && (
                         <p className="text-xs text-gray-500 mt-1">
-                          Expires: {stock.expiryDate}
+                          {t('dates.expires')}: {formatDate(stock.expiryDate, lang)}
                         </p>
                       )}
                       {stock.openedDate && (
                         <p className="text-xs text-gray-500">
-                          Opened: {stock.openedDate}
+                          {t('dates.opened')}: {formatDate(stock.openedDate, lang)}
                         </p>
                       )}
                     </div>
@@ -328,7 +334,7 @@ export function MedicineDetail() {
                         onClick={() => void handleOpenBoxClick(stock)}
                       >
                         <Package className="h-3 w-3 mr-1" />
-                        Open box
+                        {t('form.openBox')}
                       </Button>
                     )}
                     <Button
@@ -341,7 +347,7 @@ export function MedicineDetail() {
                       }}
                     >
                       <ArrowRightLeft className="h-3 w-3 mr-1" />
-                      Move/Split
+                      {t('form.moveStock')}
                     </Button>
                     <Button
                       variant="outline"
@@ -353,7 +359,7 @@ export function MedicineDetail() {
                       }}
                     >
                       <Trash2 className="h-3 w-3 mr-1" />
-                      Delete
+                      {t('form.delete')}
                     </Button>
                   </div>
                   <ChangeHistory medicineId={stock.id} />
@@ -367,7 +373,7 @@ export function MedicineDetail() {
       {/* Catalog Notes */}
       {catalog.notes && (
         <div className="space-y-2">
-          <h2 className="text-sm font-medium text-gray-500">Notes</h2>
+          <h2 className="text-sm font-medium text-gray-500">{t('form.notes')}</h2>
           <p className="text-sm text-gray-900 whitespace-pre-wrap">{catalog.notes}</p>
         </div>
       )}
@@ -375,7 +381,7 @@ export function MedicineDetail() {
       {/* Back link */}
       <div className="pt-2">
         <Link to="/medicines" className="text-sm text-blue-600 hover:underline">
-          ← Back to list
+          {t('detail.backToList')}
         </Link>
       </div>
 
@@ -417,20 +423,20 @@ export function MedicineDetail() {
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete stock entry?</AlertDialogTitle>
+            <AlertDialogTitle>{t('form.deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will move the entry to Trash. You can restore it later.
+              {t('form.deleteConfirmBody')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setSelectedStockForDelete(null)}>
-              Cancel
+              {t('form.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => void handleDeleteConfirm()}
             >
-              Move to Trash
+              {t('form.moveToTrash')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -442,28 +448,28 @@ export function MedicineDetail() {
           <AlertDialogHeader>
             {(stockEntries?.length ?? 0) > 0 ? (
               <>
-                <AlertDialogTitle>Cannot delete catalog</AlertDialogTitle>
+                <AlertDialogTitle>{t('detail.cannotDeleteTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This catalog has active stock entries that must be deleted first. Move all stock entries to Trash before deleting the catalog.
+                  {t('detail.cannotDeleteBody')}
                 </AlertDialogDescription>
               </>
             ) : (
               <>
-                <AlertDialogTitle>Delete catalog?</AlertDialogTitle>
+                <AlertDialogTitle>{t('detail.deleteCatalogTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This permanently removes the catalog entry. This action cannot be undone.
+                  {t('detail.deleteCatalogBody')}
                 </AlertDialogDescription>
               </>
             )}
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
             {(allStockCount ?? 1) === 0 && (
               <AlertDialogAction
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 onClick={() => void handleCatalogDeleteConfirm()}
               >
-                Delete
+                {t('form.delete')}
               </AlertDialogAction>
             )}
           </AlertDialogFooter>

@@ -12,10 +12,12 @@ import { Button } from '@/components/ui/button'
 import { CatalogAutocomplete } from '@/components/CatalogAutocomplete'
 import { CatalogFields, catalogSchema, type CatalogFormData } from '@/components/CatalogFields'
 import { StockFields, stockSchema, type StockFormData } from '@/components/StockFields'
+import { useLang, CATEGORY_KEYS } from '@/i18n'
 
 type Step = 'search' | 'create-catalog' | 'stock-form'
 
 export function MedicineNew() {
+  const { t } = useLang()
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('search')
   const [selectedCatalog, setSelectedCatalog] = useState<MedicineCatalog | null>(null)
@@ -66,11 +68,11 @@ export function MedicineNew() {
         setSelectedCatalog(newCatalog)
         setStep('stock-form')
       } else {
-        toast.error('Failed to load new catalog. Please try again.')
+        toast.error(t('toasts.saveFailed'))
       }
     } catch (err) {
       console.error('Failed to create catalog:', err)
-      toast.error('Failed to create medicine. Please try again.')
+      toast.error(t('toasts.saveFailed'))
     }
   }
 
@@ -98,7 +100,7 @@ export function MedicineNew() {
       void navigate(`/medicines/${selectedCatalog.id}`)
     } catch (err) {
       console.error('Failed to add stock:', err)
-      toast.error('Failed to save. Please try again.')
+      toast.error(t('toasts.saveFailed'))
     }
   }
 
@@ -118,9 +120,9 @@ export function MedicineNew() {
       {step === 'search' && (
         <div>
           <div className="flex items-center justify-between px-4 pt-4 pb-2">
-            <h1 className="text-xl font-semibold">Add Medicine</h1>
+            <h1 className="text-xl font-semibold">{t('form.addMedicine')}</h1>
             <Button variant="ghost" size="sm" onClick={handleCancel}>
-              Cancel
+              {t('form.cancel')}
             </Button>
           </div>
           <CatalogAutocomplete
@@ -142,9 +144,9 @@ export function MedicineNew() {
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <h1 className="text-xl font-semibold flex-1">Create Medicine</h1>
+            <h1 className="text-xl font-semibold flex-1">{t('form.addMedicine')}</h1>
             <Button variant="ghost" size="sm" onClick={handleCancel}>
-              Cancel
+              {t('form.cancel')}
             </Button>
           </div>
           <Form {...catalogForm}>
@@ -180,11 +182,15 @@ export function MedicineNew() {
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-semibold truncate">{selectedCatalog.name}</h1>
               {selectedCatalog.category && (
-                <p className="text-sm text-gray-500">{selectedCatalog.category}</p>
+                <p className="text-sm text-gray-500">
+                  {CATEGORY_KEYS[selectedCatalog.category]
+                    ? t(CATEGORY_KEYS[selectedCatalog.category])
+                    : selectedCatalog.category}
+                </p>
               )}
             </div>
             <Button variant="ghost" size="sm" onClick={handleCancel}>
-              Cancel
+              {t('form.cancel')}
             </Button>
           </div>
           <Form {...stockForm}>
