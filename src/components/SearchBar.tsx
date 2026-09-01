@@ -1,5 +1,6 @@
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { useLang } from '@/i18n'
 
 interface SearchBarProps {
   value: string
@@ -10,8 +11,10 @@ interface SearchBarProps {
 export function SearchBar({
   value,
   onChange,
-  placeholder = 'Search medicines by name…',
+  placeholder,
 }: SearchBarProps) {
+  const { t } = useLang()
+  const resolvedPlaceholder = placeholder ?? t('medicines.searchPlaceholder')
   return (
     <div className="relative flex items-center">
       <Input
@@ -19,7 +22,7 @@ export function SearchBar({
         name="medicine-search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
+        placeholder={resolvedPlaceholder}
         className="pr-8"
         autoComplete="off"
       />

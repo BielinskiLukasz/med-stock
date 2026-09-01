@@ -15,8 +15,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { useLang, LOCATION_KEYS } from '@/i18n'
 
 export function LocationsScreen() {
+  const { t } = useLang()
   const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
 
   const [showAddInput, setShowAddInput] = useState(false)
@@ -33,7 +35,7 @@ export function LocationsScreen() {
       setError(null)
     } catch (err) {
       console.error('Failed to add location:', err)
-      setError('Failed to add location. Name must not be empty.')
+      setError(t('locations.errorAdd'))
     }
   }
 
@@ -51,7 +53,7 @@ export function LocationsScreen() {
       setError(null)
     } catch (err) {
       console.error('Failed to rename location:', err)
-      setError('Failed to rename location. Name must not be empty.')
+      setError(t('locations.errorRename'))
     }
   }
 
@@ -61,15 +63,15 @@ export function LocationsScreen() {
       setError(null)
     } catch (err) {
       console.error('Failed to delete location:', err)
-      setError('Failed to delete location.')
+      setError(t('locations.errorDelete'))
     }
   }
 
-  if (!locations) return <div className="p-4">Loading...</div>
+  if (!locations) return <div className="p-4">{t('common.loading')}</div>
 
   return (
     <div className="p-4">
-      <h1 className="text-xl font-semibold mb-4">Locations</h1>
+      <h1 className="text-xl font-semibold mb-4">{t('locations.title')}</h1>
 
       {error && (
         <p className="text-sm text-red-600 mb-3">{error}</p>
@@ -83,17 +85,17 @@ export function LocationsScreen() {
             autoComplete="off"
             value={addValue}
             onChange={(e) => setAddValue(e.target.value)}
-            placeholder="Location name"
+            placeholder={t('locations.namePlaceholder')}
             autoFocus
             onKeyDown={(e) => { if (e.key === 'Enter') handleAdd() }}
           />
-          <Button onClick={handleAdd} size="sm">Add</Button>
+          <Button onClick={handleAdd} size="sm">{t('locations.add')}</Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => { setShowAddInput(false); setAddValue('') }}
           >
-            Cancel
+            {t('form.cancel')}
           </Button>
         </div>
       ) : (
@@ -103,7 +105,7 @@ export function LocationsScreen() {
           className="mb-4"
           onClick={() => { setShowAddInput(true); setError(null) }}
         >
-          Add location
+          {t('form.addLocation')}
         </Button>
       )}
 
@@ -118,18 +120,21 @@ export function LocationsScreen() {
                   autoFocus
                   onKeyDown={(e) => { if (e.key === 'Enter') handleRename(loc.id) }}
                 />
-                <Button size="sm" onClick={() => handleRename(loc.id)}>Save</Button>
+                <Button size="sm" onClick={() => handleRename(loc.id)}>{t('form.save')}</Button>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => { setEditingId(null); setEditValue('') }}
                 >
-                  Cancel
+                  {t('form.cancel')}
                 </Button>
               </div>
             ) : (
               <>
-                <span className="text-sm">{loc.name}</span>
+                {/* D-07: predefined names shown translated, user-created names shown as stored */}
+                <span className="text-sm">
+                  {LOCATION_KEYS[loc.name] ? t(LOCATION_KEYS[loc.name]) : loc.name}
+                </span>
                 {!loc.isDefault && (
                   <div className="flex gap-2 ml-2">
                     <Button
@@ -137,25 +142,25 @@ export function LocationsScreen() {
                       size="sm"
                       onClick={() => startEdit(loc.id, loc.name)}
                     >
-                      Edit
+                      {t('locations.edit')}
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                          Delete
+                          {t('form.delete')}
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete {loc.name}?</AlertDialogTitle>
+                          <AlertDialogTitle>{t('locations.deleteConfirmTitle')}</AlertDialogTitle>
                           <AlertDialogDescription>
-                            All medicines using this location will be moved to Other.
+                            {t('locations.deleteConfirmBody')}
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleDelete(loc.id)}>
-                            Delete
+                            {t('form.delete')}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>

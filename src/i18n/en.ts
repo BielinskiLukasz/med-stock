@@ -106,6 +106,14 @@ export const en: TranslationDict = {
   },
   locations: {
     title: 'Locations',
+    namePlaceholder: 'Location name',
+    add: 'Add',
+    edit: 'Edit',
+    deleteConfirmTitle: 'Delete location?',
+    deleteConfirmBody: 'All medicines using this location will be moved to Other.',
+    errorAdd: 'Failed to add location. Name must not be empty.',
+    errorRename: 'Failed to rename location. Name must not be empty.',
+    errorDelete: 'Failed to delete location.',
   },
   data: {
     title: 'Data',
@@ -115,6 +123,10 @@ export const en: TranslationDict = {
     exportButton: 'Export JSON',
     importJSONButton: 'Import JSON',
     importCSVButton: 'Import CSV',
+    exporting: 'Exporting…',
+    importCSVSpreadsheet: 'Import from Spreadsheet',
+    importConfirmTitle: 'Import backup?',
+    importConfirmAction: 'Import',
   },
   history: {
     title: 'History',
@@ -203,6 +215,7 @@ export const en: TranslationDict = {
     acrossLocations: 'across locations',
     across: 'across',
     locations: 'locations',
+    at: 'at',
   },
   detail: {
     notFound: 'Catalog not found.',

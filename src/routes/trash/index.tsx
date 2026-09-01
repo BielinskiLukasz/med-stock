@@ -16,8 +16,10 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import type { Medicine } from '@/lib/db'
+import { useLang, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
 
 export function TrashScreen() {
+  const { t, lang } = useLang()
   const deletedMedicines = useLiveQuery(
     () =>
       db.medicines
@@ -55,20 +57,20 @@ export function TrashScreen() {
   }
 
   if (deletedMedicines === undefined || catalogs === undefined) {
-    return <div className="p-4">Loading...</div>
+    return <div className="p-4">{t('common.loading')}</div>
   }
 
   if (deletedWithCatalogs.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 p-8 text-center">
-        <p className="text-gray-500">Trash is empty.</p>
+        <p className="text-gray-500">{t('trash.emptyBody')}</p>
       </div>
     )
   }
 
   return (
     <div>
-      <h1 className="text-xl font-semibold p-4">Trash</h1>
+      <h1 className="text-xl font-semibold p-4">{t('trash.title')}</h1>
 
       <div className="space-y-3 p-4">
         {deletedWithCatalogs.map(({ medicine, catalog }) => (
@@ -77,55 +79,58 @@ export function TrashScreen() {
             className="border rounded-lg p-4 bg-white shadow-sm"
           >
             <p className="font-medium text-gray-900">
-              {catalog?.name ?? 'Unknown Medicine'}
+              {catalog?.name ?? t('trash.unknown')}
             </p>
             <p className="text-sm text-gray-500 mt-0.5">
               {medicine.packCount && medicine.packCount > 1
-                ? `${medicine.packCount} boxes × ${medicine.quantity} ${medicine.quantityUnit || 'units'}`
-                : `${medicine.quantity} ${medicine.quantityUnit || 'units'}`}{' '}
-              at {medicine.location ?? 'Other'}
+                ? `${medicine.packCount} ${t('units.boxes')} × ${medicine.quantity} ${t(UNIT_KEYS[medicine.quantityUnit ?? ''] ?? 'units.units')}`
+                : `${medicine.quantity} ${t(UNIT_KEYS[medicine.quantityUnit ?? ''] ?? 'units.units')}`}{' '}
+              {t('common.at')}{' '}
+              {medicine.location !== null
+                ? (LOCATION_KEYS[medicine.location] ? t(LOCATION_KEYS[medicine.location]) : medicine.location)
+                : t('locationNames.other')}
             </p>
             <p className="text-sm text-gray-500 mt-0.5">
-              Deleted{' '}
+              {t('trash.deleted')}{' '}
               {medicine.deletedAt
-                ? new Date(medicine.deletedAt).toLocaleDateString('en-GB')
+                ? new Date(medicine.deletedAt).toLocaleDateString(lang === 'pl' ? 'pl-PL' : 'en-GB')
                 : ''}
             </p>
 
             <div className="flex gap-2 mt-3 flex-wrap">
               {/* D-12: View link uses catalogId (not stock entry id) so detail screen resolves correctly */}
               <Button variant="outline" size="sm" asChild>
-                <Link to={`/medicines/${medicine.catalogId}`}>View</Link>
+                <Link to={`/medicines/${medicine.catalogId}`}>{t('trash.view')}</Link>
               </Button>
               <Button
                 size="sm"
-                onClick={() => void handleRestore(medicine, catalog?.name ?? 'Unknown')}
+                onClick={() => void handleRestore(medicine, catalog?.name ?? t('trash.unknown'))}
               >
-                Restore
+                {t('trash.restore')}
               </Button>
 
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="sm">
-                    Delete Permanently
+                    {t('trash.deletePermanently')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
-                      Delete medicine permanently?
+                      {t('trash.deleteConfirmTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription>
-                      This cannot be undone, but history will be preserved.
+                      {t('trash.deleteConfirmBody')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('trash.cancel')}</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      onClick={() => void handlePermanentDelete(medicine, catalog?.name ?? 'Unknown')}
+                      onClick={() => void handlePermanentDelete(medicine, catalog?.name ?? t('trash.unknown'))}
                     >
-                      Delete Permanently
+                      {t('trash.deletePermanently')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

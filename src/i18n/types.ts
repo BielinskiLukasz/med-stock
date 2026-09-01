@@ -108,6 +108,14 @@ export type TranslationDict = {
   }
   locations: {
     title: string
+    namePlaceholder: string
+    add: string
+    edit: string
+    deleteConfirmTitle: string
+    deleteConfirmBody: string
+    errorAdd: string
+    errorRename: string
+    errorDelete: string
   }
   data: {
     title: string
@@ -117,6 +125,10 @@ export type TranslationDict = {
     exportButton: string
     importJSONButton: string
     importCSVButton: string
+    exporting: string
+    importCSVSpreadsheet: string
+    importConfirmTitle: string
+    importConfirmAction: string
   }
   history: {
     title: string
@@ -205,6 +217,7 @@ export type TranslationDict = {
     acrossLocations: string
     across: string
     locations: string
+    at: string
   }
   detail: {
     notFound: string

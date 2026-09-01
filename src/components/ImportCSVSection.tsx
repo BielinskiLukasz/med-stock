@@ -6,10 +6,12 @@ import { CSVColumnMapper } from '@/components/CSVColumnMapper'
 import { CSVPreview } from '@/components/CSVPreview'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useLang } from '@/i18n'
 
 type CSVStep = 'idle' | 'mapping' | 'preview' | 'committing'
 
 export function ImportCSVSection() {
+  const { t } = useLang()
   const [step, setStep] = useState<CSVStep>('idle')
   const [parseResult, setParseResult] = useState<Papa.ParseResult<Record<string, string>> | null>(null)
   const [columnMapping, setColumnMapping] = useState<Record<string, string>>({})
@@ -27,7 +29,7 @@ export function ImportCSVSection() {
       const result = await parseCSVFile(file)
 
       if (result.errors.length > 0 && result.data.length === 0) {
-        toast.error('Failed to import: No data found in spreadsheet')
+        toast.error(t('toasts.importFailed'))
         return
       }
 
@@ -44,10 +46,8 @@ export function ImportCSVSection() {
 
       setStep('mapping')
     } catch (err) {
-      toast.error(
-        'Failed to import: ' +
-          (err instanceof Error ? err.message : String(err))
-      )
+      console.error('Failed to parse CSV:', err)
+      toast.error(t('toasts.importFailed'))
     }
   }
 
@@ -78,23 +78,17 @@ export function ImportCSVSection() {
       await db.medicines.bulkAdd(medicines)
 
       if (skippedCount > 0) {
-        toast.warning(
-          `Imported with ${skippedCount} rows skipped due to errors. Check that required columns are mapped correctly.`
-        )
+        toast.warning(t('toasts.importPartial'))
       } else {
-        toast.success(
-          `Imported: ${medicines.length} new medicines from spreadsheet`
-        )
+        toast.success(t('toasts.imported'))
       }
 
       setStep('idle')
       setParseResult(null)
       setColumnMapping({})
     } catch (err) {
-      toast.error(
-        'Failed to import: ' +
-          (err instanceof Error ? err.message : String(err))
-      )
+      console.error('Failed to commit CSV import:', err)
+      toast.error(t('toasts.importFailed'))
       // Return to preview so user can retry
       setStep('preview')
     }
@@ -123,7 +117,7 @@ export function ImportCSVSection() {
           onClick={() => fileInputRef.current?.click()}
           className="w-full sm:w-auto"
         >
-          Import from Spreadsheet
+          {t('data.importCSVSpreadsheet')}
         </Button>
         {/* iOS Safari fallback: use <input type="file">, not File System Access API */}
         <input

@@ -2,17 +2,20 @@ import { useState } from 'react'
 import { exportToJSON } from '@/lib/dataOps'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useLang } from '@/i18n'
 
 export function ExportSection() {
+  const { t } = useLang()
   const [loading, setLoading] = useState(false)
 
   async function handleExport() {
     setLoading(true)
     try {
       await exportToJSON()
-      toast.success('Exported: ' + new Date().toISOString().slice(0, 10))
+      toast.success(t('toasts.exported'))
     } catch (err) {
-      toast.error('Failed to export: ' + (err instanceof Error ? err.message : String(err)))
+      console.error('Failed to export:', err)
+      toast.error(t('toasts.exportFailed'))
     } finally {
       setLoading(false)
     }
@@ -30,7 +33,7 @@ export function ExportSection() {
         disabled={loading}
         className="w-full sm:w-auto"
       >
-        {loading ? 'Exporting...' : 'Export Backup'}
+        {loading ? t('data.exporting') : t('data.exportButton')}
       </Button>
     </div>
   )

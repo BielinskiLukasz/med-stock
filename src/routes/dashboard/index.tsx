@@ -4,8 +4,10 @@ import { db } from '@/lib/db'
 import { calculateStatus } from '@/lib/expiry'
 import { DashboardCard } from '@/components/DashboardCard'
 import { useUIStore } from '@/stores/uiStore'
+import { useLang } from '@/i18n'
 
 export function DashboardScreen() {
+  const { t } = useLang()
   const navigate = useNavigate()
   const clearAllFilters = useUIStore((s) => s.clearAllFilters)
   const toggleStatus = useUIStore((s) => s.toggleStatus)
@@ -49,7 +51,7 @@ export function DashboardScreen() {
     return { total: all.length, expired, expiringSoon, exceededOpenPeriod }
   }, [])
 
-  if (!stats) return <div className="p-4">Loading...</div>
+  if (!stats) return <div className="p-4">{t('dashboard.loading')}</div>
 
   const handleExpiredTap = () => {
     clearAllFilters()
@@ -71,28 +73,28 @@ export function DashboardScreen() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold p-4">Dashboard</h1>
+      <h1 className="text-xl font-semibold p-4">{t('dashboard.title')}</h1>
       <div className="grid grid-cols-2 gap-4 p-4">
         <DashboardCard
-          label="Total Medicines"
+          label={t('dashboard.total')}
           count={stats.total}
           colorClass="bg-white border-gray-200 text-gray-900"
           interactive={false}
         />
         <DashboardCard
-          label="Expired"
+          label={t('dashboard.expired')}
           count={stats.expired}
           colorClass="bg-red-50 border-red-200 text-red-700"
           onTap={handleExpiredTap}
         />
         <DashboardCard
-          label="Expiring Soon (30 days)"
+          label={t('dashboard.expiringSoon')}
           count={stats.expiringSoon}
           colorClass="bg-amber-50 border-amber-200 text-amber-700"
           onTap={handleExpiringSoonTap}
         />
         <DashboardCard
-          label="Exceeded Open Period"
+          label={t('dashboard.exceededOpenPeriod')}
           count={stats.exceededOpenPeriod}
           colorClass="bg-orange-50 border-orange-200 text-orange-700"
           onTap={handleExceededOpenPeriodTap}

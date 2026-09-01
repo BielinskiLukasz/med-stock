@@ -106,6 +106,14 @@ export const pl: TranslationDict = {
   },
   locations: {
     title: 'Lokalizacje',
+    namePlaceholder: 'Nazwa lokalizacji',
+    add: 'Dodaj',
+    edit: 'Edytuj',
+    deleteConfirmTitle: 'Usunąć lokalizację?',
+    deleteConfirmBody: 'Wszystkie leki z tą lokalizacją zostaną przeniesione do Inne.',
+    errorAdd: 'Błąd dodawania. Nazwa nie może być pusta.',
+    errorRename: 'Błąd zmiany nazwy. Nazwa nie może być pusta.',
+    errorDelete: 'Błąd usuwania lokalizacji.',
   },
   data: {
     title: 'Dane',
@@ -115,6 +123,10 @@ export const pl: TranslationDict = {
     exportButton: 'Eksportuj JSON',
     importJSONButton: 'Importuj JSON',
     importCSVButton: 'Importuj CSV',
+    exporting: 'Eksportowanie…',
+    importCSVSpreadsheet: 'Importuj z arkusza',
+    importConfirmTitle: 'Importować kopię zapasową?',
+    importConfirmAction: 'Importuj',
   },
   history: {
     title: 'Historia',
@@ -203,6 +215,7 @@ export const pl: TranslationDict = {
     acrossLocations: 'w lokalizacjach',
     across: 'w',
     locations: 'lokalizacjach',
+    at: 'w',
   },
   detail: {
     notFound: 'Nie znaleziono leku.',

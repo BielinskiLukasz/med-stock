@@ -13,8 +13,10 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useLang } from '@/i18n'
 
 export function ImportJSONSection() {
+  const { t } = useLang()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [pendingRaw, setPendingRaw] = useState<unknown | null>(null)
   const [medicineCount, setMedicineCount] = useState(0)
@@ -37,14 +39,14 @@ export function ImportJSONSection() {
       try {
         parsed = JSON.parse(text)
       } catch {
-        toast.error('Failed to import: Invalid JSON file')
+        toast.error(t('toasts.importFailed'))
         return
       }
 
       // Zod schema validation before showing the dialog (D-50); passes for both old and new format
       const schemaCheck = BackupSchema.safeParse(parsed)
       if (!schemaCheck.success) {
-        toast.error('Failed to import: Schema validation failed')
+        toast.error(t('toasts.importFailed'))
         return
       }
 
@@ -59,7 +61,8 @@ export function ImportJSONSection() {
       setLocationCount(lCount)
       setDialogOpen(true)
     } catch (err) {
-      toast.error('Failed to import: ' + (err instanceof Error ? err.message : String(err)))
+      console.error('Failed to read file:', err)
+      toast.error(t('toasts.importFailed'))
     }
   }
 
@@ -68,22 +71,12 @@ export function ImportJSONSection() {
 
     setLoading(true)
     try {
-      const result = await importFromJSON(pendingRaw)
-      if (result.isLegacyFormat) {
-        // D-02: old-format toast shows medicine count and inferred catalog count
-        toast.success(
-          'Imported ' + result.medicineCount + ' medicines — ' +
-          result.catalogCount + ' catalog entries created from v1.0 backup.'
-        )
-      } else {
-        // D-49: new-format toast
-        toast.success(
-          'Imported: ' + result.medicineCount + ' medicines, ' + result.locationCount + ' locations'
-        )
-      }
+      await importFromJSON(pendingRaw)
+      toast.success(t('toasts.imported'))
       setPendingRaw(null)
     } catch (err) {
-      toast.error('Failed to import: ' + (err instanceof Error ? err.message : String(err)))
+      console.error('Failed to import:', err)
+      toast.error(t('toasts.importFailed'))
     } finally {
       setLoading(false)
     }
@@ -101,7 +94,7 @@ export function ImportJSONSection() {
         disabled={loading}
         className="w-full sm:w-auto"
       >
-        Import Backup
+        {t('data.importJSONButton')}
       </Button>
       {/* iOS Safari requires <input type="file">; File System Access API is not supported */}
       <input
@@ -116,7 +109,7 @@ export function ImportJSONSection() {
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Import backup?</AlertDialogTitle>
+            <AlertDialogTitle>{t('data.importConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               {'This will replace all ' +
                 medicineCount +
@@ -126,8 +119,8 @@ export function ImportJSONSection() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmImport}>Import</AlertDialogAction>
+            <AlertDialogCancel>{t('form.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmImport}>{t('data.importConfirmAction')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
