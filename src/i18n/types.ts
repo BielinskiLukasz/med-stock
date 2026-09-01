@@ -133,6 +133,13 @@ export type TranslationDict = {
     importCSVSpreadsheet: string
     importConfirmTitle: string
     importConfirmAction: string
+    syncStep1: string
+    syncStep2: string
+    syncStep3: string
+    syncStep4: string
+    syncNote: string
+    exportDescription: string
+    importCSVDescription: string
   }
   history: {
     title: string
@@ -179,6 +186,14 @@ export type TranslationDict = {
     delete: string
     deleteConfirmTitle: string
     deleteConfirmBody: string
+    boxesToMove: string
+    unitsPerBox: string
+    quantityToMove: string
+    boxValidationMin: string
+    boxValidationMax: string
+    quantityValidationMin: string
+    quantityValidationMax: string
+    saving: string
   }
   filter: {
     title: string
@@ -214,6 +229,7 @@ export type TranslationDict = {
     importFailed: string
     boxOpened: string
     catalogDeleted: string
+    csvImportNeedsCatalog: string
   }
   common: {
     loading: string
@@ -231,6 +247,20 @@ export type TranslationDict = {
     cannotDeleteBody: string
     deleteCatalogTitle: string
     deleteCatalogBody: string
+  }
+  catalog: {
+    selectOrCreate: string
+    placeholderText: string
+    createEntry: string
+    noMedicinesYet: string
+  }
+  csv: {
+    previewHeader: string
+    rowCount: string
+    importing: string
+    importComplete: string
+    back: string
+    cancel: string
   }
 }
 
