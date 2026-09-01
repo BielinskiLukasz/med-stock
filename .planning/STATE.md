@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 07
 current_phase_name: i18n-polish-language
 status: verifying
-stopped_at: Completed 07-05-PLAN.md
-last_updated: "2026-09-01T10:30:47.935Z"
+stopped_at: Completed 07-06-PLAN.md
+last_updated: "2026-09-01T10:38:58.143Z"
 last_activity: 2026-09-01
 last_activity_desc: Phase 07 marked complete
-state_head: ad4ee3f615e5974cb87fc2968e20be0ba438a698
+state_head: 05ad48eba25be742d8ae3eeddc73017f509738a9
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 6
-  completed_plans: 5
+  completed_plans: 6
   percent: 0
 ---
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 
 ## Session
 
-**Last session:** 2026-09-01T10:30:47.907Z
-**Stopped at:** Completed 07-05-PLAN.md
+**Last session:** 2026-09-01T10:38:43.003Z
+**Stopped at:** Completed 07-06-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -98,6 +98,7 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 | Phase 07-i18n-polish-language P03 | 9 | 2 tasks | 8 files |
 | Phase 07-i18n-polish-language P04 | 45min | 2 tasks | 15 files |
 | Phase 07 P05 | 5 | 2 tasks | 3 files |
+| Phase 07 P06 | 15min | 2 tasks | 8 files |
 
 ## Decisions
 
@@ -124,6 +125,7 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 - [Phase 07]: SearchBar preserves optional placeholder prop with ?? fallback to t() so existing callers are unaffected
 - [Phase 07]: Extended LOCATION_KEYS and locationNames to cover all 7 predefined locations
 - [Phase 07]: Added catalog and csv sections to TranslationDict for gap components
+- [Phase 07]: LOCATION_KEYS[v] ?? v fallback in FilterChips preserves user-created location names (D-06/D-07)
 
 ## Operator Next Steps
 
