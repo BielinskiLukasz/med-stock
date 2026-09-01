@@ -34,7 +34,7 @@ export function MedicineCard({ catalogId, catalogName, medicine }: MedicineCardP
         <div className="flex-1 min-w-0">
           <h3 className="font-medium text-gray-900 truncate">{catalogName}</h3>
           <p className="text-sm text-gray-500 mt-0.5">
-            {medicine.quantity} {unitDisplay} at {locationDisplay}
+            {medicine.quantity} {unitDisplay} {t('common.at')} {locationDisplay}
           </p>
           {medicine.expiryDate && (
             <p className="text-sm text-gray-500 mt-0.5">

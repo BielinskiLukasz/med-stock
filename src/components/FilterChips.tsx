@@ -1,6 +1,6 @@
 import { useUIStore, useShallow } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
-import { useLang } from '@/i18n'
+import { useLang, CATEGORY_KEYS, LOCATION_KEYS } from '@/i18n'
 import type { MedicineStatus } from '@/lib/expiry'
 
 const statusKey: Record<MedicineStatus, string> = {
@@ -24,11 +24,11 @@ export function FilterChips() {
 
   const all = [
     ...selectedCategories.map((v) => ({
-      label: `${t('filter.category')}: ${v}`,
+      label: `${t('filter.category')}: ${t(CATEGORY_KEYS[v] ?? 'categories.other')}`,
       remove: () => toggleCategory(v),
     })),
     ...selectedLocations.map((v) => ({
-      label: `${t('filter.location')}: ${v}`,
+      label: `${t('filter.location')}: ${t(LOCATION_KEYS[v] ?? v)}`,
       remove: () => toggleLocation(v),
     })),
     ...selectedStatuses.map((v) => ({

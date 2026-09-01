@@ -87,7 +87,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
             {useBoxes ? (
               <>
                 <label htmlFor="move-boxes" className="text-sm font-medium">
-                  Boxes to move (max {maxBoxes})
+                  {`${t('form.boxesToMove')} (max ${maxBoxes})`}
                 </label>
                 <Input
                   id="move-boxes"
@@ -98,19 +98,19 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
                   onChange={(e) => setBoxes(Number(e.target.value))}
                 />
                 <p className="text-xs text-gray-500">
-                  = {unitsPerBox} {stock.quantityUnit || 'units'} per box
+                  {`= ${unitsPerBox} ${stock.quantityUnit || t('units.units')} ${t('form.unitsPerBox')}`}
                 </p>
                 {boxes < 1 && (
-                  <p className="text-sm text-red-500">Must be at least 1 box</p>
+                  <p className="text-sm text-red-500">{t('form.boxValidationMin')}</p>
                 )}
                 {boxes > maxBoxes && (
-                  <p className="text-sm text-red-500">Cannot exceed {maxBoxes} boxes</p>
+                  <p className="text-sm text-red-500">{t('form.boxValidationMax')}</p>
                 )}
               </>
             ) : (
               <>
                 <label htmlFor="move-qty" className="text-sm font-medium">
-                  Quantity to move (max {maxQty})
+                  {`${t('form.quantityToMove')} (max ${maxQty})`}
                 </label>
                 <Input
                   id="move-qty"
@@ -121,10 +121,10 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
                   onChange={(e) => setQuantity(Number(e.target.value))}
                 />
                 {quantity < 1 && (
-                  <p className="text-sm text-red-500">Quantity must be at least 1</p>
+                  <p className="text-sm text-red-500">{t('form.quantityValidationMin')}</p>
                 )}
                 {quantity > maxQty && (
-                  <p className="text-sm text-red-500">Cannot exceed {maxQty}</p>
+                  <p className="text-sm text-red-500">{t('form.quantityValidationMax')}</p>
                 )}
               </>
             )}
@@ -168,7 +168,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
               className="flex-1"
               disabled={isSubmitting || !isValid}
             >
-              {isSubmitting ? 'Moving…' : t('form.save')}
+              {isSubmitting ? t('form.saving') : t('form.save')}
             </Button>
           </div>
         </form>
