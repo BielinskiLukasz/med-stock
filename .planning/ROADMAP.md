@@ -53,13 +53,13 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   4. Built-in category names and predefined location names display in the active language; stored database values remain unchanged
   5. Dates appear as DD.MM.YYYY in Polish mode and YYYY-MM-DD in English mode throughout the app
 
-**Plans**: 6 plans
+**Plans**: 5/6 plans executed
 
 Plans:
 **Wave 1**
 
 - [x] 07-01-PLAN.md — i18n module, LanguageProvider, useLang, formatDate, App.tsx wrapping, BottomTabBar toggle (Wave 1)
-- [ ] 07-05-PLAN.md — Gap closure: extend i18n dictionary (LOCATION_KEYS, form.*, catalog.*, data.sync*, csv.*, toasts) (Wave 1)
+- [x] 07-05-PLAN.md — Gap closure: extend i18n dictionary (LOCATION_KEYS, form.*, catalog.*, data.sync*, csv.*, toasts) (Wave 1)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -133,7 +133,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. i18n / Polish Language | 0/4 | Not started | - |
+| 7. i18n / Polish Language | 5/6 | In Progress|  |
 | 8. Full Location Management | 0/? | Not started | - |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
