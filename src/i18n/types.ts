@@ -35,6 +35,10 @@ export type TranslationDict = {
     bathroomCabinet: string
     bedroomCabinet: string
     kitchenDrawer: string
+    livingRoomCabinet: string
+    medicineBox: string
+    refrigerator: string
+    travelKit: string
     other: string
   }
   formTypes: {
@@ -251,6 +255,10 @@ export const LOCATION_KEYS: Record<string, string> = {
   'Bathroom Cabinet': 'locationNames.bathroomCabinet',
   'Bedroom Cabinet': 'locationNames.bedroomCabinet',
   'Kitchen Drawer': 'locationNames.kitchenDrawer',
+  'Living Room Cabinet': 'locationNames.livingRoomCabinet',
+  'Medicine Box': 'locationNames.medicineBox',
+  'Refrigerator': 'locationNames.refrigerator',
+  'Travel Kit': 'locationNames.travelKit',
 }
 
 /** Maps canonical quantity unit values (from QUANTITY_UNITS) to TranslationDict dot-notation keys */

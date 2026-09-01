@@ -33,6 +33,10 @@ export const pl: TranslationDict = {
     bathroomCabinet: 'Szafka łazienkowa',
     bedroomCabinet: 'Szafka przy łóżku',
     kitchenDrawer: 'Szuflada kuchenna',
+    livingRoomCabinet: 'Szafka w salonie',
+    medicineBox: 'Apteczka',
+    refrigerator: 'Lodówka',
+    travelKit: 'Apteczka podróżna',
     other: 'Inne',
   },
   formTypes: {

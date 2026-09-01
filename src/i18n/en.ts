@@ -33,6 +33,10 @@ export const en: TranslationDict = {
     bathroomCabinet: 'Bathroom Cabinet',
     bedroomCabinet: 'Bedroom Cabinet',
     kitchenDrawer: 'Kitchen Drawer',
+    livingRoomCabinet: 'Living Room Cabinet',
+    medicineBox: 'Medicine Box',
+    refrigerator: 'Refrigerator',
+    travelKit: 'Travel Kit',
     other: 'Other',
   },
   formTypes: {
