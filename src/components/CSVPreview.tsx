@@ -1,5 +1,6 @@
 import { SKIP_VALUE } from '@/lib/csvOps'
 import { Button } from '@/components/ui/button'
+import { useLang } from '@/i18n'
 
 interface CSVPreviewProps {
   rows: Record<string, string>[]
@@ -18,6 +19,7 @@ export function CSVPreview({
   onCancel,
   loading,
 }: CSVPreviewProps) {
+  const { t } = useLang()
   // Array of [csvHeader, fieldName] pairs, excluding skipped columns
   const mappedFields = Object.entries(mapping).filter(
     ([, fieldName]) => fieldName !== SKIP_VALUE && fieldName !== ''
@@ -29,8 +31,8 @@ export function CSVPreview({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">Preview (first 5 rows)</p>
-        <span className="text-xs text-muted-foreground">{totalCount} rows</span>
+        <p className="text-sm font-medium">{t('csv.previewHeader')}</p>
+        <span className="text-xs text-muted-foreground">{`${totalCount} ${t('csv.rowCount')}`}</span>
       </div>
 
       <div className="overflow-x-auto">
@@ -66,13 +68,13 @@ export function CSVPreview({
 
       <div className="flex gap-2 pt-2">
         <Button variant="default" onClick={onCommit} disabled={loading}>
-          {loading ? 'Importing...' : `Import ${totalCount} medicines`}
+          {loading ? t('csv.importing') : `${t('csv.importComplete')} (${totalCount})`}
         </Button>
         <Button variant="outline" onClick={onBack} disabled={loading}>
-          Back
+          {t('csv.back')}
         </Button>
         <Button variant="ghost" onClick={onCancel} disabled={loading}>
-          Cancel
+          {t('csv.cancel')}
         </Button>
       </div>
     </div>

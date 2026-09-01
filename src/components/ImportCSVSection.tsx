@@ -60,9 +60,7 @@ export function ImportCSVSection() {
     // the import would create broken foreign keys. Fail early with a clear message.
     const targetCatalog = await db.medicine_catalog.get(1)
     if (!targetCatalog) {
-      toast.error(
-        'CSV import requires at least one medicine catalog. Please add a medicine first, then retry the import.'
-      )
+      toast.error(t('toasts.csvImportNeedsCatalog'))
       return
     }
 
@@ -109,8 +107,7 @@ export function ImportCSVSection() {
     return (
       <div className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          Bulk import medicines from a CSV spreadsheet. Map your spreadsheet
-          columns to medicine fields, preview the data, and commit.
+          {t('data.importCSVDescription')}
         </p>
         <Button
           variant="default"

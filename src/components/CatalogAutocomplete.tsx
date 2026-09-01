@@ -3,6 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import type { MedicineCatalog } from '@/lib/db'
 import { Input } from '@/components/ui/input'
+import { useLang } from '@/i18n'
 
 interface CatalogAutocompleteProps {
   onSelect: (catalog: MedicineCatalog) => void
@@ -10,6 +11,7 @@ interface CatalogAutocompleteProps {
 }
 
 export function CatalogAutocomplete({ onSelect, onCreateClick }: CatalogAutocompleteProps) {
+  const { t } = useLang()
   const [searchText, setSearchText] = useState('')
   const [open, setOpen] = useState(false)
 
@@ -30,11 +32,11 @@ export function CatalogAutocomplete({ onSelect, onCreateClick }: CatalogAutocomp
 
   return (
     <div className="p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Select or Create Medicine</h2>
+      <h2 className="text-lg font-semibold">{t('catalog.selectOrCreate')}</h2>
 
       <div className="space-y-2 relative">
         <Input
-          placeholder="Start typing a medicine name…"
+          placeholder={t('catalog.placeholderText')}
           value={searchText}
           autoFocus
           autoComplete="off"
@@ -73,7 +75,7 @@ export function CatalogAutocomplete({ onSelect, onCreateClick }: CatalogAutocomp
 
             {/* Empty state when focused but no text and no catalogs */}
             {!searchText && filtered.length === 0 && (
-              <p className="px-4 py-3 text-sm text-gray-500">No medicines yet. Type a name to create one.</p>
+              <p className="px-4 py-3 text-sm text-gray-500">{t('catalog.noMedicinesYet')}</p>
             )}
 
             {/* "Create [name]" when no matches (D-08) */}
@@ -87,7 +89,7 @@ export function CatalogAutocomplete({ onSelect, onCreateClick }: CatalogAutocomp
                 }}
                 className="w-full text-left px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium transition-colors text-sm"
               >
-                Create "{searchText}"
+                {`${t('catalog.createEntry')} "${searchText}"`}
               </button>
             )}
           </div>

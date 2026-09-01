@@ -24,8 +24,7 @@ export function ExportSection() {
   return (
     <div className="space-y-3">
       <p className="text-sm text-muted-foreground">
-        Download your entire inventory as a JSON file. You can restore this backup on another
-        device or share it with household members.
+        {t('data.exportDescription')}
       </p>
       <Button
         variant="default"
