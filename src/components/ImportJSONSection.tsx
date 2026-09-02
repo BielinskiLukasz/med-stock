@@ -84,10 +84,7 @@ export function ImportJSONSection() {
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-muted-foreground">
-        Restore your inventory from a backup file. This will replace all medicines, locations,
-        and history with the contents of the backup.
-      </p>
+      <p className="text-sm text-muted-foreground">{t('data.importJSONDescription')}</p>
       <Button
         variant="default"
         onClick={() => fileInputRef.current?.click()}
@@ -111,11 +108,7 @@ export function ImportJSONSection() {
           <AlertDialogHeader>
             <AlertDialogTitle>{t('data.importConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {'This will replace all ' +
-                medicineCount +
-                ' medicines, ' +
-                locationCount +
-                ' locations, and full change history. This cannot be undone. Import anyway?'}
+              {t('data.importConfirmBodyPre')}{medicineCount}{t('data.importConfirmBodyMid')}{locationCount}{t('data.importConfirmBodyPost')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

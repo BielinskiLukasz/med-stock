@@ -140,6 +140,10 @@ export type TranslationDict = {
     syncNote: string
     exportDescription: string
     importCSVDescription: string
+    importJSONDescription: string
+    importConfirmBodyPre: string
+    importConfirmBodyMid: string
+    importConfirmBodyPost: string
   }
   history: {
     title: string

@@ -138,6 +138,10 @@ export const pl: TranslationDict = {
     syncNote: 'Uwaga: Wszystkie zmiany są ręczne. Nie ma automatycznej synchronizacji — każdy domownik musi ręcznie eksportować i importować przy udostępnianiu aktualizacji.',
     exportDescription: 'Pobierz cały inwentarz jako plik JSON. Możesz przywrócić tę kopię zapasową na innym urządzeniu lub udostępnić ją domownikom.',
     importCSVDescription: 'Importuj leki hurtowo z pliku CSV. Przypisz kolumny arkusza do pól leku, podejrzyj dane i zatwierdź.',
+    importJSONDescription: 'Przywróć stan magazynu z pliku kopii zapasowej. Zastąpi to wszystkie leki, lokalizacje oraz historię zmian zawartością pliku.',
+    importConfirmBodyPre: 'Spowoduje to zastąpienie wszystkich ',
+    importConfirmBodyMid: ' leków, ',
+    importConfirmBodyPost: ' lokalizacji oraz całej historii zmian. Tej operacji nie można cofnąć. Importować?',
   },
   history: {
     title: 'Historia',

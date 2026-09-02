@@ -138,6 +138,10 @@ export const en: TranslationDict = {
     syncNote: 'Note: All changes are manual. There is no automatic sync — each household member must explicitly export and import when sharing updates.',
     exportDescription: 'Download your entire inventory as a JSON file. You can restore this backup on another device or share it with household members.',
     importCSVDescription: 'Bulk import medicines from a CSV spreadsheet. Map your spreadsheet columns to medicine fields, preview the data, and commit.',
+    importJSONDescription: 'Restore your inventory from a backup file. This will replace all medicines, locations, and history with the contents of the backup.',
+    importConfirmBodyPre: 'This will replace all ',
+    importConfirmBodyMid: ' medicines, ',
+    importConfirmBodyPost: ' locations, and full change history. This cannot be undone. Import anyway?',
   },
   history: {
     title: 'History',
