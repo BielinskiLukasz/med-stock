@@ -53,7 +53,7 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   4. Built-in category names and predefined location names display in the active language; stored database values remain unchanged
   5. Dates appear as DD.MM.YYYY in Polish mode and YYYY-MM-DD in English mode throughout the app
 
-**Plans**: 6/6 plans executed
+**Plans**: 7 plans (6 executed + 1 gap closure)
 
 Plans:
 **Wave 1**
@@ -67,6 +67,7 @@ Plans:
 - [x] 07-03-PLAN.md — Translate form components, sheets, ChangeHistory, HistoryEntry (Wave 2)
 - [x] 07-04-PLAN.md — Translate all route screens and remaining utility components (Wave 2)
 - [x] 07-06-PLAN.md — Gap closure: wire FilterChips, MedicineCard, MoveStockSheet, CatalogAutocomplete, SyncInstructions, CSVPreview, ExportSection, ImportCSVSection (Wave 2)
+- [ ] 07-07-PLAN.md — Gap closure: FilterBottomSheet location i18n, CatalogAutocomplete category i18n, catalog cascade delete, ImportJSONSection translations (Wave 2)
 
 **UI hint**: yes
 
