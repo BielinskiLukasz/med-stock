@@ -96,10 +96,13 @@ export async function restoreMedicine(medicine: Medicine, medicineName: string):
  * Permanently delete a medicine record.
  * CRITICAL: writes history entry FIRST, then deletes the medicine.
  * NEVER deletes history entries — they are preserved forever (D-38, Pitfall 6).
+ * Cascades to delete the medicine_catalog row when no other medicines reference
+ * the same catalogId (G-07-17b). Count and delete happen inside the same
+ * transaction to prevent a TOCTOU race (T-07-07-01).
  */
 export async function permanentDeleteMedicine(medicine: Medicine, medicineName: string): Promise<void> {
   const now = new Date().toISOString()
-  await db.transaction('rw', db.medicines, db.history, async () => {
+  await db.transaction('rw', db.medicines, db.history, db.medicine_catalog, async () => {
     await db.history.add({
       medicineId: medicine.id,
       medicineName: medicineName,
@@ -108,6 +111,10 @@ export async function permanentDeleteMedicine(medicine: Medicine, medicineName: 
       timestamp: now,
     })
     await db.medicines.delete(medicine.id)
+    const remaining = await db.medicines.where('catalogId').equals(medicine.catalogId).count()
+    if (remaining === 0) {
+      await db.medicine_catalog.delete(medicine.catalogId)
+    }
   })
 }
 
