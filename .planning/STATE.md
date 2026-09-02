@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish, UX & i18n
 current_phase: 07
-current_phase_name: i18n-polish-language
-status: verifying
-stopped_at: Completed 07-06-PLAN.md
-last_updated: "2026-09-01T10:38:58.143Z"
-last_activity: 2026-09-01
-last_activity_desc: Phase 07 marked complete
-state_head: 05ad48eba25be742d8ae3eeddc73017f509738a9
+current_phase_name: i18n / Polish Language
+status: executing
+stopped_at: Completed 07-07-PLAN.md
+last_updated: "2026-09-02T21:47:46.161Z"
+last_activity: 2026-09-02
+last_activity_desc: Phase 07 execution started
+state_head: c89649b8b467c7d42108649bc320ff01685fdb1f
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 7
+  completed_plans: 7
   percent: 0
 ---
 
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-31)
 
 ## Current Position
 
-Phase: 07 (i18n-polish-language) — READY TO EXECUTE
-Plan: 4 of 4
-Status: Phase complete — ready for verification
-Last activity: 2026-09-01 — Phase 07 marked complete
+Phase: 07 (i18n / Polish Language) — EXECUTING
+Plan: 2 of 7
+Status: Ready to execute
+Last activity: 2026-09-02 — Phase 07 execution started
 
 ## v1.0 Summary
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 
 ## Session
 
-**Last session:** 2026-09-01T10:38:43.003Z
-**Stopped at:** Completed 07-06-PLAN.md
+**Last session:** 2026-09-02T21:47:46.106Z
+**Stopped at:** Completed 07-07-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -99,6 +99,7 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 | Phase 07-i18n-polish-language P04 | 45min | 2 tasks | 15 files |
 | Phase 07 P05 | 5 | 2 tasks | 3 files |
 | Phase 07 P06 | 15min | 2 tasks | 8 files |
+| Phase 07-i18n-polish-language P07 | 12 | 3 tasks | 8 files |
 
 ## Decisions
 
@@ -126,6 +127,8 @@ Last activity: 2026-09-01 — Phase 07 marked complete
 - [Phase 07]: Extended LOCATION_KEYS and locationNames to cover all 7 predefined locations
 - [Phase 07]: Added catalog and csv sections to TranslationDict for gap components
 - [Phase 07]: LOCATION_KEYS[v] ?? v fallback in FilterChips preserves user-created location names (D-06/D-07)
+- [Phase 07]: cascade-delete runs inside the same transaction as medicine delete to prevent TOCTOU race
+- [Phase 07]: LOCATION_KEYS[name] ?? name fallback preserves user-created location names verbatim
 
 ## Operator Next Steps
 
