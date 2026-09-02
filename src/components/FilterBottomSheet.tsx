@@ -10,7 +10,7 @@ import type { SortField, SortDirection } from '@/stores/uiStore'
 import { Button } from '@/components/ui/button'
 import { db } from '@/lib/db'
 import type { MedicineStatus } from '@/lib/expiry'
-import { useLang, CATEGORY_KEYS } from '@/i18n'
+import { useLang, CATEGORY_KEYS, LOCATION_KEYS } from '@/i18n'
 import { CATEGORIES } from '@/types/medicine'
 
 const ALL_STATUSES: MedicineStatus[] = [
@@ -135,12 +135,12 @@ export function FilterBottomSheet() {
                   }`}
                 >
                   {isSelected && <span className="mr-1">&#10003;</span>}
-                  {location.name}
+                  {t(LOCATION_KEYS[location.name] ?? location.name)}
                 </button>
               )
             })}
             {locations?.length === 0 && (
-              <p className="text-xs text-gray-500">No locations added yet.</p>
+              <p className="text-xs text-gray-500">{t('filter.noLocations')}</p>
             )}
           </div>
         </div>

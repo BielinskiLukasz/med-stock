@@ -211,6 +211,7 @@ export type TranslationDict = {
     status: string
     category: string
     location: string
+    noLocations: string
   }
   toasts: {
     saved: string

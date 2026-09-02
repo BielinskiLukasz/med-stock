@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
 import type { MedicineCatalog } from '@/lib/db'
 import { Input } from '@/components/ui/input'
-import { useLang } from '@/i18n'
+import { useLang, CATEGORY_KEYS } from '@/i18n'
 
 interface CatalogAutocompleteProps {
   onSelect: (catalog: MedicineCatalog) => void
@@ -66,7 +66,7 @@ export function CatalogAutocomplete({ onSelect, onCreateClick }: CatalogAutocomp
                   >
                     <span className="font-medium">{cat.name}</span>
                     {cat.category && (
-                      <span className="ml-2 text-gray-500 text-xs">{cat.category}</span>
+                      <span className="ml-2 text-gray-500 text-xs">{t(CATEGORY_KEYS[cat.category] ?? cat.category)}</span>
                     )}
                   </button>
                 ))}

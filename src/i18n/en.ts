@@ -209,6 +209,7 @@ export const en: TranslationDict = {
     status: 'Status',
     category: 'Category',
     location: 'Location',
+    noLocations: 'No locations added yet.',
   },
   toasts: {
     saved: 'Saved',
