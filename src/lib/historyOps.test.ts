@@ -152,6 +152,41 @@ describe('permanentDeleteMedicine', () => {
     expect(entries[0].medicineName).toBe('Ibuprofen')
     expect(entries[0].changedFields).toEqual([])
   })
+
+  it('cascades to catalog when last medicine is deleted', async () => {
+    const now = new Date().toISOString()
+    const catalogId = await db.medicine_catalog.add({
+      name: 'Ibuprofen',
+      category: 'Pain & Fever',
+      form: null,
+      notes: null,
+      createdAt: now,
+      updatedAt: now,
+    })
+    const medId = await db.medicines.add({ ...baseMedicine, catalogId: catalogId as number })
+    const medicine = await db.medicines.get(medId) as Medicine
+    await permanentDeleteMedicine(medicine, 'Ibuprofen')
+    const catalogRow = await db.medicine_catalog.get(catalogId as number)
+    expect(catalogRow).toBeUndefined()
+  })
+
+  it('preserves catalog when other medicines still reference it', async () => {
+    const now = new Date().toISOString()
+    const catalogId = await db.medicine_catalog.add({
+      name: 'Ibuprofen',
+      category: 'Pain & Fever',
+      form: null,
+      notes: null,
+      createdAt: now,
+      updatedAt: now,
+    })
+    const medId1 = await db.medicines.add({ ...baseMedicine, catalogId: catalogId as number })
+    await db.medicines.add({ ...baseMedicine, catalogId: catalogId as number })
+    const medicine = await db.medicines.get(medId1) as Medicine
+    await permanentDeleteMedicine(medicine, 'Ibuprofen')
+    const catalogRow = await db.medicine_catalog.get(catalogId as number)
+    expect(catalogRow).toBeDefined()
+  })
 })
 
 describe('updateMedicineWithHistory', () => {
