@@ -1,0 +1,38 @@
+{
+  "contract": "1.0.0",
+  "flavor": "core",
+  "milestone": "v1.2 — Polish, UX & i18n",
+  "phases": [
+    {
+      "number": "7",
+      "name": "i18n / Polish Language",
+      "status": "in_progress"
+    },
+    {
+      "number": "8",
+      "name": "Full Location Management",
+      "status": "pending"
+    },
+    {
+      "number": "9",
+      "name": "CSV UX + Version Display",
+      "status": "pending"
+    },
+    {
+      "number": "10",
+      "name": "Expiring Soon Status",
+      "status": "pending"
+    },
+    {
+      "number": "11",
+      "name": "UX Polish — Autocomplete + Pack Count",
+      "status": "pending"
+    }
+  ],
+  "next": {
+    "command": "/gsd:progress --next",
+    "label": "Advance to the next step",
+    "reason": "Phase 7 of 5 · 0% · executing"
+  },
+  "updated_at": "2026-09-02T21:47:26.661Z"
+}

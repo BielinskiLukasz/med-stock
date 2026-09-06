@@ -1,14 +1,14 @@
 ---
 status: diagnosed
 phase: 07-i18n-polish-language
-source: [07-01-SUMMARY.md, 07-02-SUMMARY.md, 07-03-SUMMARY.md, 07-04-SUMMARY.md, 07-05-SUMMARY.md, 07-06-SUMMARY.md]
+source: [07-01-SUMMARY.md, 07-02-SUMMARY.md, 07-03-SUMMARY.md, 07-04-SUMMARY.md, 07-05-SUMMARY.md, 07-06-SUMMARY.md, 07-07-SUMMARY.md]
 started: 2026-09-02T10:51:13Z
-updated: 2026-09-02T11:10:00Z
+updated: 2026-09-05T00:00:00Z
 ---
 
 ## Current Test
 
-[testing complete]
+[testing complete — 2 new issues found]
 
 ## Tests
 
@@ -26,9 +26,7 @@ result: pass
 
 ### 4. Filter Chips Polish Labels
 expected: Apply any filter (category, location, or status). The active filter chip prefix and selected value text appear in Polish. E.g. "Kategoria: Tabletki" not "Category: Tablets".
-result: issue
-reported: "build in localisation are english only in filter screen"
-severity: major
+result: pass
 
 ### 5. Filter Bottom Sheet Polish
 expected: Open the filter/sort bottom sheet. All section headings, status options, category options, sort field labels (Nazwa, Data ważności, Kategoria), direction labels, and button labels appear in Polish.
@@ -80,9 +78,7 @@ result: pass
 
 ### 17. Catalog Autocomplete Polish
 expected: On the Add medicine form, interact with the medicine catalog autocomplete. The heading, placeholder text, empty state, and "Create new entry" button text all appear in Polish.
-result: issue
-reported: "the suggestion screen shows english category; also: cannot remove suggestion even if medicine was removed"
-severity: major
+result: pass
 
 ### 18. Sync Instructions Polish
 expected: Navigate to the Data screen → Sync section. All sync step paragraphs (all 4–5 steps) appear in Polish.
@@ -90,13 +86,14 @@ result: pass
 
 ### 19. CSV Preview Polish
 expected: Initiate a CSV import. On the CSV preview screen, the preview header, row count text, and all action button labels (Import, Back, Cancel) appear in Polish.
-result: skipped
-reason: "cannot test now"
+result: issue
+reported: "english in csv import ui"
+severity: major
 
 ### 20. Export and Import Section Polish
 expected: On the Data screen, the export description paragraph and the CSV import idle description text both appear in Polish.
 result: issue
-reported: "import part is english only"
+reported: "english in csv import ui"
 severity: major
 
 ### 21. formatDate AUTO-PASS
@@ -114,17 +111,19 @@ coverage_id: D4
 ## Summary
 
 total: 22
-passed: 18
-issues: 3
+passed: 20
+issues: 2
 pending: 0
-skipped: 1
+skipped: 0
 blocked: 0
 
 ## Gaps
 
 - gap_id: G-07-4
   truth: "Active filter chip labels (category, location, status prefix and selected value) display in Polish when Polish is active"
-  status: failed
+  status: resolved
+  resolved_by: 07-07-PLAN.md
+  resolved_at: 2026-09-02
   reason: "User reported: build in localisation are english only in filter screen"
   severity: major
   test: 4
@@ -132,15 +131,13 @@ blocked: 0
   artifacts:
     - path: "src/components/FilterBottomSheet.tsx"
       issue: "Line 138: location option button renders {location.name} directly; LOCATION_KEYS not imported. Line 143: hardcoded English empty state."
-  missing:
-    - "Import LOCATION_KEYS from @/i18n in FilterBottomSheet.tsx"
-    - "Replace {location.name} with {t(LOCATION_KEYS[location.name] ?? location.name)}"
-    - "Add translation key for 'No locations added yet.' and use t()"
   debug_session: .planning/debug/debug-filter-chips-i18n.md
 
 - gap_id: G-07-17
   truth: "Catalog autocomplete heading, placeholder text, empty state, and create button text all appear in Polish"
-  status: failed
+  status: resolved
+  resolved_by: 07-07-PLAN.md
+  resolved_at: 2026-09-02
   reason: "User reported: the suggestion screen shows english category"
   severity: major
   test: 17
@@ -148,14 +145,13 @@ blocked: 0
   artifacts:
     - path: "src/components/CatalogAutocomplete.tsx"
       issue: "Line 69: category span renders {cat.category} verbatim; CATEGORY_KEYS missing from import on line 6"
-  missing:
-    - "Add CATEGORY_KEYS to import from @/i18n in CatalogAutocomplete.tsx"
-    - "Replace {cat.category} with {t(CATEGORY_KEYS[cat.category] ?? cat.category)}"
   debug_session: .planning/debug/debug-catalog-autocomplete-i18n.md
 
 - gap_id: G-07-17b
   truth: "Stale catalog autocomplete suggestions are removed when their associated medicine is deleted"
-  status: failed
+  status: resolved
+  resolved_by: 07-07-PLAN.md
+  resolved_at: 2026-09-02
   reason: "User reported: cannot remove suggestion even if medicine was removed"
   severity: major
   test: 17
@@ -165,14 +161,13 @@ blocked: 0
       issue: "Line 19: useLiveQuery loads all catalog entries with no stock-existence filter"
     - path: "src/lib/historyOps.ts"
       issue: "permanentDeleteMedicine (lines 100-112): transaction only touches db.medicines and db.history; never checks or deletes the medicine_catalog row"
-  missing:
-    - "In permanentDeleteMedicine: after deleting medicines row, count remaining medicines for that catalogId; if zero, delete the medicine_catalog row in the same transaction"
-    - "Add db.medicine_catalog to the transaction scope in permanentDeleteMedicine"
   debug_session: .planning/debug/debug-catalog-stale-suggestions.md
 
 - gap_id: G-07-20
   truth: "The import section description text on the Data screen appears in Polish"
-  status: failed
+  status: resolved
+  resolved_by: 07-07-PLAN.md
+  resolved_at: 2026-09-02
   reason: "User reported: import part is english only"
   severity: major
   test: 20
@@ -180,8 +175,26 @@ blocked: 0
   artifacts:
     - path: "src/components/ImportJSONSection.tsx"
       issue: "Line 88-89: idle description paragraph is a hardcoded English string literal. Lines 114-118: AlertDialog confirm body is a hardcoded English string concatenation with dynamic counts."
-  missing:
-    - "Add importJSONDescription and importConfirmBody keys to TranslationDict data section in types.ts"
-    - "Add English strings to en.ts and Polish translations to pl.ts"
-    - "Replace hardcoded strings in ImportJSONSection.tsx with t() calls"
   debug_session: .planning/debug/debug-import-section-i18n.md
+
+- gap_id: G-07-19
+  truth: "The CSV column mapping screen (CSVColumnMapper) and CSV preview screen (CSVPreview) render all labels in Polish when Polish is active"
+  status: failed
+  reason: "User reported: english in csv import ui"
+  severity: major
+  test: 19
+  root_cause: "CSVColumnMapper.tsx has no i18n at all — zero useLang() calls, all strings hardcoded English: description paragraph (line 30-33), 'Map to field:' placeholder (line 49), '(skip)' option (line 57), name-required validation message (line 67), 'Preview' button (line 72), 'Cancel' button (line 75). CSVPreview.tsx is already correctly translated. Six new csv.* keys needed in types.ts, en.ts, and pl.ts."
+  artifacts:
+    - path: "src/components/CSVColumnMapper.tsx"
+      issue: "No useLang() import or call. Lines 30-33: hardcoded English description. Line 49: hardcoded placeholder. Line 57: hardcoded '(skip)'. Line 67: hardcoded validation message. Line 72: hardcoded 'Preview' button. Line 75: hardcoded 'Cancel' button (can reuse existing csv.cancel key)."
+
+- gap_id: G-07-20b
+  truth: "The CSV import section on the Data screen — idle description and column-mapping screen — appear fully in Polish"
+  status: failed
+  reason: "User reported: english in csv import ui"
+  severity: major
+  test: 20
+  root_cause: "Same as G-07-19: CSVColumnMapper.tsx is not i18n'd. The idle description on the Data screen (data.importCSVDescription) is already correctly translated in pl.ts — test 20 failure is caused by the English CSVColumnMapper appearing in the same import flow, making the user report the whole flow as English."
+  artifacts:
+    - path: "src/components/CSVColumnMapper.tsx"
+      issue: "Identical to G-07-19 — root cause is the same file"
