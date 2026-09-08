@@ -1,0 +1,53 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-09-08T14:02:08.828Z",
+  "phase": "07",
+  "phase_name": "i18n-polish-language",
+  "phase_dir": ".planning/phases/07-i18n-polish-language",
+  "plan": 8,
+  "task": 1,
+  "total_tasks": 1,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": "07-01", "name": "Foundation — i18n context and language toggle", "status": "done"},
+    {"id": "07-02", "name": "Status labels, filter chips, sort labels", "status": "done"},
+    {"id": "07-03", "name": "Form labels and placeholders", "status": "done"},
+    {"id": "07-04", "name": "Toast messages and action strings", "status": "done"},
+    {"id": "07-05", "name": "History entries and change descriptions", "status": "done"},
+    {"id": "07-06", "name": "Location names and category labels", "status": "done"},
+    {"id": "07-07", "name": "ImportJSONSection + gap-closure for G-07-4/17/17b/20 + cascade-delete fix", "status": "done"}
+  ],
+  "remaining_tasks": [
+    {
+      "id": "07-08",
+      "name": "Internationalise CSVColumnMapper.tsx — final untranslated component",
+      "status": "not_started",
+      "gap_ids": ["G-07-19", "G-07-20b"],
+      "description": "Add 5 new csv.* keys to types.ts/en.ts/pl.ts and wire useLang() into CSVColumnMapper.tsx to replace 6 hardcoded English strings"
+    }
+  ],
+  "blockers": [],
+  "async_jobs": [],
+  "human_actions_pending": [
+    {
+      "action": "Manual smoke test: open CSV import flow with Polish active and confirm column-mapper screen shows Polish labels",
+      "context": "Automated tests verify build; live UI must be checked manually to confirm G-07-19/G-07-20b are truly closed",
+      "blocking": false
+    }
+  ],
+  "decisions": [
+    {
+      "decision": "t('csv.cancel') reuses the existing key — no new key added",
+      "rationale": "G-07-19 diagnosis confirmed csv.cancel already existed; adding a duplicate would break TranslationDict structural check",
+      "phase": "07"
+    },
+    {
+      "decision": "Plan 08 is standalone gap-closure (gap_closure: true), not a regular planned task",
+      "rationale": "UAT diagnosed CSVColumnMapper as fully untranslated; plan 07-08 was created as a targeted fix after UAT status was 'diagnosed'",
+      "phase": "07"
+    }
+  ],
+  "uncommitted_files": [],
+  "next_action": "Execute plan 07-08: extend csv section in types.ts/en.ts/pl.ts with 5 new keys, then add useLang() to CSVColumnMapper.tsx and replace 6 hardcoded strings with t() calls. Run npm run build to verify.",
+  "context_notes": "Phase 07 is essentially complete — plans 01-07 done, UAT run, gaps diagnosed. Only one task remains: plan 07-08 which translates the CSV column-mapper screen. The task description in 07-08-PLAN.md is precise and self-contained with exact line-level instructions. After plan 08 executes, update UAT.md gaps G-07-19 and G-07-20b to 'resolved', then run /gsd-ship or close the phase."
+}
