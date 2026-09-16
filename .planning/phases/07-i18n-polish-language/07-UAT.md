@@ -179,7 +179,9 @@ blocked: 0
 
 - gap_id: G-07-19
   truth: "The CSV column mapping screen (CSVColumnMapper) and CSV preview screen (CSVPreview) render all labels in Polish when Polish is active"
-  status: failed
+  status: resolved
+  resolved_by: 07-08-PLAN.md
+  resolved_at: 2026-09-16
   reason: "User reported: english in csv import ui"
   severity: major
   test: 19
@@ -190,7 +192,9 @@ blocked: 0
 
 - gap_id: G-07-20b
   truth: "The CSV import section on the Data screen — idle description and column-mapping screen — appear fully in Polish"
-  status: failed
+  status: resolved
+  resolved_by: 07-08-PLAN.md
+  resolved_at: 2026-09-16
   reason: "User reported: english in csv import ui"
   severity: major
   test: 20
