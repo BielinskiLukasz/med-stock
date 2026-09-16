@@ -53,12 +53,12 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   4. Built-in category names and predefined location names display in the active language; stored database values remain unchanged
   5. Dates appear as DD.MM.YYYY in Polish mode and YYYY-MM-DD in English mode throughout the app
 
-**Plans**: 9 plans (8 executed + 07-09 gap closure planned, pending execution)
+**Plans**: 9/9 plans executed (8 executed + 07-09 gap closure planned, pending execution)
 
 Plans:
 
 - [x] 07-08-PLAN.md
-- [ ] 07-09-PLAN.md
+- [x] 07-09-PLAN.md
 
 **Wave 1**
 
@@ -142,7 +142,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. i18n / Polish Language | 8/9 | In Progress|  |
+| 7. i18n / Polish Language | 9/9 | In Progress|  |
 | 8. Full Location Management | 0/? | Not started | - |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
