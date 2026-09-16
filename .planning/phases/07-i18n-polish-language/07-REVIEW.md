@@ -44,12 +44,11 @@ files_reviewed_list:
   - src/routes/medicines/[id].tsx
   - src/routes/medicines/index.tsx
   - src/routes/medicines/new.tsx
-  - src/routes/trash/index.tsx
 findings:
   critical: 1
-  warning: 8
+  warning: 4
   info: 3
-  total: 12
+  total: 8
 status: issues_found
 ---
 
@@ -62,242 +61,237 @@ status: issues_found
 
 ## Summary
 
-This phase introduces a custom React Context i18n system (EN/PL) and translates most of the app's
-user-facing strings. The `LangContext`/`useLang()`/`t()` mechanism itself is small and reasonable,
-and the vast majority of screens correctly route strings through `t()` with sensible fallback
-lookups (`CATEGORY_KEYS`, `LOCATION_KEYS`, `UNIT_KEYS`, `FORM_TYPE_KEYS`).
+This is a re-review of phase 07 (i18n + Polish language) after gap-closure plan 07-09. The four
+previously-logged gaps are verified fixed in the current code:
 
-However, the translation coverage is **not complete**, and the gaps are concentrated in exactly the
-flow the project's own `CLAUDE.md` calls out as the core value proposition (adding/checking stock).
-The `MedicineNew.tsx` "Add Medicine" wizard — arguably the single most important screen in the app —
-ships primary call-to-action button text that is never translated, in any language. Several other
-components hardcode "Saving…"/"Other..."/"Custom unit" strings instead of using `t()`, aria-labels
-are uniformly left in English, some translation keys are entirely dead code (evidence that nothing
-enforces key/usage correctness), and `LanguageProvider` reads/writes `localStorage` without any
-error guard even though this codebase is otherwise careful about defensive coding for browser storage
-edge cases (see `App.tsx`'s `navigator.storage.persist()` handling for comparison).
+- **CR-01** (Add Medicine wizard buttons hardcoded English) — **RESOLVED**. `medicines/new.tsx:163,207`
+  now call `t('form.creating')`, `t('form.nextAddStock')`, `t('form.savingGeneric')`, `t('form.addStock')`.
+- **WR-01** (edit sheets hardcode "Saving…") — **RESOLVED**. `CatalogEditSheet.tsx:81`,
+  `StockEditSheet.tsx:103`, `MedicineForm.tsx:437` all now call `t('form.savingGeneric')`.
+- **WR-02** (custom unit/placeholder strings hardcoded) — **RESOLVED**. `MedicineForm.tsx` and
+  `StockFields.tsx` now call `t('form.customUnitOption')`, `t('form.customUnitPlaceholder')`,
+  `t('form.paoValuePlaceholder')`, `t('form.quantityPlaceholder')`, `t('form.packCountPlaceholder')`.
+- **WR-03** (aria-labels hardcoded English) — **MOSTLY RESOLVED**, but one instance was missed by the
+  closure plan: `medicines/index.tsx:160` still hardcodes `aria-label="Open filters"` on the filter-sheet
+  trigger button on the main Medicines list screen (see WR-05 below).
 
-None of the mutation/history/status logic in `lib/expiry.ts`, `lib/historyOps.ts`, or `lib/utils.ts`
-was altered incorrectly — those files remain correct. The defects found are scoped to the i18n
-system itself and to the translation coverage introduced across the phase's 8 plans.
+While verifying the fix, this pass also found one new **Critical** logic bug (unrelated to i18n, but
+present in files under review) and three new i18n coverage gaps that the 07-09 closure plan did not
+touch: Zod validation-error messages, the sync-guide `formatDate()` fallback strings, and change-history
+field-name interpolation all still bypass `t()`.
+
+The previously-deferred items (WR-04 localStorage try/catch, WR-05 fragile `LOCATION_KEYS` fallback
+duplication, WR-06 duplicated `statusKey` maps, WR-07 untyped `t()` key, WR-08 orphaned
+`form.namePlaceholder` key, IN-01 dead filter keys, IN-02 missing sort-by-status UI, IN-03 stale
+Phase-5 comment) were explicitly out of scope for 07-09 and are confirmed still present. They are
+re-surfaced briefly at the end of this report for completeness, per the review brief, but are not
+re-litigated as blocking since they were a deliberate scope decision.
 
 ## Critical Issues
 
-### CR-01: "Add Medicine" wizard's primary buttons are never translated
+### CR-02: "Not found" states are unreachable dead code — infinite loading spinner for missing records
 
-**File:** `src/routes/medicines/new.tsx:163-164, 207-208`
-**Issue:** The `MedicineNew` screen (Step 2: create catalog, Step 3: add stock) hardcodes its
-submit-button text and loading-state text as raw English string literals instead of calling `t()`:
+**File:** `src/routes/medicines/[id].tsx:226` and `src/routes/medicines/[id].edit.tsx:56`
+**Issue:**
+Both routes gate their "not found" UI on `catalog === null` / `medicine === null`:
 
 ```tsx
-{catalogForm.formState.isSubmitting ? 'Creating…' : 'Next: Add Stock'}
-...
-{stockForm.formState.isSubmitting ? 'Saving…' : 'Add Stock'}
+// [id].tsx:217-235
+if (catalog === undefined || stockEntries === undefined) { /* loading */ }
+if (catalog === null) { /* not found */ }
+```
+```tsx
+// [id].edit.tsx:48-62
+if (medicine === undefined || catalog === undefined) { /* loading */ }
+if (medicine === null) { /* not found */ }
 ```
 
-Every other screen in this phase routes its strings through `t()`; this file does not, for its two
-most important buttons. A Polish-language user completing the primary "add a medicine" flow — the
-scenario `CLAUDE.md` names as the app's core value — sees "Next: Add Stock" / "Add Stock" /
-"Creating…" / "Saving…" in English regardless of the selected language. This is not a stylistic gap;
-it is a functional failure of the feature this phase was built to deliver.
-**Fix:** Add `nextAddStock` / `addStock` / `creating` keys to `TranslationDict` (`en.ts`/`pl.ts`) and
-use them:
+Dexie's `Table.get()` (used by both `useLiveQuery` callbacks: `db.medicine_catalog.get(catalogId)` and
+`db.medicines.get(Number(id))`) resolves to `undefined` when the key does not exist — it never resolves
+to `null` (confirmed by the `EntityTable<Medicine, 'id'>` / `EntityTable<MedicineCatalog, 'id'>` typing in
+`src/lib/db.ts`, and consistent with the project's own documented invariant that IndexedDB has no native
+`null` key semantics). Consequently the `=== null` branch in both files is unreachable: a request for a
+deleted or nonexistent catalog/medicine id (e.g. a stale bookmark, a race after another tab permanently
+deletes the entry, or manually editing the URL hash) is indistinguishable from "still loading" and the
+screen falls into the first branch — the loading spinner — **forever**, with no path to the "not found"
+message and no escape other than manually navigating away.
+
+**Fix:**
 ```tsx
-{catalogForm.formState.isSubmitting ? t('form.creating') : t('form.nextAddStock')}
-...
-{stockForm.formState.isSubmitting ? t('form.saving') : t('form.addStock')}
+// [id].tsx
+if (catalog === undefined || stockEntries === undefined) { /* loading */ }
+if (catalog === undefined) { /* unreachable — remove, or... */ }
 ```
-(Note: `form.saving` currently means "Moving…" — see WR-01 — so a distinct key is needed here rather
-than reusing it as-is.)
+Replace the sentinel check with an explicit "resolved but absent" test, e.g. track a `loaded` flag or
+compare against `undefined` after an initial-load flag flips true:
+```tsx
+const [attempted, setAttempted] = useState(false)
+useEffect(() => { if (catalog !== undefined) setAttempted(true) }, [catalog])
+if (!attempted) return <Loading />
+if (catalog === undefined) return <NotFound />
+```
+or simpler — since `useLiveQuery`'s `undefined` already conflates "loading" and "not found", swap to a
+sentinel object result from the querier function itself:
+```tsx
+const catalog = useLiveQuery(
+  () => db.medicine_catalog.get(catalogId).then(c => c ?? null),
+  [id],
+)
+// now: undefined = loading, null = not found, object = found
+```
+Apply the same fix to `medicine`/`catalog` lookups in `[id].edit.tsx`.
 
 ## Warnings
 
-### WR-01: Hardcoded "Saving…" loading-state labels bypass i18n in three components
+### WR-05: `aria-label="Open filters"` still hardcoded English — missed by the WR-03 closure
 
-**File:** `src/components/CatalogEditSheet.tsx:81`, `src/components/StockEditSheet.tsx:103`, `src/components/MedicineForm.tsx:437`
-**Issue:** All three submit buttons hardcode the English literal `'Saving…'` (and in
-`MedicineForm.tsx`, an inconsistent `'Saving...'` with plain dots instead of an ellipsis character)
-for the `isSubmitting` loading state, instead of using a translation key:
+**File:** `src/routes/medicines/index.tsx:160`
+**Issue:** The filter-sheet trigger button on the main Medicines list screen (the app's primary landing
+screen) still has a literal English `aria-label="Open filters"`, never routed through `t()`. This wasn't
+in the original WR-03 finding list (which covered `BottomTabBar`, `SearchBar`, `FilterChips`,
+`medicines/new.tsx`, and `[id].tsx`) and was not touched by the 07-09 closure plan. Screen readers will
+announce this button in English regardless of the active language, on the screen every user sees first.
+**Fix:** Add an `aria.openFilters` key to `TranslationDict`/`en.ts`/`pl.ts` and use it:
 ```tsx
-{form.formState.isSubmitting ? 'Saving…' : t('form.saveChanges')}
+aria-label={t('aria.openFilters')}
 ```
-The existing `form.saving` key already exists in `TranslationDict`, but its value is `'Moving…'` /
-`'Przenoszę…'` (it is only correct for `MoveStockSheet.tsx`'s move action). Reusing it here would
-show the wrong text ("Moving…") on a save action, so a dedicated key is required.
-**Fix:** Add a `form.savingGeneric` (or similarly named) key with value `'Saving…'` / `'Zapisywanie…'`
-and use it in all three call sites instead of the literal.
 
-### WR-02: Hardcoded "Other...", "Custom unit", and numeric example placeholders
+### WR-06: Zod validation-error messages are hardcoded English, bypassing an already-existing translation key
 
-**File:** `src/components/MedicineForm.tsx:389, 394` and `src/components/StockFields.tsx:303, 308`
-(also `paoValue`/`quantity`/`packCount` placeholders `"e.g. 12"`, `"e.g. 20"`, `"e.g. 2"` in both files)
-**Issue:** The custom-quantity-unit `SelectItem` and its follow-up `Input` placeholder are hardcoded:
-```tsx
-<SelectItem value="__CUSTOM__">Other...</SelectItem>
-...
-<Input placeholder="Custom unit" ... />
+**Files:**
+- `src/components/CatalogFields.tsx:26` — `name: z.string().min(1, 'Name is required')`
+- `src/components/MedicineForm.tsx:35-36` — `name: z.string().min(1, 'Name is required')`,
+  `expiryDate: z.string().min(1, 'Expiry date is required')`
+- `src/components/StockFields.tsx:30` — `expiryDate: z.string().min(1, 'Expiry date is required')`
+
+**Issue:** All three Zod schemas hardcode their validation-failure messages as English string literals.
+These render via `<FormMessage />` when the user submits an empty required field (Name / Expiry date) on
+the Add Medicine, Edit Catalog, and Edit Stock forms. A Polish-language user who leaves the name or expiry
+date blank sees "Name is required" / "Expiry date is required" in English. Notably, `TranslationDict`
+already defines `form.nameRequired` (`'Name is required'` / `'Nazwa jest wymagana'`) but it is dead —
+never referenced anywhere in the schemas. There is no `form.expiryDateRequired` key at all. This directly
+contradicts the phase goal of "full string coverage" (I18N-02) and was missed by both the original review
+and the 07-09 closure plan, likely because Zod schemas are defined at module scope, outside any component
+where `useLang()` could be called.
+**Fix:** Move message resolution out of the static schema definition into a factory that takes `t`, and
+call it inside each component/form (where `useLang()` is available):
+```ts
+// CatalogFields.tsx
+export const makeCatalogSchema = (t: (k: string) => string) => z.object({
+  name: z.string().min(1, t('form.nameRequired')),
+  // ...
+})
 ```
-These never change when the user switches to Polish.
-**Fix:** Add `form.customUnitOption` / `form.customUnitPlaceholder` keys and route through `t()`.
-Also route the numeric-field placeholders through translated keys (or at minimum drop the English
-`"e.g."` prefix in favor of a translated equivalent, since the number itself doesn't need
-localization but the leading text does).
+Then in each consuming component: `const catalogSchema = useMemo(() => makeCatalogSchema(t), [t])`, and
+pass the resulting schema into `zodResolver`. Add `form.expiryDateRequired` to `TranslationDict`/`en.ts`/`pl.ts`.
 
-### WR-03: Hardcoded English `aria-label`s throughout, never localized
+### WR-07: `formatDate()` hardcodes its "no expiry" strings instead of reusing the translation dictionary
 
-**File:** `src/components/BottomTabBar.tsx:79`, `src/components/SearchBar.tsx:35`,
-`src/components/FilterChips.tsx:55`, `src/routes/medicines/index.tsx:160`,
-`src/routes/medicines/new.tsx:143, 178`, `src/routes/medicines/[id].tsx:260, 268, 320`
-**Issue:** Every `aria-label` in the reviewed files is a raw English string
-(`"Open filters"`, `"Back to search"`, `"Edit catalog"`, `"Delete catalog"`, `"Edit stock entry"`,
-`"Clear search"`, `` `Remove ${chip.label}` ``, and the language-toggle's own
-`"Switch to Polish"`/`"Switch to English"`). Screen-reader users on the Polish locale get an
-all-English accessibility tree. Given this phase's explicit goal is a fully localized app, these
-should have been included.
-**Fix:** Add `aria.*` translation keys and use `t()` for every `aria-label` attribute.
-
-### WR-04: `LanguageProvider` reads/writes `localStorage` without any error handling
-
-**File:** `src/i18n/LanguageProvider.tsx:20-28`
+**File:** `src/lib/utils.ts:16-25`
 **Issue:**
-```tsx
-const [lang, setLangState] = useState<Lang>(() => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  return isValidLang(saved) ? saved : 'en'
-})
+```ts
+export function formatDate(dateString: string | null | undefined, lang: Lang): string {
+  if (!dateString) {
+    return lang === 'pl' ? 'Bez daty ważności' : 'No expiry'
+  }
+  ...
+```
+This duplicates the `dates.noExpiry` key already defined in `en.ts` (`'No expiry'`) and `pl.ts`
+(`'Bez daty ważności'`). Because `formatDate` is a plain function (not a hook, so it cannot call
+`useLang()`/`t()`), the string exists in two places that must be kept in sync by hand. If a translator
+updates `dates.noExpiry` in the dictionary but misses this literal in `utils.ts` (or vice versa), the two
+copies silently diverge — a maintainability/correctness risk that defeats the point of centralizing
+translations in `en.ts`/`pl.ts`.
+**Fix:** Pass the resolved string in as a parameter instead of hardcoding it:
+```ts
+export function formatDate(dateString: string | null | undefined, lang: Lang, noExpiryLabel: string): string {
+  if (!dateString) return noExpiryLabel
+  ...
+}
+// call sites: formatDate(medicine.expiryDate, lang, t('dates.noExpiry'))
+```
+(Note: existing callers in `MedicineCard.tsx` and `[id].tsx` only invoke `formatDate` when
+`medicine.expiryDate`/`stock.expiryDate` is truthy, so the empty-string branch may currently be dead in
+practice — but the duplication risk stands regardless, and `utils.test.ts` explicitly exercises the
+null/undefined path.)
 
-const setLang = (newLang: Lang) => {
-  localStorage.setItem(STORAGE_KEY, newLang)
-  setLangState(newLang)
+### WR-08: Change-history entries interpolate raw untranslated field names
+
+**File:** `src/components/HistoryEntry.tsx:24-27`
+**Issue:**
+```ts
+if (entry.changedFields.length === 1) {
+  const { field, oldValue, newValue } = entry.changedFields[0]
+  return `${ts} — ${field} ${t('history.fieldChanged')}: "${String(oldValue)}" → "${String(newValue)}"`
 }
 ```
-Neither call is guarded. If `localStorage` throws — private-browsing storage restrictions, blocked
-third-party storage, quota exceeded, or a corporate/managed-device policy — the `useState`
-initializer throws during the very first render of `LanguageProvider`, which sits above
-`RouterProvider` in `App.tsx`, so the entire app fails to mount with an unhandled exception. This
-project is otherwise careful about this class of failure — see `App.tsx`'s
-`navigator.storage.persist()` handling, explicitly guarded with `?.` and `.catch()` — but the new
-i18n code doesn't follow the same pattern.
-**Fix:**
-```tsx
-const [lang, setLangState] = useState<Lang>(() => {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY)
-    return isValidLang(saved) ? saved : 'en'
-  } catch {
-    return 'en'
-  }
-})
-
-const setLang = (newLang: Lang) => {
-  try {
-    localStorage.setItem(STORAGE_KEY, newLang)
-  } catch (err) {
-    console.warn('Failed to persist language preference:', err)
-  }
-  setLangState(newLang)
+`field` is the raw `keyof Medicine` property name (`'location'`, `'expiryDate'`, `'quantity'`,
+`'quantityUnit'`, `'notes'`, `'pao'`, `'openedDate'`, `'manualStatus'`) taken directly from
+`TRACKED_FIELDS` in `historyOps.ts`. It is never mapped through a translation table, so a Polish-language
+user viewing a medicine's change history (`ChangeHistory.tsx`, expanded on the detail screen) sees English
+field names mixed into otherwise-Polish sentences, e.g. "12.03.2026 — quantityUnit zmieniono: ...". This
+is a genuine I18N-02 gap on a user-visible screen that neither the original review nor 07-09 addressed.
+**Fix:** Add a `Record<keyof Medicine, string>` translation-key map (mirroring the pattern already used
+for `CATEGORY_KEYS`/`LOCATION_KEYS`/`UNIT_KEYS`) and translate `field` before interpolating:
+```ts
+const FIELD_KEYS: Record<string, string> = {
+  location: 'form.location', expiryDate: 'form.expiryDate', quantity: 'form.quantity',
+  quantityUnit: 'form.quantityUnit', notes: 'form.notes', pao: 'form.pao',
+  openedDate: 'form.openedDate', manualStatus: 'status.title' /* or a dedicated key */,
 }
+// ...
+return `${ts} — ${t(FIELD_KEYS[field] ?? field)} ${t('history.fieldChanged')}: ...`
 ```
-
-### WR-05: Fragile/inconsistent fallback pattern for free-text location names passed through `t()`
-
-**File:** `src/components/MedicineCard.tsx:23`, `src/components/FilterBottomSheet.tsx:138`,
-`src/components/FilterChips.tsx:31`, `src/components/MedicineForm.tsx:204`,
-`src/components/StockFields.tsx:121`, `src/components/MoveStockSheet.tsx:150`,
-`src/routes/medicines/[id].tsx:296`, `src/routes/trash/index.tsx:90`
-**Issue:** These call sites all use the pattern `t(LOCATION_KEYS[name] ?? name)`, passing a
-user-entered, free-text custom location name directly into the same `t()` lookup used for static
-translation keys. `t()`'s fallback behavior (return the input unchanged when no matching dictionary
-entry is found) happens to make this safe today, but it is an undocumented implementation detail,
-not a contract — if a user names a custom location something that happens to collide with a real
-dot-path key (e.g. a location literally named `"form.cancel"`), that location would silently render
-as `"Cancel"` instead of its actual name. Contrast this with `src/routes/locations/index.tsx:136`,
-which uses the safer explicit pattern:
-```tsx
-{LOCATION_KEYS[loc.name] ? t(LOCATION_KEYS[loc.name]) : loc.name}
-```
-Two different guard idioms for the same problem, one of which has a real (if low-probability) data
-integrity edge case, is a maintainability hazard.
-**Fix:** Standardize on the `locations/index.tsx` pattern everywhere — never pass unvalidated
-user content into `t()`.
-
-### WR-06: `statusKey` lookup table duplicated verbatim in three files
-
-**File:** `src/components/StatusBadge.tsx:15-23`, `src/components/FilterBottomSheet.tsx:26-34`,
-`src/components/FilterChips.tsx:6-14`
-**Issue:** The exact same `Record<MedicineStatus, string>` mapping status values to `status.*`
-translation keys is copy-pasted into three separate files. Any future status addition/rename must be
-updated in three places in lockstep, or the UI silently desyncs (a status shows its raw enum name in
-one place and its translated label in another).
-**Fix:** Extract to a single shared constant, e.g. `STATUS_KEYS` in `src/i18n/types.ts` alongside
-`CATEGORY_KEYS`/`LOCATION_KEYS`/`UNIT_KEYS`/`FORM_TYPE_KEYS`, and import it in all three components.
-
-### WR-07: `t()` accepts an unvalidated `string` key — no compile-time key safety
-
-**File:** `src/i18n/index.ts:16`, `src/i18n/LanguageProvider.tsx:32-43`
-**Issue:** `t: (key: string) => string` accepts any string. A typo'd or stale key (e.g. calling
-`t('form.save_changes')` instead of `t('form.saveChanges')`) is not a compile error — it silently
-falls through to `return key`, displaying the raw dot-path string to the user at runtime. This is
-directly evidenced by the dead keys in IN-01 below (keys that exist in the dictionary but are never
-referenced, undetectable without a manual audit) and is the same class of defect that produced CR-01
-and WR-01 (missing entries that nobody could catch statically).
-**Fix:** Derive a template-literal union type from `TranslationDict` (e.g.
-`` type TKey = { [N in keyof TranslationDict]: `${string & N}.${string & keyof TranslationDict[N]}` }[keyof TranslationDict] ``)
-and type `t: (key: TKey) => string`, so invalid/unused keys are caught by `tsc -b` at build time
-(this project already runs `tsc -b` before every build per `CLAUDE.md`).
-
-### WR-08: Hardcoded medicine-name placeholder ignores the existing (and now orphaned) `form.namePlaceholder` key
-
-**File:** `src/components/CatalogFields.tsx:54`, `src/components/MedicineForm.tsx:119`
-**Issue:** Both forms hardcode:
-```tsx
-<Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
-```
-while `TranslationDict.form.namePlaceholder` already exists with a *different* value
-(`'e.g. Ibuprofen'` / `'np. Ibuprofen'`) and is never used anywhere in the codebase (confirmed via
-search — no `t('form.namePlaceholder')` call site exists). The placeholder is (a) never translated
-to Polish and (b) inconsistent with the translation dictionary's own text for the same field.
-**Fix:** Either use `t('form.namePlaceholder')` in both places, or delete the unused key if a
-hardcoded example is intentional — currently it's neither used nor consistent.
 
 ## Info
 
-### IN-01: Dead/unused translation keys
+### IN-04: Previously-deferred items confirmed still present (out of scope, not new)
 
-**File:** `src/i18n/types.ts`, `src/i18n/en.ts`, `src/i18n/pl.ts`
-**Issue:** The following keys are defined (and translated into both languages) but never referenced
-by any `t()` call in the reviewed source: `common.acrossLocations`, `filter.byStatus`,
-`filter.byCreated`, `history.updated`, `toasts.saved`, `data.importCSVButton`. These are either
-leftovers from an earlier design or aspirational keys for features not wired up (e.g. `filter.byStatus`
-suggests a "sort by status" option, but `FilterBottomSheet.tsx`'s sort buttons only offer
-`name`/`expiryDate`/`category` even though `SortField` includes `'status'`).
-**Fix:** Remove unused keys, or wire up the missing UI (sort-by-status option) if it was intended to
-ship in this phase.
+Per the review brief, these were explicitly deferred by the previous review/07-09 planning decision and
+are re-surfaced here only for completeness — they are not new findings and do not block this phase:
 
-### IN-02: `SortField` includes `'status'` but the sort UI never exposes it
+- **WR-04 (localStorage try/catch):** `LanguageProvider.tsx:20-28` still calls `localStorage.getItem`/
+  `setItem` with no try/catch. Still a crash risk in Safari private-browsing / storage-quota-exceeded
+  environments.
+- **WR-05→ (fragile `LOCATION_KEYS` fallback pattern):** the `LOCATION_KEYS[x] ? t(LOCATION_KEYS[x]) : x`
+  ternary is now duplicated across at least 7 call sites (`MedicineCard.tsx`, `locations/index.tsx`,
+  `[id].tsx`, `MoveStockSheet.tsx`, `StockFields.tsx`, `MedicineForm.tsx`, `FilterBottomSheet.tsx`) instead
+  of a single shared helper (e.g. `translateLocation(name, t)`).
+- **WR-06→ (duplicated `statusKey` map):** the identical `Record<MedicineStatus, string>` literal is now
+  copy-pasted in three files: `StatusBadge.tsx`, `FilterChips.tsx`, `FilterBottomSheet.tsx`.
+- **WR-07→ (untyped `t()` key):** `t(key: string): string` in `i18n/index.ts`/`LanguageProvider.tsx`
+  still accepts any string; typos/missing keys silently fall through to displaying the raw dot-path.
+- **WR-08→ (orphaned `form.namePlaceholder` key):** `TranslationDict.form.namePlaceholder` is defined in
+  both `en.ts` ('e.g. Ibuprofen') and `pl.ts` ('np. Ibuprofen') but never referenced — `CatalogFields.tsx:54`
+  and `MedicineForm.tsx:119` both still hardcode the literal placeholder `"e.g. Ibuprofen 400mg"` in English
+  only, regardless of active language.
+- **IN-01 (dead filter keys):** `filter.byStatus` / `filter.byCreated` remain unused in any rendered UI.
+- **IN-02 (missing sort-by-status UI):** `SortField` (`uiStore.ts`) includes `'status'` and
+  `medicines/index.tsx`'s sort comparator handles it, but `FilterBottomSheet.tsx`'s sort-by button row only
+  cycles `name` / `expiryDate` / `category` — there is no way for a user to actually select sort-by-status.
+- **IN-03 (stale Phase-5 comment):** `MedicineForm.tsx:29-31` still describes itself as kept "for backward
+  compat during Phase 5 transition," to be replaced by `CatalogFields` + `StockFields` composition — it is
+  still in active use unchanged by both `[id].edit.tsx` and `new.tsx`'s catalog-creation step re-uses
+  `CatalogFields`/`StockFields` directly, so the comment is stale/misleading about the form's actual status.
 
-**File:** `src/components/FilterBottomSheet.tsx:152`
-**Issue:** `(['name', 'expiryDate', 'category'] as SortField[]).map(...)` omits `'status'`, even
-though `MedicineList` (`src/routes/medicines/index.tsx:122-124`) has working sort-by-status logic and
-`filter.byStatus` exists as a translation key (see IN-01). This looks like a pre-existing gap outside
-this phase's scope, but it directly correlates with a dead i18n key introduced/retained in this phase
-and is worth flagging together.
-**Fix:** Either add the `'status'` sort button or remove the dead code paths that support it.
+### IN-05: `ImportJSONSection.tsx` never resets displayed counts after a successful import
 
-### IN-03: Stale `TODO: Phase 5` comment in `MedicineForm.tsx`
+**File:** `src/components/ImportJSONSection.tsx:69-83`
+**Issue:** `handleConfirmImport` clears `pendingRaw` on success but leaves `medicineCount`/`locationCount`
+state untouched. This is latent (the dialog is closed via `AlertDialogAction` before these are re-read),
+but if the dialog is ever reopened as a controlled component without a fresh file selection, stale counts
+from the previous import would flash briefly. Low impact, noted for completeness.
+**Fix:** Reset `setMedicineCount(0)` / `setLocationCount(0)` alongside `setPendingRaw(null)` in the success
+path.
 
-**File:** `src/components/MedicineForm.tsx:29-31`
-**Issue:**
-```tsx
-// TODO: Phase 5 — CatalogFields and StockFields have been extracted as reusable components.
-// This monolithic form is kept for backward compat during Phase 5 transition.
-// Replace with CatalogFields + StockFields composition once add/edit flows are updated (Plans 05-05, 05-06).
-```
-The project is now on Phase 07; this comment references a "Phase 5 transition" that (per
-`MedicineEdit`'s continued use of `MedicineForm`) either never completed or was intentionally kept.
-Either way, the stale comment misleads future readers about the file's status.
-**Fix:** Update or remove the comment to reflect the current, apparently-permanent role of
-`MedicineForm` in the edit flow.
+### IN-06: Comment/label drift — `[id].tsx` header comment says "Load catalog by catalogId" but the delete-guard reads `stockEntries` before falsy check
+
+**File:** `src/routes/medicines/[id].tsx:449`
+**Issue:** `(stockEntries?.length ?? 0) > 0` is used to decide whether to show "cannot delete" vs. "delete
+catalog?" in the confirmation dialog, but `stockEntries` at that point is guaranteed non-`undefined`
+(guarded earlier at line 217), making the `?? 0` fallback dead defensive code. Purely cosmetic — flagged
+for minor clarity only, not a functional defect.
+**Fix:** `stockEntries.length > 0` (drop the optional chaining/fallback) once the earlier guard is trusted.
 
 ---
 
