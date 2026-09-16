@@ -257,7 +257,7 @@ export function MedicineDetail() {
             type="button"
             onClick={() => setCatalogEditOpen(true)}
             className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-            aria-label="Edit catalog"
+            aria-label={t('aria.editCatalog')}
           >
             <Pencil className="h-4 w-4 text-gray-500" />
           </button>
@@ -265,7 +265,7 @@ export function MedicineDetail() {
             type="button"
             onClick={() => setCatalogDeleteOpen(true)}
             className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-            aria-label="Delete catalog"
+            aria-label={t('aria.deleteCatalog')}
           >
             <Trash2 className="h-4 w-4 text-red-500" />
           </button>
@@ -317,7 +317,7 @@ export function MedicineDetail() {
                           setStockEditOpen(true)
                         }}
                         className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-                        aria-label="Edit stock entry"
+                        aria-label={t('aria.editStockEntry')}
                       >
                         <Pencil className="h-4 w-4 text-gray-500" />
                       </button>

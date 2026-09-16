@@ -52,7 +52,7 @@ export function FilterChips() {
             size="sm"
             className="h-4 w-4 p-0 ml-1"
             onClick={chip.remove}
-            aria-label={`Remove ${chip.label}`}
+            aria-label={`${t('aria.removeFilter')} ${chip.label}`}
           >
             ×
           </Button>

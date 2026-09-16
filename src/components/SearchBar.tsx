@@ -32,7 +32,7 @@ export function SearchBar({
           size="sm"
           className="absolute right-1 h-6 w-6 p-0"
           onClick={() => onChange('')}
-          aria-label="Clear search"
+          aria-label={t('aria.clearSearch')}
         >
           ×
         </Button>

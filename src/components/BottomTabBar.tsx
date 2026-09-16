@@ -76,7 +76,7 @@ export function BottomTabBar() {
       </NavLink>
       <button
         onClick={() => setLang(lang === 'en' ? 'pl' : 'en')}
-        aria-label={lang === 'en' ? 'Switch to Polish' : 'Switch to English'}
+        aria-label={lang === 'en' ? t('aria.switchToPolish') : t('aria.switchToEnglish')}
         className="flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition-colors text-gray-500 hover:text-gray-700 min-h-[44px] min-w-[44px]"
       >
         <span>{lang === 'en' ? '🇬🇧' : '🇵🇱'}</span>

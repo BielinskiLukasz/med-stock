@@ -140,7 +140,7 @@ export function MedicineNew() {
               type="button"
               onClick={handleBackToSearch}
               className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-              aria-label="Back to search"
+              aria-label={t('aria.backToSearch')}
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
@@ -175,7 +175,7 @@ export function MedicineNew() {
               type="button"
               onClick={handleBackToSearch}
               className="p-1 rounded-md hover:bg-gray-100 transition-colors"
-              aria-label="Back to search"
+              aria-label={t('aria.backToSearch')}
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
