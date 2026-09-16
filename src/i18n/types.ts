@@ -198,6 +198,15 @@ export type TranslationDict = {
     quantityValidationMin: string
     quantityValidationMax: string
     saving: string
+    creating: string
+    nextAddStock: string
+    addStock: string
+    savingGeneric: string
+    customUnitOption: string
+    customUnitPlaceholder: string
+    paoValuePlaceholder: string
+    quantityPlaceholder: string
+    packCountPlaceholder: string
   }
   filter: {
     title: string
@@ -271,6 +280,16 @@ export type TranslationDict = {
     skip: string
     nameRequired: string
     preview: string
+  }
+  aria: {
+    backToSearch: string
+    switchToPolish: string
+    switchToEnglish: string
+    clearSearch: string
+    removeFilter: string
+    editStockEntry: string
+    deleteCatalog: string
+    editCatalog: string
   }
 }
 

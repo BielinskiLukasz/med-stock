@@ -160,7 +160,7 @@ export function MedicineNew() {
                 className="w-full"
                 disabled={catalogForm.formState.isSubmitting}
               >
-                {catalogForm.formState.isSubmitting ? 'Creating…' : 'Next: Add Stock'}
+                {catalogForm.formState.isSubmitting ? t('form.creating') : t('form.nextAddStock')}
               </Button>
             </form>
           </Form>
@@ -204,7 +204,7 @@ export function MedicineNew() {
                 className="w-full"
                 disabled={stockForm.formState.isSubmitting}
               >
-                {stockForm.formState.isSubmitting ? 'Saving…' : 'Add Stock'}
+                {stockForm.formState.isSubmitting ? t('form.savingGeneric') : t('form.addStock')}
               </Button>
             </form>
           </Form>
