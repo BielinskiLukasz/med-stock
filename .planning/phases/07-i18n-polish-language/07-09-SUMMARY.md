@@ -170,3 +170,7 @@ The out-of-scope items explicitly deferred by this plan (WR-04 through WR-08, IN
 ---
 *Phase: 07-i18n-polish-language*
 *Completed: 2026-09-16*
+
+## Self-Check: PASSED
+
+All 12 modified files and the SUMMARY.md itself confirmed present on disk. All 4 task commits (`c48c9aa`, `02e22a7`, `1f2de39`, `fdf96a5`) plus the metadata commit (`82e4a76`) confirmed present in git log.
