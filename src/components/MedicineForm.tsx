@@ -284,7 +284,7 @@ export function MedicineForm({
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="e.g. 12"
+                      placeholder={t('form.paoValuePlaceholder')}
                       min={1}
                       value={field.value ?? ''}
                       onChange={(e) => {
@@ -344,7 +344,7 @@ export function MedicineForm({
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="e.g. 20"
+                      placeholder={t('form.quantityPlaceholder')}
                       min={1}
                       value={field.value ?? ''}
                       onChange={(e) => {
@@ -386,12 +386,12 @@ export function MedicineForm({
                           {t(UNIT_KEYS[unit] ?? 'units.units')}
                         </SelectItem>
                       ))}
-                      <SelectItem value="__CUSTOM__">Other...</SelectItem>
+                      <SelectItem value="__CUSTOM__">{t('form.customUnitOption')}</SelectItem>
                     </SelectContent>
                   </Select>
                   {showCustomQuantityUnit && (
                     <Input
-                      placeholder="Custom unit"
+                      placeholder={t('form.customUnitPlaceholder')}
                       value={field.value ?? ''}
                       onChange={(e) =>
                         field.onChange(e.target.value || null)

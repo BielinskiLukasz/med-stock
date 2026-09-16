@@ -198,7 +198,7 @@ export function StockFields({ form }: StockFieldsProps) {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="e.g. 12"
+                    placeholder={t('form.paoValuePlaceholder')}
                     min={1}
                     value={field.value ?? ''}
                     onChange={(e) => {
@@ -258,7 +258,7 @@ export function StockFields({ form }: StockFieldsProps) {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="e.g. 20"
+                    placeholder={t('form.quantityPlaceholder')}
                     min={1}
                     value={field.value ?? ''}
                     onChange={(e) => {
@@ -300,12 +300,12 @@ export function StockFields({ form }: StockFieldsProps) {
                         {t(UNIT_KEYS[unit] ?? 'units.units')}
                       </SelectItem>
                     ))}
-                    <SelectItem value="__CUSTOM__">Other...</SelectItem>
+                    <SelectItem value="__CUSTOM__">{t('form.customUnitOption')}</SelectItem>
                   </SelectContent>
                 </Select>
                 {showCustomQuantityUnit && (
                   <Input
-                    placeholder="Custom unit"
+                    placeholder={t('form.customUnitPlaceholder')}
                     value={field.value ?? ''}
                     onChange={(e) => field.onChange(e.target.value || null)}
                     className="mt-2"
@@ -328,7 +328,7 @@ export function StockFields({ form }: StockFieldsProps) {
             <FormControl>
               <Input
                 type="number"
-                placeholder="e.g. 2"
+                placeholder={t('form.packCountPlaceholder')}
                 min={1}
                 value={field.value ?? ''}
                 onChange={(e) => {
