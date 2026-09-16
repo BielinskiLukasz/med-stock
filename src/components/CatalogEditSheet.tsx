@@ -78,7 +78,7 @@ export function CatalogEditSheet({ catalog, onSave, open, onOpenChange }: Catalo
                 className="flex-1"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? 'Saving…' : t('form.saveChanges')}
+                {form.formState.isSubmitting ? t('form.savingGeneric') : t('form.saveChanges')}
               </Button>
             </div>
           </form>

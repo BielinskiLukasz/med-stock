@@ -100,7 +100,7 @@ export function StockEditSheet({ stock, onSave, open, onOpenChange }: StockEditS
                 className="flex-1"
                 disabled={form.formState.isSubmitting}
               >
-                {form.formState.isSubmitting ? 'Saving…' : t('form.save')}
+                {form.formState.isSubmitting ? t('form.savingGeneric') : t('form.save')}
               </Button>
             </div>
           </form>

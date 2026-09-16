@@ -434,7 +434,7 @@ export function MedicineForm({
           className="w-full"
           disabled={form.formState.isSubmitting}
         >
-          {form.formState.isSubmitting ? 'Saving...' : resolvedLabel}
+          {form.formState.isSubmitting ? t('form.savingGeneric') : resolvedLabel}
         </Button>
       </form>
     </Form>
