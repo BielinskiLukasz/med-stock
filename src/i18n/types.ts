@@ -266,6 +266,11 @@ export type TranslationDict = {
     importComplete: string
     back: string
     cancel: string
+    mapperDescription: string
+    mapToField: string
+    skip: string
+    nameRequired: string
+    preview: string
   }
 }
 

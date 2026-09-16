@@ -264,5 +264,10 @@ export const en: TranslationDict = {
     importComplete: 'Import',
     back: 'Back',
     cancel: 'Cancel',
+    mapperDescription: 'Select which columns in your spreadsheet map to medicine fields. Mark columns as "Skip" if they\'re not needed.',
+    mapToField: 'Map to field:',
+    skip: '(skip)',
+    nameRequired: "Required field 'name' must be mapped before preview is enabled",
+    preview: 'Preview',
   },
 }

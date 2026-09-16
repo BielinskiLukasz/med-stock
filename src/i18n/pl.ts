@@ -264,5 +264,10 @@ export const pl: TranslationDict = {
     importComplete: 'Importuj',
     back: 'Wstecz',
     cancel: 'Anuluj',
+    mapperDescription: 'Wybierz, które kolumny arkusza odpowiadają polom leku. Oznacz kolumny jako „Pomiń", jeśli nie są potrzebne.',
+    mapToField: 'Mapuj na pole:',
+    skip: '(pomiń)',
+    nameRequired: "Pole wymagane 'nazwa' musi być zmapowane przed podglądem",
+    preview: 'Podgląd',
   },
 }
