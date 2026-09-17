@@ -32,7 +32,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 Phase: 8 — Full Location Management
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-09-17 — Phase 07 complete, transitioned to Phase 8
+Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add name/category column mapping and catalog dedup
 
 ## v1.0 Summary
 
@@ -139,6 +139,12 @@ Last activity: 2026-09-17 — Phase 07 complete, transitioned to Phase 8
 - [Phase 07]: Post-07-10 code review found 4 more gaps (a 4th, unplanned gap-closure cycle) — fixed via /gsd-code-review 07 --fix: MoveStockSheet raw unit string (WR-01), HistoryEntry raw field key + "[object Object]" stringify bug (WR-02), CSVColumnMapper/CSVPreview raw field identifiers (WR-03), and the highest-impact one — Zod validation schemas hardcoding English error messages (WR-04)
 - [Phase 07]: Zod schemas converted to factories (`createCatalogSchema(t)`/`createStockSchema(t)`/`createMedicineSchema(t)`) wired via `useMemo(() => createXSchema(t), [t])` in all 6 consumers — module-scope schemas can't call the `t()` hook, so this pattern is required wherever form validation messages must be language-aware
 - [Phase 07]: Phase 07 VERIFIED PASSED after 4th gap-closure cycle — I18N-01 through I18N-05 all satisfied; phase marked complete, transitioned to Phase 8
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260917-hx0 | Fix CSV import: add name/category column mapping and catalog dedup | 2026-09-17 | 30b14ca | [260917-hx0-fix-csv-import-add-name-category-column-](./quick/260917-hx0-fix-csv-import-add-name-category-column-/) |
 
 ## Operator Next Steps
 
