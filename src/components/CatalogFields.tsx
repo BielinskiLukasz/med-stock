@@ -51,7 +51,7 @@ export function CatalogFields({ form }: CatalogFieldsProps) {
           <FormItem>
             <FormLabel>{t('form.name')} *</FormLabel>
             <FormControl>
-              <Input placeholder="e.g. Ibuprofen 400mg" autoComplete="off" {...field} />
+              <Input placeholder={t('form.namePlaceholder')} autoComplete="off" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

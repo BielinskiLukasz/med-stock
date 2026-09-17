@@ -155,7 +155,7 @@ export const pl: TranslationDict = {
   },
   form: {
     name: 'Nazwa leku',
-    namePlaceholder: 'np. Ibuprofen',
+    namePlaceholder: 'np. Ibuprofen 400mg',
     nameRequired: 'Nazwa jest wymagana',
     category: 'Kategoria',
     noCategory: 'Bez kategorii',

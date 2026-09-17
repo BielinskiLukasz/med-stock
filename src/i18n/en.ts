@@ -155,7 +155,7 @@ export const en: TranslationDict = {
   },
   form: {
     name: 'Medicine name',
-    namePlaceholder: 'e.g. Ibuprofen',
+    namePlaceholder: 'e.g. Ibuprofen 400mg',
     nameRequired: 'Name is required',
     category: 'Category',
     noCategory: 'No category',
