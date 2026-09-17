@@ -1,52 +1,80 @@
 ---
 phase: 07-i18n-polish-language
-verified: 2026-09-16T21:35:00Z
+verified: 2026-09-17T12:00:00Z
 status: gaps_found
 score: 5/5 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
 re_verification:
   previous_status: gaps_found
-  previous_verified_at: 2026-09-16T20:00:00Z
+  previous_verified_at: 2026-09-16T21:35:00Z
   previous_gaps:
-    - CR-01 (Add Medicine wizard buttons hardcoded)
-    - WR-01 (Edit sheets "Saving…" hardcoded)
-    - WR-02 (Custom unit/placeholder strings hardcoded)
-    - WR-03 (8 aria-labels hardcoded)
-  gap_closure_plan: 07-09-PLAN.md
-  closure_status: "Partial — 4 gaps targeted, 3.5/4 closed; 1 instance of WR-03 (medicines/index.tsx) missed"
+    - WR-05 (aria-label="Open filters" on Medicines list filter button)
+    - namePlaceholder gap (CatalogFields.tsx:54, MedicineForm.tsx:119)
+  gap_closure_plan: 07-10-PLAN.md
+  closure_status: "Complete — WR-05 and placeholder gap both closed"
   new_gaps_identified:
-    - WR-05 (aria-label="Open filters" not covered by 07-09 scope)
-    - WR-07 (formatDate() hardcoded "No expiry" strings, out-of-scope for 07-09)
+    - WR-01 (Zod form validation messages hardcoded English, never localized)
+    - WR-02 (HistoryEntry field names untranslated)
+    - WR-03 (CSV column mapper shows raw field identifiers untranslated)
 
 gaps:
-  - truth: "All UI labels and screen titles display in the active language, including aria-labels for accessibility (I18N-02 Success Criterion #2)"
+  - truth: "All UI error messages display in the active language (I18N-02 requirement: 'All UI strings...error messages...display in active language')"
     status: failed
-    reason: "WR-05 (NEW GAP): medicines/index.tsx:160 has aria-label='Open filters' hardcoded English on the primary Medicines list screen (the app's most-viewed screen). A Polish user cannot see this label translated, violating the phase goal of 'full string coverage'."
+    reason: "WR-01 (NEW GAP): Zod form-validation messages are hardcoded English literals in schemas (CatalogFields.tsx:26, StockFields.tsx:30, MedicineForm.tsx:35-36) and rendered verbatim by FormMessage (ui/form.tsx:148) without any localization. When Polish-language users submit an add/edit form with missing required fields, validation errors appear in English ('Name is required', 'Expiry date is required') regardless of app language setting. This directly violates I18N-02 ('error messages display in active language') and affects the most common user workflows (add medicine, edit medicine, add stock, edit stock). A form.nameRequired key exists in en.ts and pl.ts but is never referenced; form.expiryDateRequired does not exist at all."
     artifacts:
-      - path: "src/routes/medicines/index.tsx"
-        issue: "Line 160: aria-label='Open filters' is hardcoded English literal, never routed through t(). This aria-label was not included in the 07-09 closure plan's WR-03 scope (which covered 8 instances across 5 files, but missed this one on the main Medicines list)."
+      - path: "src/components/CatalogFields.tsx"
+        issue: "Line 26: catalogSchema validation message 'Name is required' is hardcoded English literal"
+      - path: "src/components/StockFields.tsx"
+        issue: "Line 30: stockSchema validation message 'Expiry date is required' is hardcoded English literal"
+      - path: "src/components/MedicineForm.tsx"
+        issue: "Lines 35-36: medicineSchema validation messages 'Name is required' and 'Expiry date is required' are hardcoded English literals"
+      - path: "src/components/ui/form.tsx"
+        issue: "Line 148: FormMessage renders error.message verbatim (String(error?.message)) without calling t() to translate it"
     missing:
-      - "Add aria.openFilters key to src/i18n/types.ts TranslationDict.aria namespace"
-      - "Add aria.openFilters to src/i18n/en.ts (value: 'Open filters') and src/i18n/pl.ts (value: 'Otwórz filtry' or equivalent)"
-      - "Change medicines/index.tsx:160 from aria-label='Open filters' to aria-label={t('aria.openFilters')}"
+      - "Add form.expiryDateRequired key to src/i18n/types.ts TranslationDict.form namespace"
+      - "Add form.expiryDateRequired to src/i18n/en.ts (value: 'Expiry date is required') and src/i18n/pl.ts (value: 'Data ważności jest wymagana' or equivalent)"
+      - "Update src/components/CatalogFields.tsx:26 catalogSchema from z.string().min(1, 'Name is required') to z.string().min(1, 'form.nameRequired')"
+      - "Update src/components/StockFields.tsx:30 stockSchema from z.string().min(1, 'Expiry date is required') to z.string().min(1, 'form.expiryDateRequired')"
+      - "Update src/components/MedicineForm.tsx:35-36 medicineSchema to use 'form.nameRequired' and 'form.expiryDateRequired' instead of hardcoded English"
+      - "Update src/components/ui/form.tsx:148 FormMessage to import useLang and translate error messages: const { t } = useLang(); const body = error ? t(String(error?.message)) : children"
+
+  - truth: "All UI field labels and screen text display in the active language, including internal field names in secondary features like change history (I18N-02)"
+    status: failed
+    reason: "WR-02 (NEW GAP): HistoryEntry.tsx:26 interpolates raw internal database field names (expiryDate, openedDate, location, etc.) directly into history entry text without translation. A Polish-language user viewing a stock entry's change history will see e.g. '12.09.2026 — expiryDate zmieniono: \"2026-01-01\" → \"2026-06-01\"' where 'expiryDate' is untranslated English/camelCase embedded in a Polish sentence. This violates the goal of 'all text displays in chosen language' even though history is a secondary feature."
+    artifacts:
+      - path: "src/components/HistoryEntry.tsx"
+        issue: "Line 26: field variable (raw camelCase name from TRACKED_FIELDS) is interpolated into the formatted entry string without translation: `${field} ${t('history.fieldChanged')}`"
+    missing:
+      - "Add a FIELD_LABEL_KEYS mapping in HistoryEntry.tsx or historyOps.ts that maps each tracked field name to a translation key (e.g., 'expiryDate' → 'form.expiryDate')"
+      - "Translate field labels at format time: const fieldLabel = t(FIELD_LABEL_KEYS[field] ?? field); return `${ts} — ${fieldLabel} ${t('history.fieldChanged')}: ...`"
+
+  - truth: "All UI field names and dropdown options display in the active language, including CSV import field selectors and preview headers (I18N-02)"
+    status: failed
+    reason: "WR-03 (NEW GAP): CSVColumnMapper.tsx:53-57 and CSVPreview.tsx:42-49 render internal MEDICINE_FIELDS identifiers (expiryDate, quantityUnit, packCount, etc.) verbatim in the dropdown options and table header row. Polish-language users performing a CSV import see untranslated field names in both the column-mapping dropdown and the preview table. This is an edge-case feature (power-user action) but still violates 'all text displays in chosen language' within the scope of what that user-facing screen shows."
+    artifacts:
+      - path: "src/components/CSVColumnMapper.tsx"
+        issue: "Lines 53-57: MEDICINE_FIELDS.map() renders field values directly without translation: {field}"
+      - path: "src/components/CSVPreview.tsx"
+        issue: "Lines 42-49: mappedFields.map() renders fieldName directly without translation: {fieldName}"
+    missing:
+      - "Add a FIELD_LABEL_KEYS mapping in a shared location (csvOps.ts or a new i18n/csv.ts file)"
+      - "Translate field names at render time in both CSVColumnMapper and CSVPreview: const fieldLabel = t(FIELD_LABEL_KEYS[field] ?? field); then render {fieldLabel}"
+      - "Alternatively, add csv.fields.* keys to TranslationDict for each MEDICINE_FIELDS value"
 
 deferred: []
 behavior_unverified_items: []
 coincidental_reliance_items: []
 
-human_verification:
-  - test: "Toggle app language to Polish, navigate to Medicines list screen (first tab), and click the filter button (sliders icon). Verify the aria-label for the filter button reads 'Otwórz filtry' or equivalent Polish translation when using a screen reader."
-    expected: "Screen reader announces the filter button's aria-label in Polish, not English."
-    why_human: "aria-label text is not visible in the UI but only exposed to assistive technology (screen readers); automated grep/file checks cannot verify the accessibility announcement."
+human_verification: []
 
 ---
 
-# Phase 07: i18n Polish Language - Re-verification Report
+# Phase 07: i18n Polish Language - Final Verification Report
 
 **Phase Goal:** Users can switch between English and Polish; all text displays in the chosen language with locale-aware formatting
 
-**Verified:** 2026-09-16T21:35:00Z (Re-verification after 07-09 gap-closure plan)
+**Verified:** 2026-09-17T12:00:00Z (Re-verification after 07-10-PLAN.md gap closure + 07-REVIEW.md fresh code review)
 
 **Status:** GAPS_FOUND — Phase goal NOT fully achieved
 
@@ -54,12 +82,15 @@ human_verification:
 
 ## Executive Summary
 
-The 07-09 gap-closure plan successfully closed 3.5 of 4 documented gaps (CR-01, WR-01, WR-02, and 7/8 of WR-03), with **12 files modified and 4 commits executed**. However:
+Phase 07-10 successfully closed the two documented gaps from the prior verification (WR-05: aria-label="Open filters" and the medicine-name placeholder gap). A fresh code review (07-REVIEW.md, dated 2026-09-17) then ran across all modified phase files and identified **three new, previously-undocumented violations of I18N-02** ("all UI strings display in active language"):
 
-1. **WR-03 closure was incomplete:** One aria-label instance in `medicines/index.tsx:160` ("Open filters" on the primary Medicines list screen) was missed and remains hardcoded English.
-2. **Out-of-scope gap persists:** `formatDate()` in `src/lib/utils.ts` hardcodes "No expiry" strings (WR-07), explicitly deferred by 07-09 but still violating "full string coverage."
+1. **WR-01 (CRITICAL):** Zod form-validation messages are hardcoded English. When Polish users submit forms with missing required fields, validation errors appear in English ("Name is required", "Expiry date is required") regardless of language setting. This affects the most-used workflows (add/edit medicine, add/edit stock). **Direct blocker on I18N-02.**
 
-**Result:** Phase goal requires all text to display in the active language. The missed `aria-label="Open filters"` on the most-viewed screen (Medicines list) and the hardcoded date-fallback strings mean the goal is NOT achieved.
+2. **WR-02 (MEDIUM):** Change-history entries show raw untranslated internal field names (expiryDate, openedDate, etc.) in history text. Secondary feature, but still violates "all text displays in chosen language."
+
+3. **WR-03 (MEDIUM-LOW):** CSV import column-mapper and preview show raw untranslated MEDICINE_FIELDS identifiers (internal field names) in dropdown and table headers. Power-user edge case, but still a violation within its scope.
+
+**Result:** Phase goal is NOT achieved. I18N-02 requirement ("All UI strings...error messages...display in active language") is BLOCKED by WR-01. The phase cannot pass without closing this and the other two violations.
 
 ---
 
@@ -69,115 +100,120 @@ The 07-09 gap-closure plan successfully closed 3.5 of 4 documented gaps (CR-01, 
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | User can toggle between English and Polish using a visible persistent control (SC #1 / I18N-01) | ✓ VERIFIED | BottomTabBar.tsx: language toggle button functional, t('aria.switchToPolish')/t('aria.switchToEnglish') implemented; `useLang()` hook provides state management |
-| 2 | All labels, placeholders, toasts, error messages, status names, screen titles switch to active language immediately without full page reload (SC #2 / I18N-02 — PRIMARY BLOCKER) | ✗ FAILED | medicines/index.tsx:160 has aria-label="Open filters" hardcoded English; also formatDate() (utils.ts:17-19) hardcodes "No expiry" strings. Not all text switches language. |
+| 1 | User can toggle between English and Polish using a visible persistent control (SC #1 / I18N-01) | ✓ VERIFIED | BottomTabBar.tsx: language toggle button functional, t('aria.switchToPolish')/t('aria.switchToEnglish') implemented; useLang() hook provides state management |
+| 2 | All labels, placeholders, toasts, error messages, status names, screen titles switch to active language immediately without full page reload (SC #2 / I18N-02 — PRIMARY BLOCKER) | ✗ FAILED | WR-01: Form validation messages hardcoded English ('Name is required', 'Expiry date is required') in Zod schemas, rendered verbatim by FormMessage without translation. WR-02: History entry field names untranslated. WR-03: CSV column mapper field identifiers untranslated. Not all text switches language. |
 | 3 | Previously selected language persists in localStorage on app load (SC #3 / I18N-03) | ✓ VERIFIED | LanguageProvider.tsx:20-28 reads/writes 'medstock-lang' key; language restored on mount without full reload |
 | 4 | Built-in category and predefined location names display in active language (SC #4 / I18N-04) | ✓ VERIFIED | CATEGORY_KEYS (10 entries), LOCATION_KEYS (7 entries) in types.ts; all wired through t() in FilterChips, FilterBottomSheet, CatalogAutocomplete, etc. |
 | 5 | Dates display in locale-appropriate format: PL = DD.MM.YYYY, EN = YYYY-MM-DD (SC #5 / I18N-05) | ✓ VERIFIED | formatDate() in utils.ts correctly splits and reorders dates; MedicineCard and detail views call formatDate(date, lang) to render localized dates |
 
-**Score:** 4/5 truths verified. Truth #2 FAILED (critical blocker on the phase goal).
+**Score:** 4/5 truths verified. Truth #2 (I18N-02) FAILED — critical blocker on the phase goal.
 
 ---
 
-### Gap-Closure Progress (07-09 Plan)
+## Gap-Closure Progress (07-10 Plan)
 
-**Plan Target:** Close CR-01, WR-01, WR-02, WR-03 (4 documented gaps from 07-VERIFICATION.md re-verification)
+**Plan Target:** Close WR-05 (aria-label) and the medicine-name placeholder gap (final two documented gaps from 07-VERIFICATION.md re-verification).
 
 **Execution Result:**
 
 | Gap ID | Target | Status | Evidence | Notes |
 |--------|--------|--------|----------|-------|
-| CR-01 | Add Medicine wizard buttons (medicines/new.tsx:163,207) | ✓ FIXED | Lines 163, 207 now call t('form.creating'), t('form.nextAddStock'), t('form.savingGeneric'), t('form.addStock'); all 4 keys added to TranslationDict with English and Polish values | Critical user flow now fully translated in both languages |
-| WR-01 | Edit sheet loading states (3 files: CatalogEditSheet, StockEditSheet, MedicineForm) | ✓ FIXED | CatalogEditSheet.tsx:81, StockEditSheet.tsx:103, MedicineForm.tsx:437 all call t('form.savingGeneric'); form.savingGeneric is distinct from form.saving (MoveStockSheet-only) | Consistent ellipsis character and distinct meaning from other save contexts |
-| WR-02 | Custom unit option/placeholder and numeric placeholders (MedicineForm, StockFields) | ✓ FIXED | Both files use t('form.customUnitOption'), t('form.customUnitPlaceholder'), t('form.paoValuePlaceholder'), t('form.quantityPlaceholder'); StockFields also uses t('form.packCountPlaceholder') | User-typed custom-unit value left untranslated per D-07 (only static labels translated) |
-| WR-03 | 8 aria-labels across 5 files | ⚠️ PARTIAL (7/8 fixed, 1 missed) | **Fixed:** BottomTabBar.tsx:79 (lang toggle), SearchBar.tsx:35 (clear search), FilterChips.tsx:55 (remove filter), medicines/new.tsx:143,178 (back to search × 2), medicines/[id].tsx:260,268,320 (edit/delete actions) — all use t(). **Missed:** medicines/index.tsx:160 (aria-label="Open filters" hardcoded) | 7 of 8 instances wired through t(); the missed instance is on the app's primary landing screen |
+| WR-05 | Medicines list filter button aria-label not translated | ✓ FIXED | commit 5b2b386: aria.openFilters added to types.ts/en.ts/pl.ts; medicines/index.tsx:160 now calls t('aria.openFilters'); grep confirms call site wired | Critical user-visible screen (app's primary landing screen) now has translated button label |
+| namePlaceholder | Medicine-name input placeholder hardcoded in two locations | ✓ FIXED | commit ad0d903: form.namePlaceholder EN/PL values corrected; both CatalogFields.tsx:54 and MedicineForm.tsx:119 now call t('form.namePlaceholder'); grep confirms zero remaining hardcoded aria-label/placeholder/title literals in src/**/*.tsx | Orphaned form.namePlaceholder key reused rather than minting duplicate |
 
-**NewGap: WR-05** (discovered during re-verification, not in original 07-09 scope)
-
-| Gap ID | Description | Evidence | Severity |
-|--------|-------------|----------|----------|
-| WR-05 | medicines/index.tsx:160 aria-label="Open filters" hardcoded English, never translated | Line 160: `aria-label="Open filters"` on filter-sheet trigger button; aria.openFilters key does not exist in TranslationDict | **Critical** — on the app's primary Medicines list screen, the most-viewed and most-frequently-accessed screen |
-
-**Out-of-Scope Gap: WR-07** (explicitly excluded from 07-09, but violates phase goal)
-
-| Gap ID | Description | Evidence | Why Out-of-Scope |
-|--------|-------------|----------|------------------|
-| WR-07 | formatDate() hardcodes "No expiry" strings; duplicates dates.noExpiry key | utils.ts:17-19: `return lang === 'pl' ? 'Bez daty ważności' : 'No expiry'` — hardcoded literal instead of parametrized t() call | 07-09-PLAN.md line 87: WR-07 was explicitly listed as deferred (requires refactoring formatDate to accept t parameter) |
+**Execution Quality:**
+- `npm run build` — ✓ Exits 0 (TypeScript structural type enforcement passes; no compilation errors)
+- `npx vitest run` — ✓ 143 tests pass, no regressions
+- `npm run lint` — ✓ Exits 0 (no new issues; pre-existing warnings only)
+- Final repo-wide grep probe (`grep -rnE 'aria-label="[A-Za-z]|placeholder="[A-Za-z]|title="[A-Za-z]' src --include='*.tsx'`) — ✓ Zero matches confirmed by 07-10-SUMMARY.md line 72
 
 ---
 
-### Translation Dictionary Audit
+## New Gaps Identified (Post-07-10 Code Review)
 
-**New Keys Added by 07-09 (all present):**
+Fresh code review (07-REVIEW.md, dated 2026-09-17) ran after 07-10 completion and identified three previously-undocumented violations:
 
-| Namespace | Keys | Status | Evidence |
-|-----------|------|--------|----------|
-| form (9 new) | creating, nextAddStock, addStock, savingGeneric, customUnitOption, customUnitPlaceholder, paoValuePlaceholder, quantityPlaceholder, packCountPlaceholder | ✓ All present in types.ts; both en.ts and pl.ts populated | npm run build exits 0 (TypeScript structural type enforcement) |
-| aria (8 keys) | backToSearch, switchToPolish, switchToEnglish, clearSearch, removeFilter, editStockEntry, deleteCatalog, editCatalog | ✓ All 8 present in types.ts lines 284-293 | English values in en.ts:282-291; Polish values in pl.ts:265-273 |
-| **aria (1 MISSING)** | **openFilters** (WR-05) | ✗ **NOT DEFINED** | Should be in TranslationDict.aria namespace but does not exist — this is the gap |
+### WR-01: Form Validation Messages Hardcoded English (CRITICAL BLOCKER)
 
-**Sample Polish translations verified (pl.ts lines 200-207):**
-- `creating: 'Tworzenie…'`
-- `nextAddStock: 'Dalej: Dodaj zapas'`
-- `addStock: 'Dodaj zapas'`
-- `savingGeneric: 'Zapisywanie…'`
-- `customUnitOption: 'Inna...'`
-- `customUnitPlaceholder: 'Własna jednostka'`
+**Files Affected:**
+- `src/components/CatalogFields.tsx:26` — `catalogSchema` validation: `z.string().min(1, 'Name is required')`
+- `src/components/StockFields.tsx:30` — `stockSchema` validation: `z.string().min(1, 'Expiry date is required')`
+- `src/components/MedicineForm.tsx:35-36` — `medicineSchema` validation: both fields with hardcoded English messages
+- `src/components/ui/form.tsx:148` — `FormMessage` component renders `error.message` verbatim: `const body = error ? String(error?.message) : children`
+
+**Impact:**
+- Validation errors appear in English to Polish users on every form submission
+- Affects the four most-common workflows: add medicine, edit medicine (2 forms), add stock, edit stock
+- Violation of I18N-02 requirement: "error messages display in active language"
+- User experience: Polish user fills out form, tries to submit with missing name → sees English error "Name is required" in red text
+
+**Evidence:**
+- `form.nameRequired` key exists in en.ts (line 159: `'Name is required'`) and pl.ts, but is **never referenced** in any `t()` call — it is dead code
+- `form.expiryDateRequired` key **does not exist** at all in TranslationDict
+- Zod schemas are built at module scope and cannot call `t()` directly; translation must happen at display time in FormMessage
+- Root cause: FormMessage renders error.message without translation support
+
+**Severity:** HIGH — affects core user workflows (form submission) on every use of the app's core feature (add/edit medicine).
+
+### WR-02: Change-History Field Names Untranslated (MEDIUM)
+
+**File:** `src/components/HistoryEntry.tsx:26`
+
+**Issue:**
+```typescript
+return `${ts} — ${field} ${t('history.fieldChanged')}: "${String(oldValue)}" → "${String(newValue)}"`
+```
+
+The `field` variable contains raw internal database field names (expiryDate, openedDate, location, pao, quantity, quantityUnit, notes, manualStatus — from TRACKED_FIELDS in historyOps.ts). These are rendered as-is, embedded in the history sentence. A Polish user sees: `12.09.2026 — expiryDate zmieniono: "2026-01-01" → "2026-06-01"` where the field name is untranslated English/camelCase.
+
+**Severity:** MEDIUM-LOW — history is a secondary feature (viewed when inspecting individual medicines), not a core workflow. However, it still violates "all text displays in chosen language" within the scope of its screen.
+
+### WR-03: CSV Import Field Identifiers Untranslated (MEDIUM-LOW)
+
+**Files Affected:**
+- `src/components/CSVColumnMapper.tsx:53-57` — dropdown options render field names directly: `{field}`
+- `src/components/CSVPreview.tsx:42-49` — preview table headers render field names directly: `{fieldName}`
+
+**Issue:** MEDICINE_FIELDS internal identifiers (expiryDate, quantityUnit, packCount, etc.) are shown to users in both the column-mapping dropdown ("select which column is the app field for this CSV column") and the preview table header row. Polish users see untranslated field names.
+
+**Severity:** MEDIUM-LOW — CSV import is a power-user, edge-case feature (infrequent action). However, it still violates "all text displays in chosen language" within the scope of what that screen shows.
 
 ---
 
-### Build and Test Verification
+## Requirements Traceability
 
-- `npm run build` — ✓ Exits 0 (all 12 modified files compile without error; TranslationDict structural type enforced for both en.ts and pl.ts)
-- `npx vitest run` — ✓ All 143 tests pass (no regression in existing suites)
-- `npm run lint` — ✓ Exits 0 (5 pre-existing, unrelated warnings only; no new issues in modified files)
+| Requirement | Definition | Phase Goal Component | Status | Evidence | Blocker |
+|-------------|-----------|---------------------|--------|----------|---------|
+| I18N-01 | User can switch app language between English and Polish via a persistent toggle | Language switching | ✓ SATISFIED | BottomTabBar toggle functional; state management via useLang() hook | — |
+| I18N-02 | **All UI strings (labels, placeholders, toasts, error messages, status messages, screen titles) display in the active language** | Full string coverage | ✗ BLOCKED | WR-01 (form validation hardcoded English), WR-02 (history field names untranslated), WR-03 (CSV field names untranslated) | **YES** |
+| I18N-03 | Selected language persists in localStorage and applies on next load without full reload | Persistence | ✓ SATISFIED | LanguageProvider reads/writes 'medstock-lang' on mount and language change | — |
+| I18N-04 | Built-in category names and predefined location names display in the active language | Built-in name translation | ✓ SATISFIED | CATEGORY_KEYS and LOCATION_KEYS all wired through t(); verified in FilterChips, FilterBottomSheet, CatalogAutocomplete | — |
+| I18N-05 | Dates display in locale-appropriate format (PL: DD.MM.YYYY, EN: YYYY-MM-DD) | Date formatting | ✓ SATISFIED | formatDate() correctly returns formatted dates per language; verified in MedicineCard, detail views, history timestamps | — |
 
----
-
-### Key Artifacts Status
-
-| Artifact | Modified | Verified | Issues |
-|----------|----------|----------|--------|
-| src/i18n/types.ts | ✓ | ✓ VERIFIED | Added form namespace (9 keys) + aria namespace (8 keys); aria.openFilters missing (WR-05) |
-| src/i18n/en.ts | ✓ | ✓ VERIFIED | All 17 new keys populated with English values; aria section missing openFilters key |
-| src/i18n/pl.ts | ✓ | ✓ VERIFIED | All 17 new keys populated with Polish values; aria section missing openFilters key |
-| src/routes/medicines/new.tsx | ✓ | ✓ VERIFIED | Lines 163, 178, 207: all 4 button/aria-label call sites wired through t() |
-| src/components/CatalogEditSheet.tsx | ✓ | ✓ VERIFIED | Line 81: submitting-state text now uses t('form.savingGeneric') |
-| src/components/StockEditSheet.tsx | ✓ | ✓ VERIFIED | Line 103: submitting-state text now uses t('form.savingGeneric') |
-| src/components/MedicineForm.tsx | ✓ | ✓ VERIFIED | Line 437: submitting-state uses t('form.savingGeneric'); lines 389, 394: custom-unit options use t() |
-| src/components/StockFields.tsx | ✓ | ✓ VERIFIED | Lines 303, 308: custom-unit options use t(); placeholder calls use t('form.*PlaceholderPlaceholder') |
-| src/components/BottomTabBar.tsx | ✓ | ✓ VERIFIED | Line 79: language-toggle aria-label now uses t('aria.switchToPolish')/t('aria.switchToEnglish') |
-| src/components/SearchBar.tsx | ✓ | ✓ VERIFIED | Line 35: clear-search button aria-label now uses t('aria.clearSearch') |
-| src/components/FilterChips.tsx | ✓ | ✓ VERIFIED | Line 55: chip-removal aria-label concatenates t('aria.removeFilter') with chip label |
-| src/routes/medicines/[id].tsx | ✓ | ✓ VERIFIED | Lines 260, 268, 320: three aria-labels now use t('aria.editCatalog')/t('aria.deleteCatalog')/t('aria.editStockEntry') |
-| src/routes/medicines/index.tsx | ✗ | ✗ UNMODIFIED | Line 160: `aria-label="Open filters"` remains hardcoded; NOT touched by 07-09 plan (WR-05) |
-| src/lib/utils.ts | ✗ | ✗ UNMODIFIED | Lines 17-19: formatDate() still hardcodes "No expiry" strings; explicitly out-of-scope for 07-09 (WR-07) |
+**Phase Goal Achievement:** ✗ NOT ACHIEVED — I18N-02 ("all UI strings...error messages...display in active language") blocked by WR-01 (critical), WR-02 (secondary), WR-03 (edge case).
 
 ---
 
-### Requirements Traceability
+## Known Out-of-Scope Gaps (Not Flagged as Phase-07 Blockers)
 
-| Requirement | Phase Goal | Status | Evidence | Blocker |
-|-------------|-----------|--------|----------|---------|
-| I18N-01 | User can switch language persistently | ✓ SATISFIED | BottomTabBar toggle functional; state persists per localStorage check in LanguageProvider | — |
-| I18N-02 | All UI strings display in active language | ✗ BLOCKED | CR-01, WR-01, WR-02 fixed; WR-03 7/8 fixed; WR-05 and WR-07 gaps remain → not "all" strings translated | **YES** |
-| I18N-03 | Language persists in localStorage | ✓ SATISFIED | LanguageProvider reads/writes 'medstock-lang' on mount and language change | — |
-| I18N-04 | Built-in names display in active language | ✓ SATISFIED | CATEGORY_KEYS (10 entries), LOCATION_KEYS (7 entries) all wired through t() | — |
-| I18N-05 | Dates display in locale-appropriate format | ✓ SATISFIED | formatDate() correctly returns DD.MM.YYYY (PL) or YYYY-MM-DD (EN) | — |
+These findings were explicitly identified in prior reviews but marked as out-of-scope for earlier cycles. They remain unfixed but are NOT counted as phase-blocking per the review brief:
 
-**Phase Goal Achievement:** ✗ NOT ACHIEVED — I18N-02 ("all UI strings display in active language") blocked by missed aria-label and out-of-scope formatDate() hardcoding.
+- **CR-02:** Dexie `.get()` returns `undefined` instead of `null` in some paths — unrelated to i18n, noted for future fix
+- **WR-07:** `formatDate()` hardcodes "No expiry" strings instead of using `t('dates.noExpiry')` — explicitly deferred by 07-09; requires refactoring formatDate to accept translation parameter
+
+These are tracked separately and do not affect this verification's status determination.
 
 ---
 
 ## Gaps Summary
 
-### Gaps Found (Must Close)
+### Critical Gaps (Must Close Before Phase 07 Passes)
 
-**Critical Gap (Phase-Blocking):**
-- **WR-05:** The app's primary Medicines list screen (medicines/index.tsx:160) has an untranslated aria-label button ("Open filters"). This is the screen every user sees first, and it violates the phase goal of "all text displays in the chosen language." Screen readers will announce "Open filters" in English to Polish users.
+**WR-01 — Form Validation Messages Hardcoded English:** The app's most-used workflows (add medicine, edit medicine, add stock, edit stock) show form validation errors in English to Polish users. This is a direct violation of I18N-02 requirement ("error messages display in active language") and makes the app non-functional in Polish for basic form submission.
 
-**Known Out-of-Scope Gap (Noted for Completeness):**
-- **WR-07:** `formatDate()` hardcodes "No expiry" strings (utils.ts:17-19) instead of using the translation dictionary. This was explicitly deferred by 07-09 planning but still violates "full string coverage."
+**WR-02 — History Field Names Untranslated:** Secondary feature (change history) shows raw untranslated database field names in history text. Less critical than WR-01 but still a violation of "all text displays in chosen language."
+
+**WR-03 — CSV Field Names Untranslated:** Power-user feature (CSV import) shows raw untranslated internal field identifiers in UI. Least critical but still a violation within scope of its feature.
 
 ---
 
@@ -191,9 +227,11 @@ The 07-09 gap-closure plan successfully closed 3.5 of 4 documented gaps (CR-01, 
 |-----------|--------|----------|
 | Language switching ✓ | ✓ ACHIEVED | Toggle works; state management complete |
 | Locale-aware dates ✓ | ✓ ACHIEVED | formatDate() returns correct format per language |
-| Full string coverage ✗ | ✗ NOT ACHIEVED | 2 gaps remain: WR-05 (aria-label on primary screen) + WR-07 (formatDate hardcoding) |
+| Full string coverage ✗ | ✗ NOT ACHIEVED | Three gaps remain: WR-01 (form validation hardcoded English — CRITICAL), WR-02 (history field names untranslated — SECONDARY), WR-03 (CSV field names untranslated — EDGE CASE). Of these, WR-01 alone blocks I18N-02 requirement compliance. |
 
-**Recommendation:** Mark as **GAPS_FOUND**. The 07-09 plan made significant progress (fixing CR-01, WR-01, WR-02, and 7/8 of WR-03), but the phase goal's promise of "full string coverage" is not met. The missed aria-label is on the app's most-viewed screen, making it a visible gap for any Polish user who relies on screen reader accessibility. Do not proceed to Phase 8 without closing WR-05.
+**Recommendation:** Mark as **GAPS_FOUND**. The 07-10 plan made progress (closing WR-05 and the placeholder gap), but the phase goal's promise of "full string coverage" is not met. **WR-01 is a critical blocker:** form validation messages are shown in English to every Polish user on the most-common workflows. Closing WR-02 and WR-03 would also be required for true "full coverage."
+
+Do not proceed to Phase 8 without closing all three gaps. WR-01 should be prioritized as it affects core app functionality; WR-02 and WR-03 can be batched into a follow-up cycle.
 
 ---
 
@@ -201,21 +239,25 @@ The 07-09 gap-closure plan successfully closed 3.5 of 4 documented gaps (CR-01, 
 
 To achieve "PASSED" status, the following work is required:
 
-1. **Close WR-05 (aria-label translation):**
-   - Add `openFilters: string` to `TranslationDict.aria` in src/i18n/types.ts
-   - Add English value to src/i18n/en.ts aria section
-   - Add Polish equivalent to src/i18n/pl.ts aria section
-   - Update medicines/index.tsx:160 to use `aria-label={t('aria.openFilters')}`
-   - Verify `npm run build` exits 0
+### Priority 1: Close WR-01 (Form Validation Messages)
+1. Add `expiryDateRequired: string` to `TranslationDict.form` in src/i18n/types.ts
+2. Add English and Polish values to src/i18n/en.ts and src/i18n/pl.ts
+3. Update all three schemas (CatalogFields.tsx, StockFields.tsx, MedicineForm.tsx) to use translation keys instead of hardcoded messages
+4. Modify FormMessage (ui/form.tsx) to call `t()` on error messages before rendering
+5. Verify `npm run build` exits 0 and `npx vitest run` passes all tests
 
-2. **Optional (out-of-scope for 07-09, but recommended for true "full coverage"):**
-   - Refactor formatDate() to accept the "No expiry" label as a parameter instead of hardcoding it
-   - Update all callers to pass `t('dates.noExpiry')`
-   - This addresses WR-07 and eliminates the duplicate string maintenance risk
+### Priority 2: Close WR-02 (History Field Names)
+1. Add a FIELD_LABEL_KEYS mapping in HistoryEntry.tsx or historyOps.ts
+2. Translate field labels at format time using t() and the mapping
+3. Verify `npm run build` exits 0
+
+### Priority 3: Close WR-03 (CSV Field Names)
+1. Add a FIELD_LABEL_KEYS mapping for MEDICINE_FIELDS
+2. Translate field identifiers at render time in CSVColumnMapper and CSVPreview
+3. Verify `npm run build` exits 0
 
 ---
 
-_Verified: 2026-09-16T21:35:00Z_  
-_Verifier: Claude (gsd-verifier) — re-verification after 07-09-PLAN.md gap closure_  
-_Code Review Reference: 07-REVIEW.md (2026-09-16)_  
-_Previous Verification: 07-VERIFICATION.md (2026-09-16T20:00:00Z, status: gaps_found with CR-01/WR-01/WR-02/WR-03)_
+_Verified: 2026-09-17T12:00:00Z_  
+_Verifier: Claude (gsd-verifier) — re-verification after 07-10-PLAN.md gap closure + fresh code review 07-REVIEW.md_  
+_Previous Verification: 07-VERIFICATION.md (2026-09-16T21:35:00Z, status: gaps_found)_
