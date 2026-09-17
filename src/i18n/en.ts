@@ -288,5 +288,6 @@ export const en: TranslationDict = {
     editStockEntry: 'Edit stock entry',
     deleteCatalog: 'Delete catalog',
     editCatalog: 'Edit catalog',
+    openFilters: 'Open filters',
   },
 }

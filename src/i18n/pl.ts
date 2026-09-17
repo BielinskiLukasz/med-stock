@@ -288,5 +288,6 @@ export const pl: TranslationDict = {
     editStockEntry: 'Edytuj pozycję magazynową',
     deleteCatalog: 'Usuń lek',
     editCatalog: 'Edytuj lek',
+    openFilters: 'Otwórz filtry',
   },
 }

@@ -157,7 +157,7 @@ export function MedicineList() {
           <button
             onClick={() => setFilterSheetOpen(true)}
             className="relative flex items-center gap-1 rounded-md p-2 text-gray-600 hover:bg-gray-100 transition-colors"
-            aria-label="Open filters"
+            aria-label={t('aria.openFilters')}
           >
             <SlidersHorizontal className="h-5 w-5" />
             {/* D-29: filter badge showing active filter count */}

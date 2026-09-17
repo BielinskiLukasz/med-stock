@@ -290,6 +290,7 @@ export type TranslationDict = {
     editStockEntry: string
     deleteCatalog: string
     editCatalog: string
+    openFilters: string
   }
 }
 
