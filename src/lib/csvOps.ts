@@ -1,9 +1,13 @@
 import Papa from 'papaparse'
+import { db } from './db'
 import type { Medicine } from './db'
 
-// Valid medicine (stock entry) field names for CSV column mapping (D-52)
-// Note: 'name' and 'category' belong to the catalog, not the stock entry (D-16)
+// Valid medicine field names for CSV column mapping (D-52)
+// Note: 'name' and 'category' resolve to a medicine_catalog entry (looked up or
+// created by commitCSVImport), not to fields stored directly on the stock entry (D-16)
 export const MEDICINE_FIELDS: string[] = [
+  'name',
+  'category',
   'location',
   'expiryDate',
   'openedDate',
@@ -11,6 +15,12 @@ export const MEDICINE_FIELDS: string[] = [
   'quantityUnit',
   'notes',
 ]
+
+/** A parsed CSV row's medicine data, prior to catalog resolution by commitCSVImport. */
+export type ParsedCSVMedicine = Omit<Medicine, 'id' | 'catalogId'> & {
+  name: string
+  category: string | null
+}
 
 // Sentinel value used when a CSV column is intentionally not mapped (D-52)
 export const SKIP_VALUE = '(skip)'
@@ -43,9 +53,9 @@ export function parseCSVFile(
 export function mergeCSVRowsToMedicines(
   rows: Record<string, string>[],
   columnMapping: Record<string, string>
-): { medicines: Omit<Medicine, 'id'>[]; skippedCount: number } {
+): { medicines: ParsedCSVMedicine[]; skippedCount: number } {
   const now = new Date().toISOString()
-  const medicines: Omit<Medicine, 'id'>[] = []
+  const medicines: ParsedCSVMedicine[] = []
   let skippedCount = 0
 
   for (const row of rows) {
@@ -58,10 +68,8 @@ export function mergeCSVRowsToMedicines(
       return (row[csvHeader] ?? '').trim()
     }
 
-    // Note: name and category are now catalog fields, not stock entry fields (D-16)
-    // For CSV import, we create stock entries without explicit name/category
-    // TODO Phase 5: CSV import should create catalog entries from name/category columns
-
+    const nameVal = getMappedValue('name')
+    const categoryVal = getMappedValue('category')
     const locationVal = getMappedValue('location')
     const expiryDateVal = getMappedValue('expiryDate')
     const openedDateVal = getMappedValue('openedDate')
@@ -83,9 +91,16 @@ export function mergeCSVRowsToMedicines(
       continue
     }
 
-    // For now, create stock entries without catalog assignment (catalogId will be 1 as placeholder)
+    // Skip rows with no resolvable name — either no column mapped to 'name', or the
+    // mapped column's cell is blank. name is required to resolve/create a catalog entry.
+    if (nameVal === '') {
+      skippedCount++
+      continue
+    }
+
     medicines.push({
-      catalogId: 1,  // TODO Phase 5: derive catalogId from CSV name/category columns with dedup
+      name: nameVal,
+      category: categoryVal || null,
       location: locationVal || null,
       expiryDate: expiryDateVal || null,
       openedDate: openedDateVal || null,
@@ -102,4 +117,45 @@ export function mergeCSVRowsToMedicines(
   }
 
   return { medicines, skippedCount }
+}
+
+/**
+ * Resolves each parsed CSV row to a medicine_catalog entry (case-insensitive dedup,
+ * both against existing entries and within this same batch) and bulk-inserts the
+ * resulting stock entries. All work happens inside a single Dexie transaction.
+ */
+export async function commitCSVImport(
+  medicines: ParsedCSVMedicine[]
+): Promise<{ importedCount: number }> {
+  return db.transaction('rw', db.medicine_catalog, db.medicines, async () => {
+    const now = new Date().toISOString()
+    const stockRows: Omit<Medicine, 'id'>[] = []
+
+    for (const { name, category, ...rest } of medicines) {
+      let catalogId: number
+      const existing = await db.medicine_catalog
+        .where('name')
+        .equalsIgnoreCase(name)
+        .first()
+
+      if (existing) {
+        catalogId = existing.id
+      } else {
+        catalogId = await db.medicine_catalog.add({
+          name,
+          category,
+          form: null,
+          notes: null,
+          createdAt: now,
+          updatedAt: now,
+        })
+      }
+
+      stockRows.push({ ...rest, catalogId })
+    }
+
+    await db.medicines.bulkAdd(stockRows)
+
+    return { importedCount: stockRows.length }
+  })
 }
