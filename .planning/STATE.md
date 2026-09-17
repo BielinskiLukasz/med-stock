@@ -5,11 +5,11 @@ milestone_name: Polish, UX & i18n
 current_phase: 8
 current_phase_name: Full Location Management
 status: planning
-stopped_at: Phase 07 complete, ready to plan Phase 8
-last_updated: "2026-09-17T10:07:54.939Z"
+stopped_at: Phase 07 complete (4 gap-closure cycles), ready to plan Phase 8
+last_updated: "2026-09-17T10:11:21.918Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 07 complete, transitioned to Phase 8
-state_head: 94859c4b41975e85fe766b975ed1e3852a1c43aa
+state_head: 02ea04475e4d74c033275c2dac8e9b38835b2bef
 progress:
   total_phases: 5
   completed_phases: 1
@@ -22,10 +22,10 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-31)
+See: .planning/PROJECT.md (updated 2026-09-17)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 07 — i18n / Polish Language
+**Current focus:** Phase 8 — Full Location Management
 
 ## Current Position
 
@@ -53,7 +53,7 @@ Last activity: 2026-09-17 — Phase 07 complete, transitioned to Phase 8
 
 | Phase | Goal | Requirements | Status |
 |-------|------|--------------|--------|
-| 7 | i18n / Polish Language | I18N-01–05 | Not started |
+| 7 | i18n / Polish Language | I18N-01–05 | Complete ✓ |
 | 8 | Full Location Management | LOC-01–04 | Not started |
 | 9 | CSV UX + Version Display | CSV-01, CSV-02, UX-01 | Not started |
 | 10 | Expiring Soon Status | STAT-01–04 | Not started |
@@ -77,8 +77,8 @@ Last activity: 2026-09-17 — Phase 07 complete, transitioned to Phase 8
 
 ## Session
 
-**Last session:** 2026-09-17T08:58:53.313Z
-**Stopped at:** Phase 07 complete, ready to plan Phase 8
+**Last session:** 2026-09-17T10:11:21.036Z
+**Stopped at:** Phase 07 complete (4 gap-closure cycles), ready to plan Phase 8
 **Resume file:** None
 
 ## Performance Metrics
@@ -136,7 +136,10 @@ Last activity: 2026-09-17 — Phase 07 complete, transitioned to Phase 8
 - [Phase 07]: form.savingGeneric introduced as distinct key from form.saving (Moving) to close WR-01 without meaning collision
 - [Phase 07]: aria.removeFilter holds only leading verb; FilterChips concatenates with chip label at render time (07-09)
 - [Phase 07]: Phase 07: aria.openFilters wired at medicines/index.tsx (WR-05); form.namePlaceholder reused (not duplicated) and wired at CatalogFields.tsx + MedicineForm.tsx (Gap 2) — closes final I18N-02 gaps
+- [Phase 07]: Post-07-10 code review found 4 more gaps (a 4th, unplanned gap-closure cycle) — fixed via /gsd-code-review 07 --fix: MoveStockSheet raw unit string (WR-01), HistoryEntry raw field key + "[object Object]" stringify bug (WR-02), CSVColumnMapper/CSVPreview raw field identifiers (WR-03), and the highest-impact one — Zod validation schemas hardcoding English error messages (WR-04)
+- [Phase 07]: Zod schemas converted to factories (`createCatalogSchema(t)`/`createStockSchema(t)`/`createMedicineSchema(t)`) wired via `useMemo(() => createXSchema(t), [t])` in all 6 consumers — module-scope schemas can't call the `t()` hook, so this pattern is required wherever form validation messages must be language-aware
+- [Phase 07]: Phase 07 VERIFIED PASSED after 4th gap-closure cycle — I18N-01 through I18N-05 all satisfied; phase marked complete, transitioned to Phase 8
 
 ## Operator Next Steps
 
-- Plan Phase 7 with /gsd-plan-phase 7
+- Plan Phase 8 with /gsd-plan-phase 8

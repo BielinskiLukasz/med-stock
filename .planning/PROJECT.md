@@ -51,6 +51,14 @@ Known gaps carried to backlog: interactive Sync Now flow (B-002), JSON import me
 
 v1.0 requirements archived at [milestones/v1.0-REQUIREMENTS.md](milestones/v1.0-REQUIREMENTS.md).
 
+v1.2 requirements — B-011 satisfied:
+
+- ✓ I18N-01: Instant Polish/English toggle, no reload — Phase 7
+- ✓ I18N-02: All UI strings (labels, placeholders, toasts, error messages, status names, screen titles) display in the active language — Phase 7
+- ✓ I18N-03: Language choice persists in localStorage across reloads — Phase 7
+- ✓ I18N-04: Built-in/predefined names (locations, categories, units, form types) display in the active language — Phase 7
+- ✓ I18N-05: Dates render in locale-appropriate format for the active language — Phase 7
+
 v1.1 requirements — all satisfied:
 
 - ✓ MIGR-01: Auto-migrate v1.0 data to catalog + stock on first open — v1.1
@@ -76,7 +84,6 @@ v1.1 requirements — all satisfied:
 - [ ] B-001: Medicine name autocomplete from catalog history (name field suggests existing entries)
 - [ ] B-004: CSV column auto-mapping by header name
 - [ ] B-005: CSV mapper column header labels ("Your file column" / "App field")
-- [ ] B-011: Polish / English language switcher — all UI strings, locale-aware date format
 - [ ] B-012: Full location management — rename, hide, delete, reorder all locations including predefined
 - [ ] B-013: App version number display (Data tab footer or About section)
 - [ ] B-014: Expiring Soon warning status — fires within configurable window (default 7 days) of expiry or PAO end
@@ -133,6 +140,9 @@ v1.1 requirements — all satisfied:
 | schemaVersion detection: undefined = old-format (D-48) | Two-pass Zod parse avoids strict per-format schemas; BackupSchema accepts both formats via optional field | Applied — importFromJSON branches on `schemaVersion === undefined` — Phase 6 |
 | LegacyBackupSchema module-internal; ImportResult exported | Callers need the result contract, not the legacy schema types; prevents leaking internal format details | Applied — ImportResult is the public API; LegacyBackupSchema unexported — Phase 6 |
 | pendingRaw: unknown\|null in ImportJSONSection | importFromJSON owns all validation; UI doesn't need to parse the backup format | Applied — removed BackupData state type; importFromJSON validates on confirm — Phase 6 |
+| Custom React Context i18n, no library (D-01) | TypeScript-typed EN/PL dicts + `useLang()`/`t()` give compile-time-checked coverage without a runtime dependency; app is two-language, doesn't need pluralization/ICU | Validated — `LanguageProvider` outermost in App.tsx, `TranslationDict` structural typing catches missing keys at build time — Phase 7 |
+| Zod validation schemas must be factories taking `t()`, not module-level constants | Schemas built at module scope can't read the active-language dictionary; discovered as a real, shipped gap (WR-04) where every add/edit form's validation errors stayed English regardless of language toggle | Applied — `createCatalogSchema(t)`/`createStockSchema(t)`/`createMedicineSchema(t)` wired via `useMemo(() => createXSchema(t), [t])` in all 6 consumers — Phase 7 |
+| Repo-wide grep, not enumerated lists, closes hardcoded-string gap-closure plans | Three consecutive gap-closure cycles each found "the last" hardcoded aria-label/placeholder/title by manual enumeration, and each missed one instance the next review caught — a fixed list undercounts, a grep can't | Applied — 07-10's final acceptance check is `grep -rnE 'aria-label="[A-Za-z]\|placeholder="[A-Za-z]\|title="[A-Za-z]' src` returning zero matches, not a checklist — Phase 7 |
 
 ## Evolution
 
@@ -152,4 +162,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-31 after v1.2 milestone start (Polish, UX & i18n)*
+*Last updated: 2026-09-17 after Phase 7 (i18n / Polish Language)*
