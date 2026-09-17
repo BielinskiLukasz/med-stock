@@ -53,12 +53,13 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   4. Built-in category names and predefined location names display in the active language; stored database values remain unchanged
   5. Dates appear as DD.MM.YYYY in Polish mode and YYYY-MM-DD in English mode throughout the app
 
-**Plans**: 9/9 plans executed (8 executed + 07-09 gap closure planned, pending execution)
+**Plans**: 10/10 plans executed (9 executed + 07-10 gap closure planned, pending execution)
 
 Plans:
 
 - [x] 07-08-PLAN.md
 - [x] 07-09-PLAN.md
+- [ ] 07-10-PLAN.md
 
 **Wave 1**
 
@@ -75,7 +76,11 @@ Plans:
 
 **Wave 3 — gap closure (code-review re-verification, 07-VERIFICATION.md)**
 
-- [ ] 07-09-PLAN.md — Gap closure: Add Medicine wizard submit buttons (CR-01), edit-sheet saving text (WR-01), custom-unit/placeholder strings (WR-02), aria-label attributes (WR-03)
+- [x] 07-09-PLAN.md — Gap closure: Add Medicine wizard submit buttons (CR-01), edit-sheet saving text (WR-01), custom-unit/placeholder strings (WR-02), aria-label attributes (WR-03)
+
+**Wave 4 — gap closure (re-verification, 07-VERIFICATION.md)**
+
+- [ ] 07-10-PLAN.md — Gap closure: missed aria-label on Medicines list filter button (WR-05) + medicine-name placeholder hardcoded in CatalogFields/MedicineForm (Gap 2)
 
 **UI hint**: yes
 
