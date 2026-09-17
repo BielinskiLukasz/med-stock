@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { useLang } from '@/i18n'
+import { useLang, CSV_FIELD_KEYS } from '@/i18n'
 
 interface CSVColumnMapperProps {
   headers: string[]
@@ -52,7 +52,7 @@ export function CSVColumnMapper({
                 <SelectContent>
                   {MEDICINE_FIELDS.map((field) => (
                     <SelectItem key={field} value={field}>
-                      {field}
+                      {t(CSV_FIELD_KEYS[field] ?? field)}
                     </SelectItem>
                   ))}
                   <SelectItem value={SKIP_VALUE}>{t('csv.skip')}</SelectItem>

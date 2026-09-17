@@ -347,6 +347,16 @@ export const HISTORY_FIELD_KEYS: Record<string, string> = {
   manualStatus: 'history.manualStatusField',
 }
 
+/** Maps CSV import MEDICINE_FIELDS canonical values to TranslationDict dot-notation keys */
+export const CSV_FIELD_KEYS: Record<string, string> = {
+  location: 'form.location',
+  expiryDate: 'form.expiryDate',
+  openedDate: 'form.openedDate',
+  quantity: 'form.quantity',
+  quantityUnit: 'form.quantityUnit',
+  notes: 'form.notes',
+}
+
 /** Maps MedicineForm canonical values to TranslationDict dot-notation keys */
 export const FORM_TYPE_KEYS: Record<string, string> = {
   'Tablet': 'formTypes.tablet',

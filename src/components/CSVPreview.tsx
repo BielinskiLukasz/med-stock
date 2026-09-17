@@ -1,6 +1,6 @@
 import { SKIP_VALUE } from '@/lib/csvOps'
 import { Button } from '@/components/ui/button'
-import { useLang } from '@/i18n'
+import { useLang, CSV_FIELD_KEYS } from '@/i18n'
 
 interface CSVPreviewProps {
   rows: Record<string, string>[]
@@ -44,7 +44,7 @@ export function CSVPreview({
                   key={fieldName}
                   className="text-left font-medium pb-2 pr-4 whitespace-nowrap"
                 >
-                  {fieldName}
+                  {t(CSV_FIELD_KEYS[fieldName] ?? fieldName)}
                 </th>
               ))}
             </tr>
