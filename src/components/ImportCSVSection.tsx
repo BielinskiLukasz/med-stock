@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react'
 import type Papa from 'papaparse'
-import { parseCSVFile, mergeCSVRowsToMedicines, SKIP_VALUE } from '@/lib/csvOps'
-import { db } from '@/lib/db'
+import { parseCSVFile, mergeCSVRowsToMedicines, commitCSVImport, SKIP_VALUE } from '@/lib/csvOps'
 import { CSVColumnMapper } from '@/components/CSVColumnMapper'
 import { CSVPreview } from '@/components/CSVPreview'
 import { Button } from '@/components/ui/button'
@@ -54,16 +53,6 @@ export function ImportCSVSection() {
   async function handleCommit() {
     if (!parseResult) return
 
-    // CR-05: validate that the placeholder catalogId=1 exists before import.
-    // CSV import currently assigns all medicines to catalogId=1. If that catalog
-    // does not exist (e.g., first catalog was deleted and auto-increment is at 2+),
-    // the import would create broken foreign keys. Fail early with a clear message.
-    const targetCatalog = await db.medicine_catalog.get(1)
-    if (!targetCatalog) {
-      toast.error(t('toasts.csvImportNeedsCatalog'))
-      return
-    }
-
     setStep('committing')
 
     try {
@@ -73,7 +62,7 @@ export function ImportCSVSection() {
       )
 
       // APPEND only — do NOT clear the table (D-53 vs D-47 asymmetry)
-      await db.medicines.bulkAdd(medicines)
+      await commitCSVImport(medicines)
 
       if (skippedCount > 0) {
         toast.warning(t('toasts.importPartial'))
