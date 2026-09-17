@@ -3,7 +3,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { toast } from 'sonner'
 import type { Medicine } from '@/lib/db'
 import { db } from '@/lib/db'
-import { useLang, LOCATION_KEYS } from '@/i18n'
+import { useLang, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -98,7 +98,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
                   onChange={(e) => setBoxes(Number(e.target.value))}
                 />
                 <p className="text-xs text-gray-500">
-                  {`= ${unitsPerBox} ${stock.quantityUnit || t('units.units')} ${t('form.unitsPerBox')}`}
+                  {`= ${unitsPerBox} ${stock.quantityUnit ? t(UNIT_KEYS[stock.quantityUnit] ?? 'units.units') : t('units.units')} ${t('form.unitsPerBox')}`}
                 </p>
                 {boxes < 1 && (
                   <p className="text-sm text-red-500">{t('form.boxValidationMin')}</p>
