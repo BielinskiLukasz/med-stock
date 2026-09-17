@@ -32,7 +32,7 @@ Details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ## Active Milestone — v1.2: Polish, UX & i18n
 
-- [ ] **Phase 7: i18n / Polish Language** - Add Polish/English language switching with full string coverage and locale-aware dates
+- [x] **Phase 7: i18n / Polish Language** - Add Polish/English language switching with full string coverage and locale-aware dates (completed 2026-09-17)
 - [ ] **Phase 8: Full Location Management** - Make all locations (including predefined) fully editable, hideable, deleteable, and reorderable
 - [ ] **Phase 9: CSV UX + Version Display** - Auto-map CSV headers, clarify column labels, show app version
 - [ ] **Phase 10: Expiring Soon Status** - Add configurable early-warning status between Opened and Expired
@@ -80,7 +80,7 @@ Plans:
 
 **Wave 4 — gap closure (re-verification, 07-VERIFICATION.md)**
 
-- [ ] 07-10-PLAN.md — Gap closure: missed aria-label on Medicines list filter button (WR-05) + medicine-name placeholder hardcoded in CatalogFields/MedicineForm (Gap 2)
+- [x] 07-10-PLAN.md — Gap closure: missed aria-label on Medicines list filter button (WR-05) + medicine-name placeholder hardcoded in CatalogFields/MedicineForm (Gap 2)
 
 **UI hint**: yes
 
@@ -147,7 +147,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 7. i18n / Polish Language | 10/10 | In Progress|  |
+| 7. i18n / Polish Language | 10/10 | Complete    | 2026-09-17 |
 | 8. Full Location Management | 0/? | Not started | - |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
