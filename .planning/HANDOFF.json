@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-09-17T15:52:59.320Z",
+  "phase": "08",
+  "phase_name": "full-location-management",
+  "phase_dir": ".planning/phases/08-full-location-management",
+  "plan": null,
+  "task": null,
+  "total_tasks": null,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "Resume session, discard stale Phase 07 HANDOFF.json artifact (repo had already moved past it)", "status": "done", "commit": "73b0dd7"},
+    {"id": 2, "name": "Run /gsd-discuss-phase 8 — 4 gray areas discussed (Delete with references, Hide scope & visibility, Reorder interaction, Rename predefined names)", "status": "done", "commit": "22accbb"},
+    {"id": 3, "name": "Write 08-CONTEXT.md (17 decisions D-01..D-17) and 08-DISCUSSION-LOG.md", "status": "done", "commit": "22accbb"},
+    {"id": 4, "name": "Update STATE.md with session info", "status": "done", "commit": "b6f3cc6"}
+  ],
+  "remaining_tasks": [
+    {"id": 5, "name": "Plan Phase 8 via /gsd-plan-phase 8 (reads 08-CONTEXT.md)", "status": "not_started"},
+    {"id": 6, "name": "Execute Phase 8 plan(s) via /gsd-execute-phase 8", "status": "not_started"}
+  ],
+  "blockers": [],
+  "async_jobs": [],
+  "human_actions_pending": [],
+  "decisions": [
+    {"decision": "isDefault no longer blocks rename/delete on predefined locations", "rationale": "LOC-01/LOC-03 require full control over predefined locations", "phase": "08"},
+    {"decision": "Renamed predefined locations fall out of LOCATION_KEYS translation and display as plain strings thereafter (same as custom locations) — no new i18n override mechanism", "rationale": "User chose simplicity over preserving translation via a separate display-name override", "phase": "08"},
+    {"decision": "hidden: boolean field applies to ALL locations (not just predefined)", "rationale": "User wants one consistent toggle rather than isDefault-gated behavior", "phase": "08"},
+    {"decision": "Hidden locations excluded from Add/Edit and Move/Split dropdowns, but stay visible in the Filter sheet", "rationale": "Existing stock in a hidden location must remain findable/filterable even though new assignment is blocked", "phase": "08"},
+    {"decision": "Delete-with-references dialog offers inline reassign-or-clear (not a manual block-until-resolved flow); active stock only, soft-deleted/Trash entries excluded from the count", "rationale": "Best UX per user; trashed items are already out of the active workflow", "phase": "08"},
+    {"decision": "No minimum-location floor — user can delete every location down to zero", "rationale": "\"No location\" (Other/null) is a built-in form option independent of the locations table", "phase": "08"},
+    {"decision": "New order: number field via db.version(6) (never edit v5 in place); existing locations get alphabetical initial order on upgrade so the migration is visually silent", "rationale": "Matches current orderBy('name') display exactly until user actually reorders", "phase": "08"},
+    {"decision": "Reorder UI: drag handle PLUS up/down move buttons; no drag/sortable library exists yet in package.json — left to researcher/planner to pick one", "rationale": "Touch drag alone is unreliable on mobile and has no accessible fallback; buttons cover both", "phase": "08"},
+    {"decision": "Rename/add blocked on case-insensitive name collision with existing locations; names stored exactly as typed (no title-casing, unlike catalog's D-02 convention)", "rationale": "Avoids two rows displaying the same name; locations are short user-picked labels, not the catalog naming convention", "phase": "08"}
+  ],
+  "uncommitted_files": [],
+  "next_action": "Run /gsd-plan-phase 8 to create the phase plan(s), reading .planning/phases/08-full-location-management/08-CONTEXT.md for the 17 locked implementation decisions.",
+  "context_notes": "This is a clean phase-boundary pause, not a mid-task interruption. Phase 07 (i18n) is fully complete and verified. Phase 8 discussion is fully complete — all 4 gray areas resolved, CONTEXT.md written and committed, no open questions. Nothing is uncommitted. Next step is straightforward: plan then execute Phase 8. Key implementation-heavy areas planner should note: (1) new db.version(6) schema migration adding hidden+order fields to Location, (2) six call sites currently doing db.locations.orderBy('name') that all need to switch to ordering by the new order field — a repo-wide grep for orderBy('name') scoped to db.locations is a good acceptance check (same lesson learned in Phase 7's gap-closure cycles: grep beats enumerated lists), (3) locationOps.ts needs a new delete-with-reassign-or-clear function replacing the current isDefault-guarded deleteLocation, (4) no drag/sortable library currently in the repo — this is a new dependency decision for planning/research."
+}
