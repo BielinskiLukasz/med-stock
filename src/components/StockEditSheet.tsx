@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -12,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { StockFields, stockSchema, type StockFormData } from '@/components/StockFields'
+import { StockFields, createStockSchema, type StockFormData } from '@/components/StockFields'
 
 interface StockEditSheetProps {
   stock: Medicine
@@ -23,6 +23,7 @@ interface StockEditSheetProps {
 
 export function StockEditSheet({ stock, onSave, open, onOpenChange }: StockEditSheetProps) {
   const { t } = useLang()
+  const stockSchema = useMemo(() => createStockSchema(t), [t])
   const form = useForm<StockFormData>({
     resolver: zodResolver(stockSchema),
     defaultValues: {

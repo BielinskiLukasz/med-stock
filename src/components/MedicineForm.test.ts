@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { en } from '@/i18n/en'
 
 // Import the schema and type — MedicineForm.tsx must export these
 // This test file will fail (RED) until MedicineForm.tsx is created
@@ -6,7 +7,17 @@ import type { MedicineFormData } from './MedicineForm'
 
 // We test the Zod schema validation logic by importing a separate schema export
 // The schema itself is tested via type inference; runtime validation tested below
-import { medicineSchema } from './MedicineForm'
+import { createMedicineSchema } from './MedicineForm'
+
+// The schema is a factory over `t()` (WR-04) since validation messages are
+// language-dependent. Tests exercise it against the English dictionary,
+// matching the messages a real English-language user would see.
+function t(key: string): string {
+  const [ns, sub] = key.split('.')
+  const dict = en as unknown as Record<string, Record<string, string>>
+  return dict[ns]?.[sub] ?? key
+}
+const medicineSchema = createMedicineSchema(t)
 
 describe('medicineSchema — required fields', () => {
   it('rejects empty name', () => {

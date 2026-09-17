@@ -22,17 +22,21 @@ import {
 
 const NULL_SENTINEL = '__NULL__'
 
-export const catalogSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  category: z.string().nullable().optional(),
-  form: z.enum([
-    'Tablet', 'Capsule', 'Syrup', 'Cream', 'Drops', 'Spray',
-    'Powder', 'Gel', 'Ointment', 'Patch', 'Inhaler', 'Suppository', 'Other',
-  ]).nullable().optional(),
-  notes: z.string().nullable().optional(),
-})
+// Validation messages depend on the active language, so the schema is built via a
+// factory taking `t()` rather than defined once at module scope (WR-04).
+export function createCatalogSchema(t: (key: string) => string) {
+  return z.object({
+    name: z.string().min(1, t('form.nameRequired')),
+    category: z.string().nullable().optional(),
+    form: z.enum([
+      'Tablet', 'Capsule', 'Syrup', 'Cream', 'Drops', 'Spray',
+      'Powder', 'Gel', 'Ointment', 'Patch', 'Inhaler', 'Suppository', 'Other',
+    ]).nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+}
 
-export type CatalogFormData = z.infer<typeof catalogSchema>
+export type CatalogFormData = z.infer<ReturnType<typeof createCatalogSchema>>
 
 interface CatalogFieldsProps {
   form: UseFormReturn<CatalogFormData>

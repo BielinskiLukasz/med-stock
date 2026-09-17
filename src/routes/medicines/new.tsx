@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,8 +10,8 @@ import { addStockEntry } from '@/lib/stockOps'
 import { Form } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import { CatalogAutocomplete } from '@/components/CatalogAutocomplete'
-import { CatalogFields, catalogSchema, type CatalogFormData } from '@/components/CatalogFields'
-import { StockFields, stockSchema, type StockFormData } from '@/components/StockFields'
+import { CatalogFields, createCatalogSchema, type CatalogFormData } from '@/components/CatalogFields'
+import { StockFields, createStockSchema, type StockFormData } from '@/components/StockFields'
 import { useLang, CATEGORY_KEYS } from '@/i18n'
 
 type Step = 'search' | 'create-catalog' | 'stock-form'
@@ -21,6 +21,9 @@ export function MedicineNew() {
   const navigate = useNavigate()
   const [step, setStep] = useState<Step>('search')
   const [selectedCatalog, setSelectedCatalog] = useState<MedicineCatalog | null>(null)
+
+  const catalogSchema = useMemo(() => createCatalogSchema(t), [t])
+  const stockSchema = useMemo(() => createStockSchema(t), [t])
 
   const catalogForm = useForm<CatalogFormData>({
     resolver: zodResolver(catalogSchema),

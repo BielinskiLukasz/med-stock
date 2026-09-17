@@ -158,6 +158,7 @@ export const pl: TranslationDict = {
     name: 'Nazwa leku',
     namePlaceholder: 'np. Ibuprofen 400mg',
     nameRequired: 'Nazwa jest wymagana',
+    expiryDateRequired: 'Data ważności jest wymagana',
     category: 'Kategoria',
     noCategory: 'Bez kategorii',
     formType: 'Postać',

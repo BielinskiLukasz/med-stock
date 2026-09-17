@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -12,7 +12,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { CatalogFields, catalogSchema, type CatalogFormData } from '@/components/CatalogFields'
+import { CatalogFields, createCatalogSchema, type CatalogFormData } from '@/components/CatalogFields'
 
 interface CatalogEditSheetProps {
   catalog: MedicineCatalog
@@ -23,6 +23,7 @@ interface CatalogEditSheetProps {
 
 export function CatalogEditSheet({ catalog, onSave, open, onOpenChange }: CatalogEditSheetProps) {
   const { t } = useLang()
+  const catalogSchema = useMemo(() => createCatalogSchema(t), [t])
   const form = useForm<CatalogFormData>({
     resolver: zodResolver(catalogSchema),
     defaultValues: {

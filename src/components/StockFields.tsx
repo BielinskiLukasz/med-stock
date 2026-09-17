@@ -26,19 +26,23 @@ import {
 
 const NULL_SENTINEL = '__NULL__'
 
-export const stockSchema = z.object({
-  expiryDate: z.string().min(1, 'Expiry date is required'),
-  location: z.string().nullable().optional(),
-  openedDate: z.string().nullable().optional(),
-  paoValue: z.number().positive().nullable().optional(),
-  paoUnit: z.enum(['days', 'weeks', 'months']).nullable().optional(),
-  quantity: z.number().positive().nullable().optional(),
-  packCount: z.number().positive().nullable().optional(),
-  quantityUnit: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-})
+// Validation messages depend on the active language, so the schema is built via a
+// factory taking `t()` rather than defined once at module scope (WR-04).
+export function createStockSchema(t: (key: string) => string) {
+  return z.object({
+    expiryDate: z.string().min(1, t('form.expiryDateRequired')),
+    location: z.string().nullable().optional(),
+    openedDate: z.string().nullable().optional(),
+    paoValue: z.number().positive().nullable().optional(),
+    paoUnit: z.enum(['days', 'weeks', 'months']).nullable().optional(),
+    quantity: z.number().positive().nullable().optional(),
+    packCount: z.number().positive().nullable().optional(),
+    quantityUnit: z.string().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+}
 
-export type StockFormData = z.infer<typeof stockSchema>
+export type StockFormData = z.infer<ReturnType<typeof createStockSchema>>
 
 interface StockFieldsProps {
   form: UseFormReturn<StockFormData>

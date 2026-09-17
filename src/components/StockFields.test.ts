@@ -15,7 +15,18 @@ vi.mock('@/lib/db', () => ({
   },
 }))
 
-import { stockSchema } from './StockFields'
+import { createStockSchema } from './StockFields'
+import { en } from '@/i18n/en'
+
+// The schema is a factory over `t()` (WR-04) since validation messages are
+// language-dependent. Tests exercise it against the English dictionary,
+// matching the messages a real English-language user would see.
+function t(key: string): string {
+  const [ns, sub] = key.split('.')
+  const dict = en as unknown as Record<string, Record<string, string>>
+  return dict[ns]?.[sub] ?? key
+}
+const stockSchema = createStockSchema(t)
 
 const baseValid = {
   expiryDate: '2027-01-01',

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { toast } from 'sonner'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -31,20 +31,24 @@ import {
 // Replace with CatalogFields + StockFields composition once add/edit flows are updated (Plans 05-05, 05-06).
 
 // Zod schema — all optional fields are nullable; location uses null as 'Other' sentinel (D-17)
-export const medicineSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  expiryDate: z.string().min(1, 'Expiry date is required'),
-  category: z.string().nullable().optional(),
-  location: z.string().nullable().optional(), // null = "Other" (D-17); NEVER default 'Other'
-  openedDate: z.string().nullable().optional(),
-  paoValue: z.number().positive().nullable().optional(),
-  paoUnit: z.enum(['days', 'weeks', 'months']).nullable().optional(),
-  quantity: z.number().positive().nullable().optional(),
-  quantityUnit: z.string().nullable().optional(),
-  notes: z.string().nullable().optional(),
-})
+// Validation messages depend on the active language, so the schema is built via a
+// factory taking `t()` rather than defined once at module scope (WR-04).
+export function createMedicineSchema(t: (key: string) => string) {
+  return z.object({
+    name: z.string().min(1, t('form.nameRequired')),
+    expiryDate: z.string().min(1, t('form.expiryDateRequired')),
+    category: z.string().nullable().optional(),
+    location: z.string().nullable().optional(), // null = "Other" (D-17); NEVER default 'Other'
+    openedDate: z.string().nullable().optional(),
+    paoValue: z.number().positive().nullable().optional(),
+    paoUnit: z.enum(['days', 'weeks', 'months']).nullable().optional(),
+    quantity: z.number().positive().nullable().optional(),
+    quantityUnit: z.string().nullable().optional(),
+    notes: z.string().nullable().optional(),
+  })
+}
 
-export type MedicineFormData = z.infer<typeof medicineSchema>
+export type MedicineFormData = z.infer<ReturnType<typeof createMedicineSchema>>
 
 interface MedicineFormProps {
   defaultValues?: Partial<MedicineFormData>
@@ -65,6 +69,7 @@ export function MedicineForm({
   const [showQuickAddLocation, setShowQuickAddLocation] = useState(false)
   const [newLocationInput, setNewLocationInput] = useState('')
   const [showCustomQuantityUnit, setShowCustomQuantityUnit] = useState(false)
+  const medicineSchema = useMemo(() => createMedicineSchema(t), [t])
 
   // Load locations live from Dexie — updates immediately when Plan 04 adds/renames (D-19)
   const locations = useLiveQuery(

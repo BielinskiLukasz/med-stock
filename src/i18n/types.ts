@@ -160,6 +160,7 @@ export type TranslationDict = {
     name: string
     namePlaceholder: string
     nameRequired: string
+    expiryDateRequired: string
     category: string
     noCategory: string
     formType: string
