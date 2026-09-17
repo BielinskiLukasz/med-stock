@@ -1,6 +1,12 @@
 import type { HistoryEntry as HistoryEntryType } from '@/lib/db'
-import { useLang } from '@/i18n'
+import { useLang, HISTORY_FIELD_KEYS } from '@/i18n'
 import type { Lang } from '@/i18n'
+
+function displayValue(v: unknown): string {
+  if (v === null || v === undefined) return '—'
+  if (typeof v === 'object') return JSON.stringify(v)
+  return String(v)
+}
 
 function formatEntry(
   entry: HistoryEntryType,
@@ -23,7 +29,8 @@ function formatEntry(
   // 'updated'
   if (entry.changedFields.length === 1) {
     const { field, oldValue, newValue } = entry.changedFields[0]
-    return `${ts} — ${field} ${t('history.fieldChanged')}: "${String(oldValue)}" → "${String(newValue)}"`
+    const label = t(HISTORY_FIELD_KEYS[field] ?? field)
+    return `${ts} — ${label} ${t('history.fieldChanged')}: "${displayValue(oldValue)}" → "${displayValue(newValue)}"`
   }
   return `${ts} — ${entry.changedFields.length} ${t('history.fieldsUpdated')}`
 }

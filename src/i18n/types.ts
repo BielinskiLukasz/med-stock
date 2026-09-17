@@ -154,6 +154,7 @@ export type TranslationDict = {
     updated: string
     fieldsUpdated: string
     fieldChanged: string
+    manualStatusField: string
   }
   form: {
     name: string
@@ -332,6 +333,18 @@ export const UNIT_KEYS: Record<string, string> = {
   'drops': 'units.drops',
   'doses': 'units.doses',
   'units': 'units.units',
+}
+
+/** Maps Medicine field keys (as used in HistoryEntry.changedFields) to TranslationDict dot-notation keys */
+export const HISTORY_FIELD_KEYS: Record<string, string> = {
+  location: 'form.location',
+  expiryDate: 'form.expiryDate',
+  openedDate: 'form.openedDate',
+  pao: 'form.pao',
+  quantity: 'form.quantity',
+  quantityUnit: 'form.quantityUnit',
+  notes: 'form.notes',
+  manualStatus: 'history.manualStatusField',
 }
 
 /** Maps MedicineForm canonical values to TranslationDict dot-notation keys */

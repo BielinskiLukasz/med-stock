@@ -152,6 +152,7 @@ export const pl: TranslationDict = {
     updated: 'Zaktualizowano',
     fieldsUpdated: 'pól zaktualizowanych',
     fieldChanged: 'zmieniono',
+    manualStatusField: 'Status ręczny',
   },
   form: {
     name: 'Nazwa leku',

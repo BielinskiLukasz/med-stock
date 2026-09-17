@@ -152,6 +152,7 @@ export const en: TranslationDict = {
     updated: 'Updated',
     fieldsUpdated: 'fields updated',
     fieldChanged: 'changed',
+    manualStatusField: 'Manual status',
   },
   form: {
     name: 'Medicine name',
