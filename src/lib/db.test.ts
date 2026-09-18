@@ -2,7 +2,12 @@ import 'fake-indexeddb/auto'
 import { Dexie } from 'dexie'
 import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from './db'
-import { addCustomLocation, renameLocation, deleteLocation } from './locationOps'
+import {
+  addCustomLocation,
+  renameLocation,
+  countActiveLocationReferences,
+  deleteLocationWithReassign,
+} from './locationOps'
 
 beforeEach(async () => {
   await db.delete()
@@ -58,68 +63,99 @@ describe('addCustomLocation', () => {
   })
 })
 
-describe('deleteLocation', () => {
-  it('deletes a custom location and sets affected medicines.location to null', async () => {
-    const locId = await db.locations.add({ name: 'Living Room', isDefault: false, hidden: false, order: 1 })
-    const med1Id = await db.medicines.add({
-      catalogId: 1,
-      location: 'Living Room',
-      expiryDate: '2030-01-01',
-      openedDate: null,
-      pao: null,
-      quantity: null,
-      quantityUnit: null,
-      packCount: null,
-      notes: null,
-      manualStatus: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    })
-    const med2Id = await db.medicines.add({
-      catalogId: 1,
-      location: 'Living Room',
-      expiryDate: '2030-01-01',
-      openedDate: null,
-      pao: null,
-      quantity: null,
-      quantityUnit: null,
-      packCount: null,
-      notes: null,
-      manualStatus: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    })
-    await db.medicines.add({
-      catalogId: 1,
-      location: 'Kitchen',
-      expiryDate: '2030-01-01',
-      openedDate: null,
-      pao: null,
-      quantity: null,
-      quantityUnit: null,
-      packCount: null,
-      notes: null,
-      manualStatus: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      deletedAt: null,
-    })
+// Shared fixture factory for medicine rows referencing a location — reduces
+// per-test boilerplate across countActiveLocationReferences/deleteLocationWithReassign.
+function makeMedicine(overrides: Partial<{
+  location: string | null
+  deletedAt: string | null
+}> = {}) {
+  return {
+    catalogId: 1,
+    location: overrides.location ?? null,
+    expiryDate: '2030-01-01',
+    openedDate: null,
+    pao: null,
+    quantity: null,
+    quantityUnit: null,
+    packCount: null,
+    notes: null,
+    manualStatus: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    deletedAt: overrides.deletedAt ?? null,
+  }
+}
 
-    await deleteLocation(locId)
+describe('countActiveLocationReferences', () => {
+  it('counts only active (non-soft-deleted) medicines referencing the location', async () => {
+    await db.medicines.add(makeMedicine({ location: 'Kitchen Drawer' }))
+    await db.medicines.add(makeMedicine({ location: 'Kitchen Drawer' }))
+    await db.medicines.add(makeMedicine({ location: 'Kitchen Drawer', deletedAt: '2026-01-01T00:00:00.000Z' }))
+    await db.medicines.add(makeMedicine({ location: 'Other Place' }))
 
-    expect(await db.locations.get(locId)).toBeUndefined()
-    expect((await db.medicines.get(med1Id))?.location).toBeNull()
-    expect((await db.medicines.get(med2Id))?.location).toBeNull()
-    const medC = await db.medicines.where('location').equals('Kitchen').first()
-    expect(medC?.location).toBe('Kitchen')
+    const count = await countActiveLocationReferences('Kitchen Drawer')
+    expect(count).toBe(2)
   })
 
-  it('throws when trying to delete a default location', async () => {
+  it('returns 0 when no medicines reference the location', async () => {
+    const count = await countActiveLocationReferences('Nonexistent Location')
+    expect(count).toBe(0)
+  })
+})
+
+describe('deleteLocationWithReassign', () => {
+  it('reassigns active references to the target location, leaves soft-deleted ones untouched, and deletes the location row', async () => {
+    const locId = await db.locations.add({ name: 'Living Room', isDefault: false, hidden: false, order: 1 })
+    const med1Id = await db.medicines.add(makeMedicine({ location: 'Living Room' }))
+    const med2Id = await db.medicines.add(makeMedicine({ location: 'Living Room' }))
+    const trashedId = await db.medicines.add(
+      makeMedicine({ location: 'Living Room', deletedAt: '2026-01-01T00:00:00.000Z' })
+    )
+    const otherId = await db.medicines.add(makeMedicine({ location: 'Kitchen' }))
+
+    await deleteLocationWithReassign(locId, 'Bathroom Cabinet')
+
+    expect(await db.locations.get(locId)).toBeUndefined()
+    expect((await db.medicines.get(med1Id))?.location).toBe('Bathroom Cabinet')
+    expect((await db.medicines.get(med2Id))?.location).toBe('Bathroom Cabinet')
+    expect((await db.medicines.get(trashedId))?.location).toBe('Living Room')
+    expect((await db.medicines.get(otherId))?.location).toBe('Kitchen')
+  })
+
+  it('clears active references to null ("Other") when reassignTo is null, never the string "Other"', async () => {
+    const locId = await db.locations.add({ name: 'Living Room', isDefault: false, hidden: false, order: 1 })
+    const medId = await db.medicines.add(makeMedicine({ location: 'Living Room' }))
+
+    await deleteLocationWithReassign(locId, null)
+
+    const med = await db.medicines.get(medId)
+    expect(med?.location).toBeNull()
+    expect(med?.location).not.toBe('Other')
+  })
+
+  it('deletes a location with zero active references successfully, no special-case throw', async () => {
+    const locId = await db.locations.add({ name: 'Unused Shelf', isDefault: false, hidden: false, order: 1 })
+    await expect(deleteLocationWithReassign(locId, null)).resolves.not.toThrow()
+    expect(await db.locations.get(locId)).toBeUndefined()
+  })
+
+  it('throws "Location not found" on a second call with the same (already-deleted) id', async () => {
+    const locId = await db.locations.add({ name: 'Pantry', isDefault: false, hidden: false, order: 1 })
+    await deleteLocationWithReassign(locId, null)
+    await expect(deleteLocationWithReassign(locId, null)).rejects.toThrow('Location not found')
+  })
+
+  it('deletes the last remaining location with no minimum-floor check', async () => {
+    await db.locations.clear()
+    const locId = await db.locations.add({ name: 'Only Location', isDefault: false, hidden: false, order: 1 })
+    await deleteLocationWithReassign(locId, null)
+    expect(await db.locations.count()).toBe(0)
+  })
+
+  it('works identically on an isDefault:true location (no isDefault guard)', async () => {
     const locId = await db.locations.add({ name: 'Predefined', isDefault: true, hidden: false, order: 1 })
-    await expect(deleteLocation(locId)).rejects.toThrow('Cannot delete default location')
-    expect(await db.locations.get(locId)).toBeDefined()
+    await expect(deleteLocationWithReassign(locId, null)).resolves.not.toThrow()
+    expect(await db.locations.get(locId)).toBeUndefined()
   })
 })
 
