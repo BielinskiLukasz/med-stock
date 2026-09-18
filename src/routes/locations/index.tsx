@@ -19,7 +19,10 @@ import { useLang, LOCATION_KEYS } from '@/i18n'
 
 export function LocationsScreen() {
   const { t } = useLang()
-  const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
+  // 'order' is intentionally not an indexed field (matches the non-indexed precedent
+  // for packCount in v5) — orderBy() requires an index and throws SchemaError on a
+  // non-indexed keyPath, so sort via toCollection().sortBy() instead (Rule 1 fix).
+  const locations = useLiveQuery(() => db.locations.toCollection().sortBy('order'), [])
 
   const [showAddInput, setShowAddInput] = useState(false)
   const [addValue, setAddValue] = useState('')
@@ -135,15 +138,17 @@ export function LocationsScreen() {
                 <span className="text-sm">
                   {LOCATION_KEYS[loc.name] ? t(LOCATION_KEYS[loc.name]) : loc.name}
                 </span>
-                {!loc.isDefault && (
-                  <div className="flex gap-2 ml-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => startEdit(loc.id, loc.name)}
-                    >
-                      {t('locations.edit')}
-                    </Button>
+                <div className="flex gap-2 ml-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => startEdit(loc.id, loc.name)}
+                  >
+                    {t('locations.edit')}
+                  </Button>
+                  {/* Plan 08-04 replaces this delete block with the reassign-or-clear flow
+                      and removes the isDefault guard permanently — deliberate incremental step. */}
+                  {!loc.isDefault && (
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
@@ -165,8 +170,8 @@ export function LocationsScreen() {
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
-                  </div>
-                )}
+                  )}
+                </div>
               </>
             )}
           </div>

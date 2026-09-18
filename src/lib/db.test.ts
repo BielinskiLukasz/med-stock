@@ -171,7 +171,7 @@ describe('renameLocation', () => {
 
 describe('db.version(6) migration', () => {
   it('seeds fresh installs with hidden=false and sequential order 1..7 (Bathroom Cabinet..Travel Kit)', async () => {
-    const locs = await db.locations.orderBy('order').toArray()
+    const locs = await db.locations.toCollection().sortBy('order')
     expect(locs).toHaveLength(7)
     expect(locs.every(l => l.hidden === false)).toBe(true)
     expect(locs.map(l => l.order)).toEqual([1, 2, 3, 4, 5, 6, 7])
@@ -211,7 +211,7 @@ describe('db.version(6) migration', () => {
 
     await db.open()
 
-    const locs = await db.locations.orderBy('order').toArray()
+    const locs = await db.locations.toCollection().sortBy('order')
     expect(locs).toHaveLength(3)
     expect(locs.every(l => l.hidden === false)).toBe(true)
     expect(locs.map(l => l.order)).toEqual([1, 2, 3])

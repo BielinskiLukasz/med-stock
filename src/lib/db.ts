@@ -48,7 +48,9 @@ export interface Medicine {
 export interface Location {
   id: number
   name: string
-  isDefault: boolean            // D-18: predefined locations cannot be renamed/deleted
+  isDefault: boolean
+  hidden: boolean                // D-05: hide/show toggle, available on ALL locations (not gated by isDefault)
+  order: number                  // D-13: user-controlled display order (db.version(6))
 }
 
 export interface MedicineCatalog {
@@ -208,16 +210,32 @@ db.version(5)
     })
   )
 
-// Seed predefined locations on first open (D-18, LOC-01)
+db.version(6)
+  .stores({
+    // hidden/order are not indexed — index string unchanged from v1
+    locations: '++id, name, isDefault',
+  })
+  .upgrade(async tx => {
+    // D-13: existing rows get hidden=false and a contiguous order matching alphabetical
+    // display order, so the upgrade is visually silent until the user reorders something.
+    // Read + write entirely inside this versionchange transaction (tx) — Dexie's Version
+    // builder does not expose a public .then() for post-upgrade work.
+    const rows = await tx.table('locations').toCollection().sortBy('name')
+    for (let i = 0; i < rows.length; i++) {
+      await tx.table('locations').update(rows[i].id, { hidden: false, order: i + 1 })
+    }
+  })
+
+// Seed predefined locations on first open (LOC-01)
 db.on('populate', async () => {
   await db.locations.bulkAdd([
-    { name: 'Bathroom Cabinet', isDefault: true },
-    { name: 'Bedroom Cabinet', isDefault: true },
-    { name: 'Kitchen Drawer', isDefault: true },
-    { name: 'Living Room Cabinet', isDefault: true },
-    { name: 'Medicine Box', isDefault: true },
-    { name: 'Refrigerator', isDefault: true },
-    { name: 'Travel Kit', isDefault: true },
+    { name: 'Bathroom Cabinet', isDefault: true, hidden: false, order: 1 },
+    { name: 'Bedroom Cabinet', isDefault: true, hidden: false, order: 2 },
+    { name: 'Kitchen Drawer', isDefault: true, hidden: false, order: 3 },
+    { name: 'Living Room Cabinet', isDefault: true, hidden: false, order: 4 },
+    { name: 'Medicine Box', isDefault: true, hidden: false, order: 5 },
+    { name: 'Refrigerator', isDefault: true, hidden: false, order: 6 },
+    { name: 'Travel Kit', isDefault: true, hidden: false, order: 7 },
   ])
 })
 
