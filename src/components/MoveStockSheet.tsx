@@ -51,7 +51,13 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
     }
   }, [open, stock])
 
-  const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
+  // order is intentionally unindexed (matches packCount v5 precedent) — toCollection().sortBy()
+  // is used instead of orderBy(), which throws SchemaError on a non-indexed keyPath (08-01 precedent).
+  // Hidden locations are excluded here — never assignable via this dropdown (D-06).
+  const locations = useLiveQuery(
+    () => db.locations.toCollection().sortBy('order').then((locs) => locs.filter((l) => !l.hidden)),
+    [],
+  )
 
   const isBoxesValid = boxes >= 1 && boxes <= maxBoxes
   const isUnitsValid = quantity >= 1 && quantity <= maxQty
@@ -146,7 +152,7 @@ export function MoveStockSheet({ stock, onMove, open, onOpenChange }: MoveStockS
                 {locations
                   ?.filter(loc => loc.name !== 'Other')
                   .map((loc) => (
-                    <SelectItem key={loc.id} value={loc.name}>
+                    <SelectItem key={loc.id} value={loc.name} className="truncate">
                       {t(LOCATION_KEYS[loc.name] ?? loc.name)}
                     </SelectItem>
                   ))}

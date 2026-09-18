@@ -54,8 +54,11 @@ export function StockFields({ form }: StockFieldsProps) {
   const [newLocationInput, setNewLocationInput] = useState('')
   const [showCustomQuantityUnit, setShowCustomQuantityUnit] = useState(false)
 
+  // order is intentionally unindexed (matches packCount v5 precedent) — toCollection().sortBy()
+  // is used instead of orderBy(), which throws SchemaError on a non-indexed keyPath (08-01 precedent).
+  // Hidden locations are excluded here — never assignable via this dropdown (D-06).
   const locations = useLiveQuery(
-    () => db.locations.orderBy('name').toArray(),
+    () => db.locations.toCollection().sortBy('order').then((locs) => locs.filter((l) => !l.hidden)),
     [],
   )
 
@@ -122,7 +125,7 @@ export function StockFields({ form }: StockFieldsProps) {
                 {locations
                   ?.filter(loc => loc.name !== 'Other')
                   .map((loc) => (
-                    <SelectItem key={loc.id} value={loc.name}>
+                    <SelectItem key={loc.id} value={loc.name} className="truncate">
                       {t(LOCATION_KEYS[loc.name] ?? loc.name)}
                     </SelectItem>
                   ))}
