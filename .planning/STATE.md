@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 08
 current_phase_name: Full Location Management
 status: executing
-stopped_at: Completed 08-03-PLAN.md
-last_updated: "2026-09-18T11:02:04.754Z"
+stopped_at: Completed 08-04-PLAN.md
+last_updated: "2026-09-18T11:16:15.186Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 08 execution started
-state_head: fcbbf43a781e51cccc26d06a7967cbfa2458458e
+state_head: 67e1cba599fd5f457eea0522a483aabbb432e233
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 14
   percent: 20
 ---
 
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 08 (Full Location Management) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 08 execution started
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-18 — Phase 08 execution started
 
 ## Session
 
-**Last session:** 2026-09-18T11:02:03.680Z
-**Stopped at:** Completed 08-03-PLAN.md
+**Last session:** 2026-09-18T11:16:14.318Z
+**Stopped at:** Completed 08-04-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -106,6 +106,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 | Phase 08 P01 | 33min | 2 tasks | 9 files |
 | Phase 08 P02 | 17min | 3 tasks | 3 files |
 | Phase 08 P03 | 13min | 3 tasks | 6 files |
+| Phase 08 P04 | 9min | 2 tasks | 1 files |
 
 ## Decisions
 
@@ -150,6 +151,8 @@ Last activity: 2026-09-18 — Phase 08 execution started
 - [Phase 08]: [Phase 08] toggleLocationHidden and reorderLocations added; reorderLocations renumbers to contiguous 1..N via bulkUpdate, no-op on 0/1-element arrays (D-13, D-16)
 - [Phase 08]: [Phase 08]: db.locations.toCollection().sortBy('order') used in all four remaining UI call sites (never orderBy('order'), which throws SchemaError on the intentionally-unindexed order field)
 - [Phase 08]: [Phase 08]: BackupSchema/LegacyBackupSchema locations gain hidden/order as optional-with-default fields, matching the packCount backward-compat precedent
+- [Phase 08]: [Phase 08]: reassignTo modeled as string|undefined (never null) — Radix Select's controlled value rejects null, REASSIGN_OTHER sentinel represents explicit Other choice
+- [Phase 08]: [Phase 08]: per-row delete AlertDialog made fully controlled (open={deleteTargetId === loc.id}) so countActiveLocationReferences resolves before the reassign-vs-simple dialog body renders
 
 ### Quick Tasks Completed
 

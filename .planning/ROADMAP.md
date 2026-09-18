@@ -96,14 +96,14 @@ Plans:
   3. User can delete any location; if medicines reference it, a warning prompts the user to reassign or clear those references before deletion proceeds
   4. User can drag locations into a new order; the order persists across sessions and is reflected in form dropdowns
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 Plans:
 
 - [x] 08-01-PLAN.md — db.version(6) migration (Location.hidden/order) + tracer: rename a predefined location end-to-end + full i18n key batch (Wave 1)
 - [x] 08-02-PLAN.md — TDD: locationOps.ts mutation logic — collision-safe add/rename, delete-with-reassign, hide toggle, contiguous reorder (Wave 2)
 - [x] 08-03-PLAN.md — Filter hidden locations out of assignment dropdowns, keep them in the Filter sheet, round-trip hidden/order through BackupSchema (Wave 2)
-- [ ] 08-04-PLAN.md — Locations screen: hide/show toggle + delete-with-reassign dialog (Wave 3)
+- [x] 08-04-PLAN.md — Locations screen: hide/show toggle + delete-with-reassign dialog (Wave 3)
 - [ ] 08-05-PLAN.md — Reorder UI: @dnd-kit drag handle + up/down buttons (Wave 4)
 
 **Wave 1**
@@ -113,7 +113,7 @@ Plans:
 **Wave 2** *(blocked on Wave 1 completion)*
 
 - [x] 08-02-PLAN.md (Wave 2)
-- [ ] 08-03-PLAN.md (Wave 2)
+- [x] 08-03-PLAN.md (Wave 2)
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
@@ -174,7 +174,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. i18n / Polish Language | 10/10 | Complete    | 2026-09-17 |
-| 8. Full Location Management | 3/5 | In Progress|  |
+| 8. Full Location Management | 4/5 | In Progress|  |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
 | 11. UX Polish — Autocomplete + Pack Count | 0/? | Not started | - |
