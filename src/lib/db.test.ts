@@ -43,6 +43,7 @@ describe('addCustomLocation', () => {
 
   // Pitfall 3: order assignment on add
   it('assigns order = max(existing order) + 1', async () => {
+    await db.locations.clear()
     await db.locations.add({ name: 'A', isDefault: false, hidden: false, order: 5 })
     const id = await addCustomLocation('B')
     const loc = await db.locations.get(id)
