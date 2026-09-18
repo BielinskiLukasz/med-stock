@@ -37,12 +37,32 @@ export async function renameLocation(locationId: number, newName: string): Promi
   })
 }
 
-export async function deleteLocation(locationId: number): Promise<void> {
+// D-10: only active (non-soft-deleted) stock entries participate in reference counting.
+// Never query db.medicines.where('deletedAt').equals(null) — null is not a valid
+// IndexedDB key — filter in memory instead.
+export async function countActiveLocationReferences(locationName: string): Promise<number> {
+  return db.medicines
+    .where('location')
+    .equals(locationName)
+    .filter(m => m.deletedAt === null)
+    .count()
+}
+
+// D-09/D-10/D-11/D-12: replaces the old isDefault-guarded deleteLocation. Reassigns (or
+// clears to null — never the string 'Other') all ACTIVE references before deleting the
+// location row, atomically. No isDefault guard, no minimum-location floor.
+export async function deleteLocationWithReassign(
+  locationId: number,
+  reassignTo: string | null
+): Promise<void> {
   await db.transaction('rw', db.locations, db.medicines, async () => {
     const loc = await db.locations.get(locationId)
     if (!loc) throw new Error('Location not found')
-    if (loc.isDefault) throw new Error('Cannot delete default location')
-    await db.medicines.where('location').equals(loc.name).modify({ location: null })
+    await db.medicines
+      .where('location')
+      .equals(loc.name)
+      .filter(m => m.deletedAt === null)
+      .modify({ location: reassignTo })
     await db.locations.delete(locationId)
   })
 }

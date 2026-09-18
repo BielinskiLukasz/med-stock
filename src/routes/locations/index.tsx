@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
-import { addCustomLocation, renameLocation, deleteLocation } from '@/lib/locationOps'
+import { addCustomLocation, renameLocation, deleteLocationWithReassign } from '@/lib/locationOps'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -62,7 +62,10 @@ export function LocationsScreen() {
 
   async function handleDelete(id: number) {
     try {
-      await deleteLocation(id)
+      // Plan 08-04 replaces this with the full reassign-or-clear picker (D-09); until
+      // then, this screen keeps the pre-existing "clear to null" behavior and stays
+      // isDefault-guarded above (deleteLocationWithReassign itself has no such guard).
+      await deleteLocationWithReassign(id, null)
       setError(null)
     } catch (err) {
       console.error('Failed to delete location:', err)
