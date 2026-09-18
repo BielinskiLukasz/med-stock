@@ -4,17 +4,17 @@ milestone: v1.2
 milestone_name: Polish, UX & i18n
 current_phase: 08
 current_phase_name: Full Location Management
-status: executing
-stopped_at: Completed 08-04-PLAN.md
-last_updated: "2026-09-18T11:16:15.186Z"
+status: verifying
+stopped_at: Completed 08-05-PLAN.md
+last_updated: "2026-09-18T11:38:35.940Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 08 execution started
-state_head: 67e1cba599fd5f457eea0522a483aabbb432e233
+state_head: 468db2ea3afe1cf0be55777f5408e436d73f6e39
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
   percent: 20
 ---
 
@@ -31,7 +31,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 
 Phase: 08 (Full Location Management) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-09-18 — Phase 08 execution started
 
 ## v1.0 Summary
@@ -77,8 +77,8 @@ Last activity: 2026-09-18 — Phase 08 execution started
 
 ## Session
 
-**Last session:** 2026-09-18T11:16:14.318Z
-**Stopped at:** Completed 08-04-PLAN.md
+**Last session:** 2026-09-18T11:38:34.931Z
+**Stopped at:** Completed 08-05-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -107,6 +107,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 | Phase 08 P02 | 17min | 3 tasks | 3 files |
 | Phase 08 P03 | 13min | 3 tasks | 6 files |
 | Phase 08 P04 | 9min | 2 tasks | 1 files |
+| Phase 08 P05 | 12min | 2 tasks | 3 files |
 
 ## Decisions
 
@@ -153,6 +154,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 - [Phase 08]: [Phase 08]: BackupSchema/LegacyBackupSchema locations gain hidden/order as optional-with-default fields, matching the packCount backward-compat precedent
 - [Phase 08]: [Phase 08]: reassignTo modeled as string|undefined (never null) — Radix Select's controlled value rejects null, REASSIGN_OTHER sentinel represents explicit Other choice
 - [Phase 08]: [Phase 08]: per-row delete AlertDialog made fully controlled (open={deleteTargetId === loc.id}) so countActiveLocationReferences resolves before the reassign-vs-simple dialog body renders
+- [Phase 08]: [Phase 08]: SortableLocationList owns only drag mechanics via a renderRow render-prop; handleMove delegates to handleReorder so both drag-end and up/down buttons funnel through a single reorderLocations call
 
 ### Quick Tasks Completed
 
