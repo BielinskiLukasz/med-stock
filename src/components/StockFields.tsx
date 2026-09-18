@@ -63,7 +63,8 @@ export function StockFields({ form }: StockFieldsProps) {
     const trimmed = newLocationInput.trim()
     if (!trimmed) return
     try {
-      await db.locations.add({ name: trimmed, isDefault: false })
+      // order: 999 sentinel — real order assignment on add is deferred to Plan 08-02 (D-13)
+      await db.locations.add({ name: trimmed, isDefault: false, hidden: false, order: 999 })
       form.setValue('location', trimmed)
       setNewLocationInput('')
       setShowQuickAddLocation(false)
