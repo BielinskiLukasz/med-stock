@@ -25,6 +25,36 @@ describe('addCustomLocation', () => {
   it('throws if name is whitespace only', async () => {
     await expect(addCustomLocation('   ')).rejects.toThrow()
   })
+
+  // D-03: case-insensitive collision check
+  it('rejects a name that collides case-insensitively with an existing location', async () => {
+    await addCustomLocation('Pantry')
+    await expect(addCustomLocation('pantry')).rejects.toThrow('Location name already exists')
+    const all = await db.locations.toCollection().toArray()
+    expect(all.filter(l => l.name.toLowerCase() === 'pantry')).toHaveLength(1)
+  })
+
+  // D-04: trim only, no title-casing
+  it('stores the name trimmed but otherwise verbatim (no title-casing)', async () => {
+    const id = await addCustomLocation('  Fridge  ')
+    const loc = await db.locations.get(id)
+    expect(loc?.name).toBe('Fridge')
+  })
+
+  // Pitfall 3: order assignment on add
+  it('assigns order = max(existing order) + 1', async () => {
+    await db.locations.add({ name: 'A', isDefault: false, hidden: false, order: 5 })
+    const id = await addCustomLocation('B')
+    const loc = await db.locations.get(id)
+    expect(loc?.order).toBe(6)
+  })
+
+  it('assigns order = 1 on an empty locations table', async () => {
+    await db.locations.clear()
+    const id = await addCustomLocation('First')
+    const loc = await db.locations.get(id)
+    expect(loc?.order).toBe(1)
+  })
 })
 
 describe('deleteLocation', () => {
@@ -166,6 +196,23 @@ describe('renameLocation', () => {
   it('throws if newName is empty', async () => {
     const locId = await db.locations.add({ name: 'Custom', isDefault: false, hidden: false, order: 1 })
     await expect(renameLocation(locId, '')).rejects.toThrow()
+  })
+
+  // D-03: case-insensitive collision check on rename
+  it('rejects a rename that collides case-insensitively with a different existing location', async () => {
+    await db.locations.add({ name: 'Bathroom Cabinet', isDefault: false, hidden: false, order: 1 })
+    const locId = await db.locations.add({ name: 'Kitchen', isDefault: false, hidden: false, order: 2 })
+    await expect(renameLocation(locId, 'bathroom cabinet')).rejects.toThrow('Location name already exists')
+    const updated = await db.locations.get(locId)
+    expect(updated?.name).toBe('Kitchen')
+  })
+
+  it('allows renaming a location to its own current name (case-insensitive self-match is not a collision)', async () => {
+    const locId = await db.locations.add({ name: 'Pantry', isDefault: false, hidden: false, order: 1 })
+    await expect(renameLocation(locId, 'Pantry')).resolves.not.toThrow()
+    await expect(renameLocation(locId, 'pantry')).resolves.not.toThrow()
+    const updated = await db.locations.get(locId)
+    expect(updated?.name).toBe('pantry')
   })
 })
 
