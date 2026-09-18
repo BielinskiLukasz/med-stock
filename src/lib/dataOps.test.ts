@@ -112,6 +112,32 @@ describe('BackupSchema', () => {
     })
     expect(result.success).toBe(false)
   })
+
+  it('defaults hidden/order to false/0 on a location item lacking those fields (pre-v6 backup)', () => {
+    const result = BackupSchema.safeParse({
+      medicines: [],
+      locations: [{ id: 1, name: 'X', isDefault: false }],
+      history: [],
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.locations[0].hidden).toBe(false)
+      expect(result.data.locations[0].order).toBe(0)
+    }
+  })
+
+  it('preserves hidden/order exactly when a location item includes them', () => {
+    const result = BackupSchema.safeParse({
+      medicines: [],
+      locations: [{ id: 1, name: 'X', isDefault: false, hidden: true, order: 3 }],
+      history: [],
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.locations[0].hidden).toBe(true)
+      expect(result.data.locations[0].order).toBe(3)
+    }
+  })
 })
 
 describe('inferCatalogEntriesFromLegacyMedicines', () => {

@@ -50,6 +50,8 @@ export const BackupSchema = z.object({
       id: z.number(),
       name: z.string(),
       isDefault: z.boolean(),
+      hidden: z.boolean().optional().default(false), // added: prevent silent data loss on import round-trip (Phase 8)
+      order: z.number().optional().default(0),       // added: prevent silent data loss on import round-trip (Phase 8)
     })
   ),
   history: z.array(
@@ -113,6 +115,8 @@ const LegacyBackupSchema = z.object({
       id: z.number(),
       name: z.string(),
       isDefault: z.boolean(),
+      hidden: z.boolean().optional().default(false), // added: prevent silent data loss on import round-trip (Phase 8)
+      order: z.number().optional().default(0),       // added: prevent silent data loss on import round-trip (Phase 8)
     })
   ),
   history: z.array(
