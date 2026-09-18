@@ -120,6 +120,18 @@ export type TranslationDict = {
     errorAdd: string
     errorRename: string
     errorDelete: string
+    hidden: string
+    hide: string
+    show: string
+    emptyHeading: string
+    emptyBody: string
+    errorDuplicate: string
+    deleteReassignTitle: string
+    deleteReassignBody: string
+    reassignLabel: string
+    reassignOther: string
+    confirmReassignDelete: string
+    reorderHint: string
   }
   data: {
     title: string
@@ -293,6 +305,11 @@ export type TranslationDict = {
     deleteCatalog: string
     editCatalog: string
     openFilters: string
+    hideLocation: string
+    showLocation: string
+    moveUp: string
+    moveDown: string
+    dragHandle: string
   }
 }
 
