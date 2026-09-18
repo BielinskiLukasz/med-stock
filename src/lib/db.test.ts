@@ -7,6 +7,8 @@ import {
   renameLocation,
   countActiveLocationReferences,
   deleteLocationWithReassign,
+  toggleLocationHidden,
+  reorderLocations,
 } from './locationOps'
 
 beforeEach(async () => {
@@ -250,6 +252,77 @@ describe('renameLocation', () => {
     await expect(renameLocation(locId, 'pantry')).resolves.not.toThrow()
     const updated = await db.locations.get(locId)
     expect(updated?.name).toBe('pantry')
+  })
+})
+
+describe('toggleLocationHidden', () => {
+  it('sets hidden=true and leaves other fields (including isDefault) untouched', async () => {
+    const locId = await db.locations.add({ name: 'Attic', isDefault: false, hidden: false, order: 3 })
+    await toggleLocationHidden(locId, true)
+    const loc = await db.locations.get(locId)
+    expect(loc?.hidden).toBe(true)
+    expect(loc?.isDefault).toBe(false)
+    expect(loc?.order).toBe(3)
+    expect(loc?.name).toBe('Attic')
+  })
+
+  it('sets hidden=false, reversing a prior hide', async () => {
+    const locId = await db.locations.add({ name: 'Attic', isDefault: false, hidden: true, order: 3 })
+    await toggleLocationHidden(locId, false)
+    expect((await db.locations.get(locId))?.hidden).toBe(false)
+  })
+
+  // D-05: works identically on predefined (isDefault: true) rows.
+  it('works identically on an isDefault: true location', async () => {
+    const locId = await db.locations.add({ name: 'Predefined', isDefault: true, hidden: false, order: 1 })
+    await toggleLocationHidden(locId, true)
+    const loc = await db.locations.get(locId)
+    expect(loc?.hidden).toBe(true)
+    expect(loc?.isDefault).toBe(true)
+  })
+})
+
+describe('reorderLocations', () => {
+  it('renumbers three locations to contiguous integers matching the array order', async () => {
+    await db.locations.clear()
+    const idA = await db.locations.add({ name: 'A', isDefault: false, hidden: false, order: 1 })
+    const idB = await db.locations.add({ name: 'B', isDefault: false, hidden: false, order: 2 })
+    const idC = await db.locations.add({ name: 'C', isDefault: false, hidden: false, order: 3 })
+
+    await reorderLocations([idC, idA, idB])
+
+    expect((await db.locations.get(idC))?.order).toBe(1)
+    expect((await db.locations.get(idA))?.order).toBe(2)
+    expect((await db.locations.get(idB))?.order).toBe(3)
+  })
+
+  it('is a no-op on an empty array', async () => {
+    await db.locations.clear()
+    await db.locations.add({ name: 'A', isDefault: false, hidden: false, order: 1 })
+    await expect(reorderLocations([])).resolves.not.toThrow()
+  })
+
+  it('is a no-op on a single-element array', async () => {
+    await db.locations.clear()
+    const id = await db.locations.add({ name: 'A', isDefault: false, hidden: false, order: 7 })
+    await expect(reorderLocations([id])).resolves.not.toThrow()
+    expect((await db.locations.get(id))?.order).toBe(7)
+  })
+
+  it('produces unique order values across all rows after a reorder', async () => {
+    await db.locations.clear()
+    const ids = await Promise.all(
+      ['A', 'B', 'C', 'D'].map((name, i) =>
+        db.locations.add({ name, isDefault: false, hidden: false, order: i + 1 })
+      )
+    )
+
+    await reorderLocations([ids[3], ids[1], ids[0], ids[2]])
+
+    const all = await db.locations.toCollection().sortBy('order')
+    const orders = all.map(l => l.order)
+    expect(new Set(orders).size).toBe(orders.length)
+    expect(orders).toEqual([1, 2, 3, 4])
   })
 })
 
