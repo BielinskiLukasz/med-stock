@@ -96,7 +96,33 @@ Plans:
   3. User can delete any location; if medicines reference it, a warning prompts the user to reassign or clear those references before deletion proceeds
   4. User can drag locations into a new order; the order persists across sessions and is reflected in form dropdowns
 
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+
+- [ ] 08-01-PLAN.md — db.version(6) migration (Location.hidden/order) + tracer: rename a predefined location end-to-end + full i18n key batch (Wave 1)
+- [ ] 08-02-PLAN.md — TDD: locationOps.ts mutation logic — collision-safe add/rename, delete-with-reassign, hide toggle, contiguous reorder (Wave 2)
+- [ ] 08-03-PLAN.md — Filter hidden locations out of assignment dropdowns, keep them in the Filter sheet, round-trip hidden/order through BackupSchema (Wave 2)
+- [ ] 08-04-PLAN.md — Locations screen: hide/show toggle + delete-with-reassign dialog (Wave 3)
+- [ ] 08-05-PLAN.md — Reorder UI: @dnd-kit drag handle + up/down buttons (Wave 4)
+
+**Wave 1**
+
+- [ ] 08-01-PLAN.md (Wave 1)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 08-02-PLAN.md (Wave 2)
+- [ ] 08-03-PLAN.md (Wave 2)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
+- [ ] 08-04-PLAN.md (Wave 3)
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
+- [ ] 08-05-PLAN.md (Wave 4)
+
 **UI hint**: yes
 
 ### Phase 9: CSV UX + Version Display
