@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 08
 current_phase_name: Full Location Management
 status: executing
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-09-18T10:22:55.398Z"
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-09-18T10:49:26.379Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 08 execution started
-state_head: 393f3fc12e8936a1022d5e0a4237a7ae531fb1d0
+state_head: ac5a76c6c8a59fe9a83d7336a9c186b6463eabae
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 11
+  completed_plans: 12
   percent: 20
 ---
 
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 ## Current Position
 
 Phase: 08 (Full Location Management) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 08 execution started
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-18 — Phase 08 execution started
 
 ## Session
 
-**Last session:** 2026-09-18T10:22:52.309Z
-**Stopped at:** Completed 08-01-PLAN.md
+**Last session:** 2026-09-18T10:49:25.284Z
+**Stopped at:** Completed 08-02-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -104,6 +104,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 | Phase 07 P09 | 20min | 4 tasks | 12 files |
 | Phase 07 P10 | 15min | 2 tasks | 6 files |
 | Phase 08 P01 | 33min | 2 tasks | 9 files |
+| Phase 08 P02 | 17min | 3 tasks | 3 files |
 
 ## Decisions
 
@@ -143,6 +144,9 @@ Last activity: 2026-09-18 — Phase 08 execution started
 - [Phase 08]: [Phase 08]: db.version(6) upgrades hidden/order in place inside the versionchange tx (no second db.transaction() after .upgrade()); v5 stores() left byte-for-byte unchanged
 - [Phase 08]: [Phase 08]: order field intentionally unindexed (matches packCount v5 precedent) — use toCollection().sortBy('order') not orderBy('order'), which requires an index and throws SchemaError
 - [Phase 08]: [Phase 08]: renameLocation() drops isDefault guard (D-01); order:999 sentinel used on ad-hoc location adds until Plan 08-02 assigns real order on add
+- [Phase 08]: [Phase 08] deleteLocationWithReassign replaces deleteLocation entirely (no isDefault guard, no min-location floor); LocationsScreen call site updated to deleteLocationWithReassign(id, null) as Rule 3 fix
+- [Phase 08]: [Phase 08] addCustomLocation/renameLocation reject case-insensitive trimmed name collisions (D-03); order assigned as max(existing)+1 replacing the 999 sentinel
+- [Phase 08]: [Phase 08] toggleLocationHidden and reorderLocations added; reorderLocations renumbers to contiguous 1..N via bulkUpdate, no-op on 0/1-element arrays (D-13, D-16)
 
 ### Quick Tasks Completed
 
