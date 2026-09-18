@@ -1,7 +1,7 @@
 ---
 phase: "8"
 slug: "full-location-management"
-status: draft
+status: approved
 shadcn_initialized: true
 preset: base-nova
 created: "2026-09-18"
@@ -245,15 +245,15 @@ Applicable state considerations resolved: 10 covered, 2 backstop, 2 unresolved.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
-- [ ] Dimension 7 Inventory Provenance: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS (FLAG — no explicit focal-point statement; non-blocking)
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS (FLAG — "14–16px" dialog-title range is ambiguous; non-blocking)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
+- [x] Dimension 7 Inventory Provenance: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-09-18
 
 ---
 
