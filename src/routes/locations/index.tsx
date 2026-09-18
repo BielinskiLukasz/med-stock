@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, ChevronUp, ChevronDown } from 'lucide-react'
 import { db } from '@/lib/db'
 import {
   addCustomLocation,
@@ -8,7 +8,9 @@ import {
   toggleLocationHidden,
   countActiveLocationReferences,
   deleteLocationWithReassign,
+  reorderLocations,
 } from '@/lib/locationOps'
+import { SortableLocationList } from '@/components/SortableLocationList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -138,6 +140,23 @@ export function LocationsScreen() {
     }
   }
 
+  // D-14: both the drag-end handler and the up/down button handlers funnel through
+  // this single splice + reorderLocations call — no duplicate renumbering logic.
+  async function handleReorder(oldIndex: number, newIndex: number) {
+    if (!locations) return
+    const reordered = [...locations]
+    const [moved] = reordered.splice(oldIndex, 1)
+    reordered.splice(newIndex, 0, moved)
+    await reorderLocations(reordered.map((l) => l.id))
+  }
+
+  async function handleMove(index: number, direction: 'up' | 'down') {
+    if (!locations) return
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= locations.length) return
+    await handleReorder(index, targetIndex)
+  }
+
   if (!locations) return <div className="p-4">{t('common.loading')}</div>
 
   return (
@@ -187,58 +206,76 @@ export function LocationsScreen() {
           <p className="text-sm text-muted-foreground mt-1">{t('locations.emptyBody')}</p>
         </div>
       ) : (
-        <div className="space-y-1">
-          {locations.map((loc) => {
-            const displayName = LOCATION_KEYS[loc.name] ? t(LOCATION_KEYS[loc.name]) : loc.name
-            return (
-              <div
-                key={loc.id}
-                className={`flex items-center justify-between py-2 border-b last:border-0 ${loc.hidden ? 'opacity-60' : ''}`}
-              >
-                {editingId === loc.id ? (
-                  <div className="flex gap-2 flex-1">
-                    <Input
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      autoFocus
-                      maxLength={60}
-                      onKeyDown={(e) => { if (e.key === 'Enter') handleRename(loc.id) }}
-                    />
-                    <Button size="sm" onClick={() => handleRename(loc.id)}>{t('form.save')}</Button>
+        <>
+          <p className="text-xs text-muted-foreground mb-2">{t('locations.reorderHint')}</p>
+          <SortableLocationList
+            locations={locations}
+            onDragEnd={handleReorder}
+            renderRow={(loc) => {
+              const displayName = LOCATION_KEYS[loc.name] ? t(LOCATION_KEYS[loc.name]) : loc.name
+              const index = locations.findIndex((l) => l.id === loc.id)
+              return editingId === loc.id ? (
+                <div className="flex gap-2 flex-1">
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    autoFocus
+                    maxLength={60}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleRename(loc.id) }}
+                  />
+                  <Button size="sm" onClick={() => handleRename(loc.id)}>{t('form.save')}</Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => { setEditingId(null); setEditValue('') }}
+                  >
+                    {t('form.cancel')}
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  {/* D-07: predefined names shown translated, user-created names shown as stored */}
+                  <span className="text-sm truncate" title={displayName}>
+                    {displayName}
+                  </span>
+                  {loc.hidden && (
+                    <span className="text-xs text-muted-foreground ml-2">{t('locations.hidden')}</span>
+                  )}
+                  <div className="flex gap-2 ml-2">
                     <Button
-                      variant="outline"
+                      variant="ghost"
                       size="sm"
-                      onClick={() => { setEditingId(null); setEditValue('') }}
+                      aria-label={t('aria.moveUp')}
+                      disabled={index === 0}
+                      onClick={() => handleMove(index, 'up')}
                     >
-                      {t('form.cancel')}
+                      <ChevronUp className="h-4 w-4" />
                     </Button>
-                  </div>
-                ) : (
-                  <>
-                    {/* D-07: predefined names shown translated, user-created names shown as stored */}
-                    <span className="text-sm truncate" title={displayName}>
-                      {displayName}
-                    </span>
-                    {loc.hidden && (
-                      <span className="text-xs text-muted-foreground ml-2">{t('locations.hidden')}</span>
-                    )}
-                    <div className="flex gap-2 ml-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label={t(loc.hidden ? 'aria.showLocation' : 'aria.hideLocation')}
-                        onClick={() => handleToggleHidden(loc.id, loc.hidden)}
-                      >
-                        {loc.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEdit(loc.id, loc.name)}
-                      >
-                        {t('locations.edit')}
-                      </Button>
-                      <AlertDialog
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t('aria.moveDown')}
+                      disabled={index === locations.length - 1}
+                      onClick={() => handleMove(index, 'down')}
+                    >
+                      <ChevronDown className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={t(loc.hidden ? 'aria.showLocation' : 'aria.hideLocation')}
+                      onClick={() => handleToggleHidden(loc.id, loc.hidden)}
+                    >
+                      {loc.hidden ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => startEdit(loc.id, loc.name)}
+                    >
+                      {t('locations.edit')}
+                    </Button>
+                    <AlertDialog
                         open={deleteTargetId === loc.id}
                         onOpenChange={(open) => handleDeleteDialogOpenChange(loc, open)}
                       >
@@ -310,11 +347,10 @@ export function LocationsScreen() {
                       </AlertDialog>
                     </div>
                   </>
-                )}
-              </div>
-            )
-          })}
-        </div>
+                )
+            }}
+          />
+        </>
       )}
     </div>
   )
