@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Polish, UX & i18n
-current_phase: 8
+current_phase: 08
 current_phase_name: Full Location Management
-status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-09-17T15:49:04.583Z"
+status: executing
+stopped_at: Phase 08 UI-SPEC approved
+last_updated: "2026-09-18T09:38:57.196Z"
 last_activity: 2026-09-17
 last_activity_desc: Phase 07 complete, transitioned to Phase 8
-state_head: 22accbbd24fb9ab37bfde88ea9cb472c974c3cde
+state_head: 4dc20535e48bc6ef8e05aa880da78c03c8f2f73f
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 10
+  total_plans: 15
   completed_plans: 10
   percent: 20
 ---
@@ -29,9 +29,9 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 
 ## Current Position
 
-Phase: 8 — Full Location Management
+Phase: 08 (Full Location Management) — READY TO EXECUTE
 Plan: Not started
-Status: Ready to plan
+Status: Ready to execute
 Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add name/category column mapping and catalog dedup
 
 ## v1.0 Summary
@@ -77,9 +77,9 @@ Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add
 
 ## Session
 
-**Last session:** 2026-09-17T15:49:03.077Z
-**Stopped at:** Phase 8 context gathered
-**Resume file:** .planning/phases/08-full-location-management/08-CONTEXT.md
+**Last session:** 2026-09-18T09:00:08.997Z
+**Stopped at:** Phase 08 UI-SPEC approved
+**Resume file:** .planning/phases/08-full-location-management/08-UI-SPEC.md
 
 ## Performance Metrics
 
