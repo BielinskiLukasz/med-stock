@@ -66,3 +66,19 @@ export async function deleteLocationWithReassign(
     await db.locations.delete(locationId)
   })
 }
+
+// D-05: hide/show toggle available on ALL locations, no isDefault branching.
+export async function toggleLocationHidden(locationId: number, hidden: boolean): Promise<void> {
+  await db.locations.update(locationId, { hidden })
+}
+
+// D-13 (Strategy A): renumbers every id in orderedIds to contiguous integers 1..N,
+// matching the array's new position order. D-16: "Other" (null location) never appears
+// in orderedIds — callers filter it out before calling this function.
+export async function reorderLocations(orderedIds: number[]): Promise<void> {
+  if (orderedIds.length <= 1) return
+  await db.transaction('rw', db.locations, async () => {
+    const updates = orderedIds.map((id, i) => ({ key: id, changes: { order: i + 1 } }))
+    await db.locations.bulkUpdate(updates)
+  })
+}
