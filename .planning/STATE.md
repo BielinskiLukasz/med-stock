@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 08
 current_phase_name: Full Location Management
 status: executing
-stopped_at: Completed 08-05-PLAN.md
-last_updated: "2026-09-18T12:40:27.434Z"
+stopped_at: Completed 08-06-PLAN.md
+last_updated: "2026-09-18T12:59:28.275Z"
 last_activity: 2026-09-18
 last_activity_desc: Phase 08 execution started
-state_head: 11cffdbee2ed85b8f287d18f6dda58de93486a1b
+state_head: c194183dd6a440f4ee7f85b3200c77d936393ce3
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
   percent: 20
 ---
 
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-09-17)
 
 ## Current Position
 
-Phase: 08 (Full Location Management) — READY TO EXECUTE
-Plan: 5 of 5
+Phase: 08 (Full Location Management) — EXECUTING
+Plan: 2 of 6
 Status: Ready to execute
 Last activity: 2026-09-18 — Phase 08 execution started
 
@@ -77,8 +77,8 @@ Last activity: 2026-09-18 — Phase 08 execution started
 
 ## Session
 
-**Last session:** 2026-09-18T11:38:34.931Z
-**Stopped at:** Completed 08-05-PLAN.md
+**Last session:** 2026-09-18T12:59:27.067Z
+**Stopped at:** Completed 08-06-PLAN.md
 **Resume file:** None
 
 ## Performance Metrics
@@ -108,6 +108,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 | Phase 08 P03 | 13min | 3 tasks | 6 files |
 | Phase 08 P04 | 9min | 2 tasks | 1 files |
 | Phase 08 P05 | 12min | 2 tasks | 3 files |
+| Phase 08 P06 | 6min | 2 tasks | 2 files |
 
 ## Decisions
 
@@ -155,6 +156,7 @@ Last activity: 2026-09-18 — Phase 08 execution started
 - [Phase 08]: [Phase 08]: reassignTo modeled as string|undefined (never null) — Radix Select's controlled value rejects null, REASSIGN_OTHER sentinel represents explicit Other choice
 - [Phase 08]: [Phase 08]: per-row delete AlertDialog made fully controlled (open={deleteTargetId === loc.id}) so countActiveLocationReferences resolves before the reassign-vs-simple dialog body renders
 - [Phase 08]: [Phase 08]: SortableLocationList owns only drag mechanics via a renderRow render-prop; handleMove delegates to handleReorder so both drag-end and up/down buttons funnel through a single reorderLocations call
+- [Phase 08]: [Phase 08] MedicineForm/StockFields quick-add-location routed through addCustomLocation() (CR-01 fix) — both components keep db import for the useLiveQuery dropdown while addCustomLocation handles the write path and enforces D-03 collision safety
 
 ### Quick Tasks Completed
 

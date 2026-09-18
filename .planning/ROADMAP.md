@@ -96,7 +96,7 @@ Plans:
   3. User can delete any location; if medicines reference it, a warning prompts the user to reassign or clear those references before deletion proceeds
   4. User can drag locations into a new order; the order persists across sessions and is reflected in form dropdowns
 
-**Plans**: 5/5 plans executed (+ 08-06 gap closure planned, pending execution)
+**Plans**: 6/6 plans executed (+ 08-06 gap closure planned, pending execution)
 
 Plans:
 
@@ -105,7 +105,7 @@ Plans:
 - [x] 08-03-PLAN.md — Filter hidden locations out of assignment dropdowns, keep them in the Filter sheet, round-trip hidden/order through BackupSchema (Wave 2)
 - [x] 08-04-PLAN.md — Locations screen: hide/show toggle + delete-with-reassign dialog (Wave 3)
 - [x] 08-05-PLAN.md — Reorder UI: @dnd-kit drag handle + up/down buttons (Wave 4)
-- [ ] 08-06-PLAN.md — Gap closure: route quick-add-location (MedicineForm.tsx, StockFields.tsx) through addCustomLocation() to close the CR-01 collision-safety bypass (Wave 5)
+- [x] 08-06-PLAN.md — Gap closure: route quick-add-location (MedicineForm.tsx, StockFields.tsx) through addCustomLocation() to close the CR-01 collision-safety bypass (Wave 5)
 
 **Wave 1**
 
@@ -122,7 +122,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3 completion)*
 
-- [ ] 08-05-PLAN.md (Wave 4)
+- [x] 08-05-PLAN.md (Wave 4)
 
 **Wave 5 — gap closure (verification re-check, 08-VERIFICATION.md)**
 
@@ -179,7 +179,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 7. i18n / Polish Language | 10/10 | Complete    | 2026-09-17 |
-| 8. Full Location Management | 5/5 | In Progress|  |
+| 8. Full Location Management | 6/6 | In Progress|  |
 | 9. CSV UX + Version Display | 0/? | Not started | - |
 | 10. Expiring Soon Status | 0/? | Not started | - |
 | 11. UX Polish — Autocomplete + Pack Count | 0/? | Not started | - |
