@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { db } from '@/lib/db'
+import { addCustomLocation } from '@/lib/locationOps'
 import { CATEGORIES, QUANTITY_UNITS } from '@/types/medicine'
 import { useLang, CATEGORY_KEYS, LOCATION_KEYS, UNIT_KEYS } from '@/i18n'
 import {
@@ -102,15 +103,18 @@ export function MedicineForm({
     const trimmed = newLocationInput.trim()
     if (!trimmed) return
     try {
-      // order: 999 sentinel — real order assignment on add is deferred to Plan 08-02 (D-13)
-      await db.locations.add({ name: trimmed, isDefault: false, hidden: false, order: 999 })
+      await addCustomLocation(trimmed)
       form.setValue('location', trimmed)
       setNewLocationInput('')
       setShowQuickAddLocation(false)
     } catch (err) {
       // Duplicate or DB error — log and notify user
       console.error('Failed to add location:', err)
-      toast.error(t('toasts.locationFailed'))
+      if (err instanceof Error && err.message === 'Location name already exists') {
+        toast.error(t('locations.errorDuplicate'))
+      } else {
+        toast.error(t('toasts.locationFailed'))
+      }
     }
   }
 
