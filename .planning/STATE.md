@@ -5,16 +5,16 @@ milestone_name: Polish, UX & i18n
 current_phase: 08
 current_phase_name: Full Location Management
 status: executing
-stopped_at: Phase 08 UI-SPEC approved
-last_updated: "2026-09-18T09:38:57.196Z"
-last_activity: 2026-09-17
-last_activity_desc: Phase 07 complete, transitioned to Phase 8
-state_head: 4dc20535e48bc6ef8e05aa880da78c03c8f2f73f
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-09-18T10:22:55.398Z"
+last_activity: 2026-09-18
+last_activity_desc: Phase 08 execution started
+state_head: 393f3fc12e8936a1022d5e0a4237a7ae531fb1d0
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 15
-  completed_plans: 10
+  completed_plans: 11
   percent: 20
 ---
 
@@ -25,14 +25,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-09-17)
 
 **Core value:** At a glance, from anywhere, know whether you already have a valid medicine — so you never overbuy and never miss an expired one.
-**Current focus:** Phase 8 — Full Location Management
+**Current focus:** Phase 08 — Full Location Management
 
 ## Current Position
 
-Phase: 08 (Full Location Management) — READY TO EXECUTE
-Plan: Not started
+Phase: 08 (Full Location Management) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add name/category column mapping and catalog dedup
+Last activity: 2026-09-18 — Phase 08 execution started
 
 ## v1.0 Summary
 
@@ -77,9 +77,9 @@ Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add
 
 ## Session
 
-**Last session:** 2026-09-18T09:00:08.997Z
-**Stopped at:** Phase 08 UI-SPEC approved
-**Resume file:** .planning/phases/08-full-location-management/08-UI-SPEC.md
+**Last session:** 2026-09-18T10:22:52.309Z
+**Stopped at:** Completed 08-01-PLAN.md
+**Resume file:** None
 
 ## Performance Metrics
 
@@ -103,6 +103,7 @@ Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add
 | Phase 07 P08 | 12min | 1 tasks | 4 files |
 | Phase 07 P09 | 20min | 4 tasks | 12 files |
 | Phase 07 P10 | 15min | 2 tasks | 6 files |
+| Phase 08 P01 | 33min | 2 tasks | 9 files |
 
 ## Decisions
 
@@ -139,6 +140,9 @@ Last activity: 2026-09-17 - Completed quick task 260917-hx0: Fix CSV import: add
 - [Phase 07]: Post-07-10 code review found 4 more gaps (a 4th, unplanned gap-closure cycle) — fixed via /gsd-code-review 07 --fix: MoveStockSheet raw unit string (WR-01), HistoryEntry raw field key + "[object Object]" stringify bug (WR-02), CSVColumnMapper/CSVPreview raw field identifiers (WR-03), and the highest-impact one — Zod validation schemas hardcoding English error messages (WR-04)
 - [Phase 07]: Zod schemas converted to factories (`createCatalogSchema(t)`/`createStockSchema(t)`/`createMedicineSchema(t)`) wired via `useMemo(() => createXSchema(t), [t])` in all 6 consumers — module-scope schemas can't call the `t()` hook, so this pattern is required wherever form validation messages must be language-aware
 - [Phase 07]: Phase 07 VERIFIED PASSED after 4th gap-closure cycle — I18N-01 through I18N-05 all satisfied; phase marked complete, transitioned to Phase 8
+- [Phase 08]: [Phase 08]: db.version(6) upgrades hidden/order in place inside the versionchange tx (no second db.transaction() after .upgrade()); v5 stores() left byte-for-byte unchanged
+- [Phase 08]: [Phase 08]: order field intentionally unindexed (matches packCount v5 precedent) — use toCollection().sortBy('order') not orderBy('order'), which requires an index and throws SchemaError
+- [Phase 08]: [Phase 08]: renameLocation() drops isDefault guard (D-01); order:999 sentinel used on ad-hoc location adds until Plan 08-02 assigns real order on add
 
 ### Quick Tasks Completed
 
