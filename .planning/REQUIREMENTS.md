@@ -15,10 +15,10 @@
 
 ### Locations
 
-- [x] **LOC-01**: User can rename any location (including predefined) from the Locations screen
-- [x] **LOC-02**: User can hide or show any predefined location; hidden locations are excluded from add/edit dropdowns
-- [x] **LOC-03**: User can delete any location; warned if medicines reference it with a reassign-or-clear choice before deletion
-- [x] **LOC-04**: User can reorder all locations via drag-to-reorder; order persists and applies to form dropdowns
+- [ ] **LOC-01**: User can rename any location (including predefined) from the Locations screen
+- [ ] **LOC-02**: User can hide or show any predefined location; hidden locations are excluded from add/edit dropdowns
+- [ ] **LOC-03**: User can delete any location; warned if medicines reference it with a reassign-or-clear choice before deletion
+- [ ] **LOC-04**: User can reorder all locations via drag-to-reorder; order persists and applies to form dropdowns
 
 ### CSV
 
@@ -70,10 +70,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | I18N-03 | Phase 7 | Complete |
 | I18N-04 | Phase 7 | Complete |
 | I18N-05 | Phase 7 | Complete |
-| LOC-01 | Phase 8 | Complete |
-| LOC-02 | Phase 8 | Complete |
-| LOC-03 | Phase 8 | Complete |
-| LOC-04 | Phase 8 | Complete |
+| LOC-01 | Phase 8 | Gaps Found |
+| LOC-02 | Phase 8 | Gaps Found |
+| LOC-03 | Phase 8 | Gaps Found |
+| LOC-04 | Phase 8 | Gaps Found |
 | CSV-01 | Phase 9 | Pending |
 | CSV-02 | Phase 9 | Pending |
 | UX-01 | Phase 9 | Pending |
