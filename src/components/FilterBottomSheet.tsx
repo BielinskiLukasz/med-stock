@@ -53,7 +53,11 @@ export function FilterBottomSheet() {
   const selectedLocations = useUIStore(useShallow((s) => s.selectedLocations))
   const selectedStatuses = useUIStore(useShallow((s) => s.selectedStatuses))
 
-  const locations = useLiveQuery(() => db.locations.orderBy('name').toArray(), [])
+  // order is intentionally unindexed (matches packCount v5 precedent) — toCollection().sortBy()
+  // is used instead of orderBy(), which throws SchemaError on a non-indexed keyPath (08-01 precedent).
+  // Hidden locations are deliberately NOT filtered out here — existing stock already sitting
+  // in a hidden location must stay findable/filterable (D-07).
+  const locations = useLiveQuery(() => db.locations.toCollection().sortBy('order'), [])
 
   function handleSortField(field: SortField) {
     setSort(field, sortDirection)
